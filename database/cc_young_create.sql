@@ -50,7 +50,7 @@ CREATE TABLE main.categories
     question_id smallint REFERENCES main.question(question_id),
     category_id smallint,
     category_lb_es text,
-    PRIMARY KEY(question_id,category_id)
+    PRIMARY KEY(question_id,category_id),
     UNIQUE(question_id,category_lb_es)
 );
 
@@ -59,27 +59,27 @@ CREATE TABLE main.subquestions
     question_id smallint REFERENCES main.question(question_id),
     subquestion_id smallint,
     subquestion_lb_es text,
-    PRIMARY KEY (question_id, subquestion_id)
+    PRIMARY KEY (question_id, subquestion_id),
     UNIQUE(question_id,subquestion_lb_es)
 );
 
 CREATE TABLE main.answer_subq_yesno
 (
-    person_id smallint REFERENCES main.basic_info(person_id)
+    person_id smallint REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     subquestion_id smallint NOT NULL,
     answer boolean NOT NULL,
-    FOREIGN KEY (question_id, subquestion_id) REFERENCES main.subquestions(question_id, subquestion_id)
+    FOREIGN KEY (question_id, subquestion_id) REFERENCES main.subquestions(question_id, subquestion_id),
     UNIQUE (person_id, question_id, subquestion_id)
 );
 
 CREATE TABLE main.answer_subq_scale
 (
-    person_id smallint REFERENCES main.basic_info(person_id)
+    person_id smallint REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     subquestion_id smallint NOT NULL,
     answer smallint NOT NULL,
-    FOREIGN KEY (question_id, subquestion_id) REFERENCES main.subquestion(question_id,subquestion_id)
+    FOREIGN KEY (question_id, subquestion_id) REFERENCES main.subquestions(question_id,subquestion_id),
     UNIQUE(person_id, question_id, subquestion_id)
 );
 
@@ -90,7 +90,7 @@ CREATE TABLE main.answer_subq_cat_uniq
     subquestion_id smallint NOT NULL,
     category_id smallint NOT NULL,
     FOREIGN KEY (question_id, subquestion_id) REFERENCES main.subquestions (question_id, subquestion_id),
-    FOREIGN KEY (question_id, category_id) main.categories (question_id,category_id)
+    FOREIGN KEY (question_id, category_id) REFERENCES main.categories (question_id,category_id),
     UNIQUE (person_id, question_id, subquestion_id)
 );
 
@@ -121,7 +121,7 @@ CREATE TABLE main.answer_freetext
 CREATE TABLE main.answer_other
 (
     person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
-    question_id NOT NULL REFERENCES  main.question(question_id),
+    question_id smallint NOT NULL REFERENCES  main.question(question_id),
     answer text,
     UNIQUE(person_id,question_id, answer)
 );
@@ -131,16 +131,16 @@ CREATE TABLE main.answer_cat_uniq
     person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     category_id smallint NOT NULL,
-    FOREIGN KEY (question_id, category_id) REFERENCES main.categories(question_id, category_id)
+    FOREIGN KEY (question_id, category_id) REFERENCES main.categories(question_id, category_id),
     UNIQUE (person_id, question_id)
 );
 
 CREATE TABLE main.answer_cat_multi
 (
     person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
-    main.question_id REFERENCES main.question(question_id),
+    question_id smallint REFERENCES main.question(question_id),
     category_id smallint NOT NULL,
-    FOREIGN KEY  (question_id,category_id) REFERENCES main.categories (question_id, category_id)
+    FOREIGN KEY  (question_id,category_id) REFERENCES main.categories (question_id, category_id),
     UNIQUE(person_id,question_id,category_id)
 );
 
