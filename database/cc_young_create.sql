@@ -65,7 +65,7 @@ CREATE TABLE main.subquestions
 
 CREATE TABLE main.answer_subq_yesno
 (
-    person_id smallint REFERENCES main.basic_info(person_id),
+    person_id int REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     subquestion_id smallint NOT NULL,
     answer boolean NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE main.answer_subq_yesno
 
 CREATE TABLE main.answer_subq_scale
 (
-    person_id smallint REFERENCES main.basic_info(person_id),
+    person_id int REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     subquestion_id smallint NOT NULL,
     answer smallint NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE main.answer_subq_scale
 
 CREATE TABLE main.answer_subq_cat_uniq
 (
-    person_id smallint REFERENCES main.basic_info(person_id),
+    person_id int REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     subquestion_id smallint NOT NULL,
     category_id smallint NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE main.answer_subq_cat_uniq
 
 CREATE TABLE main.answer_yesno
 (
-    person_id smallint REFERENCES main.basic_info(person_id),
+    person_id int REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL REFERENCES main.question(question_id),
     answer boolean NOT NULL,
     UNIQUE(person_id, question_id)
@@ -104,7 +104,7 @@ CREATE TABLE main.answer_yesno
 
 CREATE TABLE main.answer_scale
 (
-    person_id smallint REFERENCES main.basic_info(person_id),
+    person_id int REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL REFERENCES main.question(question_id),
     answer smallint NOT NULL,
     UNIQUE(person_id, question_id)
@@ -112,7 +112,7 @@ CREATE TABLE main.answer_scale
 
 CREATE TABLE main.answer_freetext
 (
-    person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
+    person_id int NOT NULL REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL REFERENCES main.question(question_id),
     answer text NOT NULL,
     UNIQUE(person_id,question_id)
@@ -120,7 +120,7 @@ CREATE TABLE main.answer_freetext
 
 CREATE TABLE main.answer_other
 (
-    person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
+    person_id int NOT NULL REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL REFERENCES  main.question(question_id),
     answer text,
     UNIQUE(person_id,question_id, answer)
@@ -128,7 +128,7 @@ CREATE TABLE main.answer_other
 
 CREATE TABLE main.answer_cat_uniq
 (
-    person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
+    person_id int NOT NULL REFERENCES main.basic_info(person_id),
     question_id smallint NOT NULL,
     category_id smallint NOT NULL,
     FOREIGN KEY (question_id, category_id) REFERENCES main.categories(question_id, category_id),
@@ -137,7 +137,7 @@ CREATE TABLE main.answer_cat_uniq
 
 CREATE TABLE main.answer_cat_multi
 (
-    person_id smallint NOT NULL REFERENCES main.basic_info(person_id),
+    person_id int NOT NULL REFERENCES main.basic_info(person_id),
     question_id smallint REFERENCES main.question(question_id),
     category_id smallint NOT NULL,
     FOREIGN KEY  (question_id,category_id) REFERENCES main.categories (question_id, category_id),
