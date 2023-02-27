@@ -144,3 +144,25 @@ CREATE TABLE main.answer_cat_multi
     UNIQUE(person_id,question_id,category_id)
 );
 
+CREATE TABLE main.categories_post_treatment
+(
+    question_id smallint,
+    post_treatment_id smallint,
+    category_pt_id smallint,
+    category_pt_lb_es text NOT NULL,
+    PRIMARY KEY(question_id,post_treatment_id,category_pt_id),
+    UNIQUE(question_id, post_treatment_id,category_pt_id)
+);
+
+CREATE TABLE main.answer_post_treatment
+(
+    person_id int NOT NULL REFERENCES main.basic_info(person_id),
+    question_id smallint NOT NULL,
+    post_treatment_id smallint NOT NULL,
+    category_pt_id smallint NOT NULL,
+    FOREIGN KEY (question_id,post_treatment_id,category_pt_id) REFERENCES main.categories_post_treatment (question_id, post_treatment_id, category_pt_id)
+);
+
+
+
+

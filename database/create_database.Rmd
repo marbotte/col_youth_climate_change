@@ -299,6 +299,23 @@ catTab$number<-as.integer(catTab$number)
 # C36->D36 C37->D37 38 39 etc
 
 # rewrite D40
+
+# Post-treatment
+post_treatment<-rbind(
+data.frame(question_nb=31,post_treatment_id=1,
+           category_pt_id=listVal[[which(descr$title=="C31_COD1")]][,1],
+           category_pt_lb_es=listVal[[which(descr$title=="C31_COD1")]][,2]
+           ),
+data.frame(question_nb=31,post_treatment_id=2,
+           category_pt_id=listVal[[which(descr$title=="C31_COD2")]][,1],
+           category_pt_lb_es=listVal[[which(descr$title=="C31_COD2")]][,2]
+           ),
+data.frame(question_nb=31,post_treatment_id=3,
+           category_pt_id=listVal[[which(descr$title=="C31_COD3")]][,1],
+           category_pt_lb_es=listVal[[which(descr$title=="C31_COD3")]][,2]
+           )
+)
+
 ```
 
 ```{r}
@@ -322,6 +339,10 @@ dbWriteTable(cc_y, c("rawdata","subquestions"), subquestions, overwrite = T)
 
 # Insert raw data
 dbWriteTable(cc_y, c("rawdata", "data"), data1, overwrite = T)
+
+# Insert post treatment categories
+
+dbWriteTable(cc_y,c("rawdata","post_treatment"),post_treatment,overwrite=T)
 
 # Insert administrative limits
 pgPostGIS(cc_y)

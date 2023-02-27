@@ -179,7 +179,37 @@ UNION ALL
 SELECT "@_id" person_id, 15 question_id, 6 subquestion_id,"B15_6" answer
 FROM rawdata.data
 UNION ALL
-SELECT "@_id" person_id, 37 question_id, 1 subquestion_id,"D35_1" answer
+SELECT "@_id" person_id, 36 question_id, 1 subquestion_id,"D34_1" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 2 subquestion_id,"D34_2" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 3 subquestion_id,"D34_3" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 4 subquestion_id,"D34_4" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 5 subquestion_id,"D34_5" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 6 subquestion_id,"D34_6" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 7 subquestion_id,"D34_7" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 8 subquestion_id,"D34_8" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 9 subquestion_id,"D34_9" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 36 question_id, 10 subquestion_id,"D34_10" answer
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id, 37 question_id, 1 subquestion_id,"D34_1" answer
 FROM rawdata.data
 UNION ALL
 SELECT "@_id" person_id, 37 question_id, 2 subquestion_id,"D35_2" answer
@@ -284,3 +314,260 @@ FROM rawdata.data
 SELECT *
 FROM a
 WHERE answer IS NOT NULL;
+
+
+/* the following query was obtained, in part, by:
+SELECT 'SELECT "@_id" person_id, 17 question_id,' || REGEXP_REPLACE(column_name,'^C17_([0-9]+)$','\1') || ' subquestion_id,"'||column_name|| '" answer FROM rawdata.data UNION ALL' FROM information_schema.columns WHERE column_name ~ '17'
+That's a dirty meta-programmation trick but allows to avoid errors...
+*/
+INSERT INTO main.answer_subq_cat_uniq
+WITH a AS(
+ SELECT "@_id" person_id, 17 question_id,1 subquestion_id,"C17_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,2 subquestion_id,"C17_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,3 subquestion_id,"C17_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,4 subquestion_id,"C17_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,5 subquestion_id,"C17_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,6 subquestion_id,"C17_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,7 subquestion_id,"C17_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,8 subquestion_id,"C17_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,9 subquestion_id,"C17_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,10 subquestion_id,"C17_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,11 subquestion_id,"C17_11" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,12 subquestion_id,"C17_12" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,13 subquestion_id,"C17_13" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,14 subquestion_id,"C17_14" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,15 subquestion_id,"C17_15" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,16 subquestion_id,"C17_16" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,17 subquestion_id,"C17_17" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,18 subquestion_id,"C17_18" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,19 subquestion_id,"C17_19" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,20 subquestion_id,"C17_20" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,21 subquestion_id,"C17_21" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id,22 subquestion_id,"C17_22" answer FROM rawdata.data
+
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='yes/no' AND nb_subquestion=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+Then I used the result of the query, after checking for each variable which value corresponded to 'Sí'
+
+*/
+
+INSERT INTO main.answer_yesno
+WITH a AS(
+ SELECT "@_id" person_id, 9 question_id, "A9"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 10 question_id, "A10"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 19 question_id, "C19" =1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 20 question_id, "C20" =1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 22 question_id, "C22" =1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 23 question_id, "C23" = 1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 24 question_id, "C24" = 1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 25 question_id, "C25" = 1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 27 question_id, "C26"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 28 question_id, "C27"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 29 question_id, "C28"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 30 question_id, "C29"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 31 question_id, "C30"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 35 question_id, "C33"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 44 question_id, "D42"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 46 question_id, "D44"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 48 question_id, "D46"=1 answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='scale' AND nb_subquestion=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_scale
+WITH a AS(
+SELECT "@_id" person_id, 11 question_id, "A11" answer FROM rawdata.data UNION ALL
+SELECT "@_id" person_id, 42 question_id, "C40" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='choice' AND nb_subquestion=1 AND nb_to_pick=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_cat_uniq
+WITH a AS(
+ SELECT "@_id" person_id, 1 question_id, "A1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 3 question_id, "A3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 4 question_id, "A4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 5 question_id, "A5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 6 question_id, "A6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 7 question_id, "A7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 8 question_id, "A8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 21 question_id, "C21" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 43 question_id, "C41" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 45 question_id, "D43" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 47 question_id, "D45" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 52 question_id, "D50" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 53 question_id, "D51" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='choice' AND nb_subquestion=1 AND nb_to_pick>1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, UNNEST(STRING_TO_ARRAY("' || column_name || '",'' ''))::int answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_cat_multi
+WITH a AS(
+ SELECT "@_id" person_id, 12 question_id, UNNEST(STRING_TO_ARRAY("B12",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 13 question_id, UNNEST(STRING_TO_ARRAY("B13",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 14 question_id, UNNEST(STRING_TO_ARRAY("B14",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 16 question_id, UNNEST(STRING_TO_ARRAY("B16",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 33 question_id, UNNEST(STRING_TO_ARRAY("C32",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 38 question_id, UNNEST(STRING_TO_ARRAY("C36",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 39 question_id, UNNEST(STRING_TO_ARRAY("C37",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 49 question_id, UNNEST(STRING_TO_ARRAY("D47",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 50 question_id, UNNEST(STRING_TO_ARRAY("D48",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 51 question_id, UNNEST(STRING_TO_ARRAY("D49",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 54 question_id, UNNEST(STRING_TO_ARRAY("D52",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 55 question_id, UNNEST(STRING_TO_ARRAY("D53",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 56 question_id, UNNEST(STRING_TO_ARRAY("D54",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 57 question_id, UNNEST(STRING_TO_ARRAY("D55",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 58 question_id, UNNEST(STRING_TO_ARRAY("D56",' '))::int answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+(SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='free text' AND nb_subquestion=1 AND question_subnb IS NULL
+)
+UNION ALL
+(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='free text' AND nb_subquestion=1 AND question_subnb IS NOT NULL
+)
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+*/
+
+INSERT INTO main.answer_freetext
+WITH a AS(
+ SELECT "@_id" person_id, 32 question_id, "C31" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 26 question_id, "C26_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 34 question_id, "C33_1" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL AND answer !=''
+;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'_Otro$')
+WHERE other_option
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_other
+WITH a AS(
+ SELECT "@_id" person_id, 4 question_id, "A4_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 12 question_id, "B12_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 13 question_id, "B13_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 16 question_id, "B16_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 33 question_id, "C32_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 50 question_id, "D48_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 54 question_id, "D52_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 55 question_id, "D53_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 56 question_id, "D54_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 57 question_id, "D55_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 58 question_id, "D56_Otro" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+INSERT INTO main.categories_post_treatment
+SELECT question_id, post_treatment_id,category_pt_id::smallint,category_pt_lb_es
+FROM rawdata.post_treatment pt
+LEFT JOIN main.question q ON q.question_nb=pt.question_nb;
+
+INSERT INTO main.answer_post_treatment
+WITH a AS(
+SELECT "@_id" person_id,32 question_id, 1 post_treatment_id, "C31_COD1"::smallint category_pt_id
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id,32 question_id, 2 post_treatment_id, "C31_COD2"::smallint category_pt_id
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id,32 question_id, 3 post_treatment_id, "C31_COD3"::smallint category_pt_id
+FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE category_pt_id IS NOT NULL
+;
