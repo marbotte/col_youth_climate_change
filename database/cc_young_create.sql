@@ -110,6 +110,15 @@ CREATE TABLE main.answer_scale
     UNIQUE(person_id, question_id)
 );
 
+CREATE TABLE main.answer_numeric
+(
+    person_id int REFERENCES main.basic_info(person_id),
+    question_id smallint NOT NULL REFERENCES main.question(question_id),
+    answer smallint NOT NULL,
+    UNIQUE(person_id, question_id)
+);
+
+
 CREATE TABLE main.answer_freetext
 (
     person_id int NOT NULL REFERENCES main.basic_info(person_id),

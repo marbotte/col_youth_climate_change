@@ -1,38 +1,57 @@
+---
+title: "Creating the PostgreSQL database for the survey from the Colombian youth observatory (Universidad del Rosario)"
+author:
+  - Marius Bottin
+  - Juan Sebastian Cely
+output: 
+  github_document:
+    toc: true
+    number_sections: true
+always_allow_html: true
+---
 
+```{r setup}
+stopifnot(require(openxlsx), require(kableExtra), require(RPostgreSQL), require(rpostgis), require(geodata), require(sp), require(knitr))
+opts_chunk$set(cache=T,fig.path="./Fig/",tidy=T,tidy.opts=list(width.cutoff=70),cache.rebuild = F, formatSQL = TRUE)
+options(knitr.kable.NA = '--')
+```
+
+
+# Reading and first formating of the excel data
+
+We first read the data and codebook (dictionary) from the file "020-22 Base de Datos Anonimizada V4 (1).xlsx", which is located outside of the git repository (I strongly advocates against sharing Excel files in GitHub, but if we want to give open access of the data, there are other solution), in a folder called "Data_Document".
 
 ```{r}
-require(openxlsx)
 wb<-loadWorkbook("../../Data_Document/020-22 Base de Datos Anonimizada V4 (1).xlsx")
 names(wb)
 data1 <- readWorkbook(wb,sheet=1)
 codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
-wb2 <- loadWorkbook("../../Data_Document/Base de Datos Jovenes_Model_OddsRatio.xlsx")
-names(wb2)
-data2 <- readWorkbook(wb2,1)
-codeBook2 <- readWorkbook(wb2,2,skipEmptyRows = F,colNames=F)
-emptyRows<-which(apply(codeBook2,1,function(x)all(is.na(x))))
+emptyRows<-which(apply(codeBook1,1,function(x)all(is.na(x))))
 ```
 
 Reading the codebook (dictionary of data):
 
 ```{r}
 beg <- c(0, emptyRows) + 1
-end <- c(emptyRows - 1, nrow(codeBook2))
-titles<-codeBook2[beg,1]
-position <- codeBook2[beg + 2, 3]
-etiqueta <- codeBook2[beg + 3, 3]
-tipo <- codeBook2[beg +4,3]
-medicion<-codeBook2[beg+5,3]
+end <- c(emptyRows - 1, nrow(codeBook1))
+titles<-codeBook1[beg,1]
+position <- codeBook1[beg + 2, 3]
+etiqueta <- codeBook1[beg + 3, 3]
+tipo <- codeBook1[beg +4,3]
+medicion<-codeBook1[beg+5,3]
 noVal <- (beg+5==end)
 #tipo[noVal]
 #tipo[!noVal]
+```
 
+In the codebook, the potential values for all the columns of the data sheet are encoded in various small tables, here goes the code to extract this value encoding:
+```{r}
 listVal <- vector(mode="list", length = length(beg))
 for(i in 1:length(beg))
 {
   if(noVal[i])
   {listVal[[i]] <- NULL}else
-  {listVal[[i]] <- codeBook2[(beg[i]+6):(end[i]),2:3]}
+  {listVal[[i]] <- codeBook1[(beg[i]+6):(end[i]),2:3]}
   
 }
 descr<-data.frame(title=titles,
@@ -40,15 +59,25 @@ descr<-data.frame(title=titles,
            question=etiqueta,
            type=tipo,
            measurement=medicion)
+descr[1,"title"]="@_id"
+```
+
+The description of the variables goes in a table structured as follows:
+
+```{r, eval=!interactive()}
+kable(head(descr,25),caption = "Description table for the variables extracted from the codebook (dictionary)")
 ```
 
 
-Getting to understand the data from the dictionary and the table:
+Unfortunately, the information from the dictionary in terms of types of questions and variables is not very useful...
 
+## Getting to understand the data from the dictionary and the table
+
+Here we check whether the variables from the codebook are in the data table and inversely.
 
 ```{r}
-colNotInDic <- (!colnames(data2) %in% descr$title)
-dicNotInCol <- (!descr$title %in% colnames(data2))
+colNotInDic <- (!colnames(data1) %in% descr$title)
+dicNotInCol <- (!descr$title %in% colnames(data1))
 ```
 
 Dictionary fields which are not in the data:
@@ -65,21 +94,15 @@ This might be an important variable to calculate some biases in the study (what 
 Data fields which are not in the dictionary:
 
 ```{r}
-colnames(data2)[colNotInDic]
-head(data2[,colNotInDic])
+colnames(data1)[colNotInDic]
 ```
-
-*It appears that the variables which are not in the dictionary are composite variables that may be calculated from the other ones and that were added as new colums to the file...*
-*The best way to do it in a database management system is to create a view which calculate these variables.*
 
 Now, concerning the fields, they seem to be organized through some letter and number codes that we need to "hack" in order to go further.
 
 
-```{r}
-colnames(data2)
-```
+# Description of the variables
 
-Here are the questions:
+Here are the questions (I just went from question 1 to question 40, to get a better idea on how organize the database):
 
 * id
 * ponderador
@@ -231,30 +254,47 @@ Here are the questions:
   + Comprar únicamente alimentos locales
   + ... (10 sentences in total)
 * Apreciación origen CC (C40), 10 level scale from natural to anthropic
-* 
 
 
 # Create csv main table
+
+Here we create a csv file which we will fill up in order to describe the main characteristics of the survey questions.
 
 ```r
 A<- descr[grep("^[0-9]",descr$question),c("title","question")]
 write.csv(A,file="descr_question.csv")
 ```
-```{r}  
-descr$title[grep("^[A-Z][0-9]{1,2}_[0-9]{1,2}",descr$title)]
-```
+
+After filling the table we read it back in R:
 
 ```{r}
 require(kableExtra)
 infoTab<-read.csv("descr_question.csv")
-kable(infoTab)%>%
+kable(infoTab,caption="Description of the survey questions")%>%
   column_spec(2,width="5cm")
 ```
 
 
+# Extracting the info to send to the database
+
+Here we use a regular expression to extract columns which describe subquestions or categories for choices questions:
+
+```{r}  
+descr$title[grep("^[A-Z][0-9]{1,2}_[0-9]{1,2}",descr$title)]
+```
+
+
+
+
+Here we look for the questions which correspond to categories or scales.
 ```{r}
 choice_scale<-grepl("Choice", infoTab$type)|grepl("Scale", infoTab$type)
+```
 
+
+Then we extract the labels for the subquestions:
+
+```{r}
 # Searching subquestion
 title_subQues<-infoTab$title[!is.na(infoTab$subquestion_nb_rep)]
 regex_title_subQues <- paste0("^",title_subQues,"_[0-9]+$")
@@ -267,7 +307,11 @@ subquestions <- data.frame(
   number = gsub("^[A-Z][0-9]{1,2}_([0-9]{1,2})$","\\1", names(det_which_tsQ) [sapply(det_which_tsQ, function(x)length(x)==1)]),
   category = descr[match(names(det_which_tsQ)[sapply(det_which_tsQ,function(x)length(x)==1)], descr$title),"question"]
   )
+```
 
+Then we extract the categories for the choice questions:
+
+```{r}
 # Categories and scales
 positionCategories <- infoTab[choice_scale,"Pos"]
 positionCategories[is.na(positionCategories)] <- match(paste0(infoTab[choice_scale,"title"][is.na(positionCategories)],"_1"), descr$title)
@@ -293,13 +337,11 @@ category=unlist(lapply(valuesList_notNull,function(x)x[,2]))
 
 catTab<-rbind(catTab,missingCatTab)
 catTab$number<-as.integer(catTab$number)
+```
 
-# subquestions D34
+Then we extract the categories for the variables which correspond to the post-treatments.
 
-# C36->D36 C37->D37 38 39 etc
-
-# rewrite D40
-
+```{r}
 # Post-treatment
 post_treatment<-rbind(
 data.frame(question_nb=31,post_treatment_id=1,
@@ -318,11 +360,17 @@ data.frame(question_nb=31,post_treatment_id=3,
 
 ```
 
+# Pushing the tables in the database
+
+First we create the database, in linux it may be done in the shell:
+
+```bash
+createdb cc_young
+```
+
+Then we create the schema "rawdata", where we will send the raw tables from R:
+
 ```{r}
-require(RPostgreSQL)
-require(rpostgis)
-require(geodata)
-require(sp)
 cc_y <- dbConnect(PostgreSQL(),dbname="cc_young")
 listSchema<-dbGetQuery(cc_y,"SELECT * FROM information_schema.schemata")$schema_name
 if(! "rawdata" %in% listSchema)
@@ -344,15 +392,40 @@ dbWriteTable(cc_y, c("rawdata", "data"), data1, overwrite = T)
 
 dbWriteTable(cc_y,c("rawdata","post_treatment"),post_treatment,overwrite=T)
 
-# Insert administrative limits
+# Insert administrative limits of municipalities
+# (we download it from gadm to get the )
 pgPostGIS(cc_y)
 municipios <- as(gadm("Colombia", level=2, path=tempdir()),"Spatial")
-unique(data2$Departamento[!tolower(data2$Departamento)%in%tolower(municipios$NAME_1)])
-unique(data2$Municipio[!tolower(data2$Municipio)%in%tolower(municipios$NAME_2)])
+unique(data1$Departamento[!tolower(data1$Departamento)%in%tolower(municipios$NAME_1)])
+unique(data1$Municipio[!tolower(data1$Municipio)%in%tolower(municipios$NAME_2)])
 pgInsert(cc_y,c("rawdata","municipios"),municipios,geom="the_geom",overwrite = T)
+```
+
+Now the data is available in the database!
+We just have to organize it with the right structure.
+
+# Preparing the table structure in the "main" schema
+
+Deleting the schema main in case it already exists:
+
+```{r}
+if("main" %in% dbGetQuery(cc_y,"SELECT schema_name FROM information_schema.schemata")$schema_name)
+{dbSendStatement(cc_y,"DROP SCHEMA main CASCADE")}
+```
+
+
+
+```{sql, connection=cc_y, file="./cc_young_create.sql"}
+
+```
+
+
+# Description of the structure of the database
 
 
 
 
+```{r}
+dbDisconnect(cc_y)
 ```
 

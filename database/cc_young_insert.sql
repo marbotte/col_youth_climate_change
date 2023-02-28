@@ -117,6 +117,20 @@ WHERE
 ORDER BY question_id, number::int
 ;
 
+/* dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='yes/no' AND nb_subquestion>1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+Then I used the result of the query, after checking for each variable which value corresponded to 'Sí'
+
+*/
+
 INSERT INTO main.answer_subq_yesno
 WITH a AS(
 SELECT "@_id" person_id, 18 question_id, 1 subquestion_id, CASE WHEN "C18_1"=1 THEN true WHEN "C18_1"=2 THEN false ELSE NULL END answer
@@ -445,6 +459,24 @@ WITH a AS(
 SELECT *
 FROM a
 WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='numeric' AND nb_subquestion=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id,"' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_numeric
+SELECT "@_id" person_id, 2 question_id,"A2" answer FROM rawdata.data WHERE "A2" IS NOT NULL
+
 
 /* Yet another dirty meta-programmation trick:
 WITH a AS(
