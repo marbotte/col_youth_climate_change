@@ -1,19 +1,21 @@
 ---
 title: "Creating the PostgreSQL database for the survey from the Colombian youth observatory (Universidad del Rosario)"
-author:
-  - Marius Bottin
-  - Juan Sebastian Cely
+author: Marius Bottin and
+        Juan Sebastian Cely
 output: 
   github_document:
     toc: true
     number_sections: true
+    df_print: 'kable'
 always_allow_html: true
+params:
+  recreate_png_dataModel: false
 ---
 
 ```{r setup}
-stopifnot(require(openxlsx), require(kableExtra), require(RPostgreSQL), require(rpostgis), require(geodata), require(sp), require(knitr))
-opts_chunk$set(cache=T,fig.path="./Fig/",tidy=T,tidy.opts=list(width.cutoff=70),cache.rebuild = F, formatSQL = TRUE)
-options(knitr.kable.NA = '--')
+stopifnot(require(openxlsx), require(kableExtra), require(RPostgreSQL), require(rpostgis), require(geodata), require(sp), require(knitr), require(dm), require(rsvg), require(DiagrammeRsvg))
+opts_chunk$set(cache=F,fig.path="./Fig/",tidy=T,tidy.opts=list(width.cutoff=70),cache.rebuild = F, formatSQL = TRUE)
+options(knitr.kable.NA = '--', knitr.table.format = "simple")
 ```
 
 
@@ -65,7 +67,7 @@ descr[1,"title"]="@_id"
 The description of the variables goes in a table structured as follows:
 
 ```{r, eval=!interactive()}
-kable(head(descr,25),caption = "Description table for the variables extracted from the codebook (dictionary)")
+descr[1:15,]
 ```
 
 
@@ -269,9 +271,9 @@ After filling the table we read it back in R:
 
 ```{r}
 require(kableExtra)
-infoTab<-read.csv("descr_question.csv")
-kable(infoTab,caption="Description of the survey questions")%>%
-  column_spec(2,width="5cm")
+infoTabPrint<-infoTab<-read.csv("descr_question.csv")
+infoTabPrint$question<- paste0("\"",infoTabPrint$question,"\"")
+kable(infoTab,caption="Description of the survey questions")
 ```
 
 
@@ -395,7 +397,8 @@ dbWriteTable(cc_y,c("rawdata","post_treatment"),post_treatment,overwrite=T)
 # Insert administrative limits of municipalities
 # (we download it from gadm to get the )
 pgPostGIS(cc_y)
-municipios <- as(gadm("Colombia", level=2, path=tempdir()),"Spatial")
+tmp <- tempdir()
+municipios <- as(gadm("Colombia", level=2, path= tmp),"Spatial")
 unique(data1$Departamento[!tolower(data1$Departamento)%in%tolower(municipios$NAME_1)])
 unique(data1$Municipio[!tolower(data1$Municipio)%in%tolower(municipios$NAME_2)])
 pgInsert(cc_y,c("rawdata","municipios"),municipios,geom="the_geom",overwrite = T)
@@ -415,17 +418,25 @@ if("main" %in% dbGetQuery(cc_y,"SELECT schema_name FROM information_schema.schem
 
 
 
-```{sql, connection=cc_y, file="./cc_young_create.sql"}
+```{sql connection=cc_y, cache=F,file="./cc_young_create.sql"}
 
 ```
 
 
 # Description of the structure of the database
 
-
+```{r}
+if(params$recreate_png_dataModel){
+dm_object <- dm_from_con(cc_y, schema="main",learn_keys=T)
+A <- dm_draw(dm_object, view_type = "all")
+DiagrammeRsvg::export_svg(A) %>%charToRaw %>% rsvg_png("./dataModel.png")
+}
+knitr::include_graphics("./dataModel.png")
+```
 
 
 ```{r}
+unlink(tmp,recursive=T)
 dbDisconnect(cc_y)
 ```
 
