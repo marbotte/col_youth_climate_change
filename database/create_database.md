@@ -30,8 +30,10 @@ Marius Bottin and Juan Sebastian Cely
 - <a href="#8-inserting-the-data-in-the-tables"
   id="toc-8-inserting-the-data-in-the-tables">8 Inserting the data in the
   tables</a>
-- <a href="#9-preparing-basic-views" id="toc-9-preparing-basic-views">9
-  Preparing basic views</a>
+- <a href="#9-basic-information-views"
+  id="toc-9-basic-information-views">9 Basic information views</a>
+- <a href="#10-final-data-views" id="toc-10-final-data-views">10 Final
+  data views</a>
 
 ``` r
 stopifnot(require(openxlsx), require(kableExtra), require(RPostgreSQL), require(rpostgis), require(geodata), require(sp), require(knitr), require(dm), require(rsvg), require(DiagrammeRsvg))
@@ -1401,7 +1403,587 @@ WHERE category_pt_id IS NOT NULL
 ;
 ```
 
-# 9 Preparing basic views
+# 9 Basic information views
+
+``` sql
+
+CREATE OR REPLACE VIEW question_answer_table AS(
+WITH a AS(
+SELECT question_id, array_remove(ARRAY_AGG(is_in),NULL) is_in
+FROM
+(SELECT DISTINCT question_id,'main.answer_yesno' AS is_in
+FROM main.answer_yesno
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_numeric' AS is_in
+FROM main.answer_numeric
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_freetext' AS is_in
+FROM main.answer_freetext
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_scale' AS is_in
+FROM main.answer_scale
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_cat_uniq' AS is_in
+FROM main.answer_cat_uniq
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_cat_multi' AS is_in
+FROM main.answer_cat_multi
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_subq_yesno' AS is_in
+FROM main.answer_subq_yesno
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_subq_scale' AS is_in
+FROM main.answer_subq_scale
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_subq_cat_uniq' AS is_in
+FROM main.answer_subq_cat_uniq
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_other' AS is_in
+FROM main.answer_other
+UNION ALL
+SELECT DISTINCT question_id,'main.answer_post_treatment' AS is_in
+FROM main.answer_post_treatment
+) a
+GROUP BY question_id)
+SELECT question_id,
+    module_id || question_nb || CASE WHEN question_subnb IS NOT NULL THEN '_'||question_subnb ELSE '' END question_title,
+    array_remove(
+    ARRAY[
+    CASE
+        WHEN nb_subquestion = 1 THEN
+            CASE
+                WHEN question_type = 'yes/no' THEN 'main.answer_yesno'
+                WHEN question_type = 'numeric' THEN 'main.answer_numeric'
+                WHEN question_type = 'choice' AND nb_to_pick>1 THEN 'main.answer_cat_multi'
+                WHEN question_type = 'choice' AND nb_to_pick=1 THEN 'main.answer_cat_uniq'
+                WHEN question_type = 'free text' THEN 'main.answer_freetext'
+                WHEN question_type = 'scale' THEN 'main.answer_scale'
+            END
+        WHEN nb_subquestion >1 THEN
+            CASE
+                WHEN question_type = 'yes/no' THEN 'main.answer_subq_yesno'
+                WHEN question_type = 'numeric' THEN 'main.answer_subq_numeric'
+                WHEN question_type = 'choice' AND nb_to_pick>1 THEN 'main.answer_subq_cat_multi'
+                WHEN question_type = 'choice' AND nb_to_pick=1 THEN 'main.answer_subq_cat_uniq'
+                WHEN question_type = 'free text' THEN 'main.answer_subq_freetext'
+                WHEN question_type = 'scale' THEN 'main.answer_subq_scale'
+            END
+        END,
+        CASE
+            WHEN other_option THEN 'main.answer_other'
+        END,
+        CASE
+            WHEN post_treatment IS NOT NULL THEN 'main.answer_post_treatment'
+        END
+        ],
+        NULL) should_be_in, is_in
+FROM main.question q
+LEFT JOIN a USING (question_id)
+);
+
+CREATE OR REPLACE VIEW problems_should_be_is_in AS(
+WITH a AS(
+SELECT question_id,question_title,UNNEST(should_be_in) should_be_in
+FROM question_answer_table
+),b AS(
+SELECT question_id,question_title,UNNEST(is_in) is_in
+FROM question_answer_table
+)
+SELECT COALESCE(a.question_id,b.question_id) question_id, COALESCE(a.question_title,b.question_title),is_in,should_be_in
+FROM a
+FULL OUTER JOIN b ON a.question_id=b.question_id AND a.question_title=b.question_title AND b.is_in=a.should_be_in
+WHERE is_in IS NULL OR should_be_in IS NULL
+);
+
+CREATE VIEW column_names AS(
+WITH a AS(
+SELECT question_id, question_title,unnest(is_in)  table_name, nb_subquestion, post_treatment, question
+FROM question_answer_table qat
+LEFT JOIN main.question USING (question_id)
+),b AS(
+SELECT a.*, subquestion_id, NULL AS post_treatment_id, question_title||'_'||subquestion_id column_name
+FROM a
+CROSS JOIN LATERAL generate_series(1,a.nb_subquestion) AS subquestion_id
+WHERE nb_subquestion>1
+UNION ALL
+SELECT a.*, NULL AS subquestion_id, post_treatment_id, question_title||'_pt'||post_treatment_id column_name
+FROM a
+CROSS JOIN LATERAL generate_series(1,a.post_treatment) AS post_treatment_id
+WHERE a.table_name='main.answer_post_treatment'
+UNION ALL
+SELECT a.*, NULL AS subquestion_id, NULL AS post_treatment_id, question_title||'_other' column_name
+FROM a
+WHERE table_name = 'main.answer_other'
+UNION ALL
+SELECT a.*, NULL AS subquestion_id, NULL AS post_treatment_id, question_title column_name
+FROM a
+WHERE a.table_name NOT IN ('main.answer_post_treatment','main.answer_other') AND nb_subquestion=1
+)
+SELECT table_name, question_id, question_title, column_name, subquestion_id, post_treatment_id, question,
+    CASE
+        WHEN sq.question_id IS NOT NULL THEN subquestion_lb_es
+        WHEN table_name='main.answer_other' THEN 'Otro: ¿cual?'
+        ELSE NULL
+    END subquestion
+FROM b
+LEFT JOIN main.subquestions sq USING(question_id,subquestion_id)
+ORDER BY REGEXP_REPLACE(column_name,'^[A-E]([0-9]{1,2})(_.*)?$','\1')::int,subquestion_id,column_name
+);
+
+
+/*
+
+WITH a AS(
+SELECT
+    table_name,
+    CASE
+        WHEN table_name='main.answer_yesno' THEN 'every(answer) FILTER (WHERE question_id='||question_id||') AS "'|| column_name||'"'
+        WHEN table_name='main.answer_freetext' THEN 'STRING_AGG(answer,'') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_post_treatment' THEN 'STRING_AGG(category_pt_lb_es,'') FILTER (WHERE question_id='||question_id||' AND post_treatment_id='||post_treatment_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_other' THEN 'STRING_AGG(answer,'') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_uniq' THEN 'STRING_AGG(category_lb_es,'') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_multi' THEN 'ARRAY_AGG(category_lb_es) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_numeric' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_cat_uniq' THEN 'STRING_AGG(category_lb_es.'') FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_yesno' THEN 'EVERY(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+    END column_sel
+FROM column_names
+), b as(
+SELECT
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96) table_id,
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96)||E' AS (\n'||
+    E'SELECT person_id,\n\t'||
+    STRING_AGG(column_sel, E',\n\t')||
+    E'\nFROM '||table_name||
+    CASE WHEN table_name ~ 'cat' THEN E'\nJOIN main.categories USING(question_id,category_id)\n' ELSE E'\n' END||')' subtables,
+    CASE WHEN ROW_NUMBER() OVER (PARTITION BY 1) >1 THEN 'USING (person_id)' ELSE '' END join_using
+FROM a
+GROUP BY table_name
+)
+SELECT
+'WITH '|| string_agg(subtables,E',\n')||
+E'\nSELECT "'|| (SELECT string_agg(column_name,E'",\n\t"') ||'"' FROM column_names)||
+E'\nFROM '|| (SELECT string_agg(table_id ||' '|| join_using, E'\nJOIN '))
+FROM b
+;
+*/
+```
+
+A first view presents where the answer to the questions are, and where
+they should be:
+
+``` sql
+SELECT * FROM question_answer_table
+```
+
+<div class="knitsql-table">
+
+| question_id | question_title | should_be_in                             | is_in                                    |
+|:------------|:---------------|:-----------------------------------------|:-----------------------------------------|
+| 1           | A1             | {main.answer_cat_uniq}                   | {main.answer_cat_uniq}                   |
+| 2           | A2             | {main.answer_numeric}                    | {main.answer_numeric}                    |
+| 3           | A3             | {main.answer_cat_uniq}                   | {main.answer_cat_uniq}                   |
+| 4           | A4             | {main.answer_cat_uniq,main.answer_other} | {main.answer_other,main.answer_cat_uniq} |
+| 5           | A5             | {main.answer_cat_uniq}                   | {main.answer_cat_uniq}                   |
+| 6           | A6             | {main.answer_cat_uniq}                   | {main.answer_cat_uniq}                   |
+| 7           | A7             | {main.answer_cat_uniq}                   | {main.answer_cat_uniq}                   |
+| 8           | A8             | {main.answer_cat_uniq}                   | {main.answer_cat_uniq}                   |
+| 9           | A9             | {main.answer_yesno}                      | {main.answer_yesno}                      |
+| 10          | A10            | {main.answer_yesno}                      | {main.answer_yesno}                      |
+
+Displaying records 1 - 10
+
+</div>
+
+Another one presents all the characteristics of the questions/answers:
+
+``` sql
+SELECT * FROM column_names
+```
+
+<div class="knitsql-table">
+
+| table_name           | question_id | question_title | column_name | subquestion_id | post_treatment_id | question                                                                      | subquestion  |
+|:---------------------|------------:|:---------------|:------------|---------------:|------------------:|:------------------------------------------------------------------------------|:-------------|
+| main.answer_cat_uniq |           1 | A1             | A1          |              – |                 – | Sexo                                                                          | –            |
+| main.answer_numeric  |           2 | A2             | A2          |              – |                 – | ¿Cuántos años tiene?                                                          | –            |
+| main.answer_cat_uniq |           3 | A3             | A3          |              – |                 – | En el recibo de la luz de su domicilio, ¿qué estrato sale reportado?          | –            |
+| main.answer_cat_uniq |           4 | A4             | A4          |              – |                 – | ¿Qué hace usted principalmente?                                               | –            |
+| main.answer_other    |           4 | A4             | A4_other    |              – |                 – | ¿Qué hace usted principalmente?                                               | Otro: ¿cual? |
+| main.answer_cat_uniq |           5 | A5             | A5          |              – |                 – | De acuerdo con su cultura, etnia o rasgos físicos, ¿usted se reconoce como:…? | –            |
+| main.answer_cat_uniq |           6 | A6             | A6          |              – |                 – | ¿Cuál es el nivel educativo más alto alcanzado por usted?                     | –            |
+| main.answer_cat_uniq |           7 | A7             | A7          |              – |                 – | ¿Usted vive en un hogar:…?                                                    | –            |
+| main.answer_cat_uniq |           8 | A8             | A8          |              – |                 – | ¿Cuál es su parentesco con el jefe o jefa de su hogar?                        | –            |
+| main.answer_yesno    |           9 | A9             | A9          |              – |                 – | ¿Usted tiene hijos?                                                           | –            |
+
+Displaying records 1 - 10
+
+</div>
+
+# 10 Final data views
+
+``` sql
+WITH a AS(
+SELECT
+    table_name,
+    CASE
+        WHEN table_name='main.answer_yesno' THEN 'every(answer) FILTER (WHERE question_id='||question_id||') AS "'|| column_name||'"'
+        WHEN table_name='main.answer_freetext' THEN 'STRING_AGG(answer,'''') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_post_treatment' THEN 'STRING_AGG(category_pt_lb_es,'''') FILTER (WHERE question_id='||question_id||' AND post_treatment_id='||post_treatment_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_other' THEN 'STRING_AGG(answer,'''') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_uniq' THEN 'STRING_AGG(category_lb_es,'''') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_multi' THEN 'ARRAY_AGG(category_lb_es) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_numeric' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_cat_uniq' THEN 'STRING_AGG(category_lb_es,'''') FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_yesno' THEN 'EVERY(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+    END column_sel
+FROM column_names
+), b as(
+SELECT
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96) table_id,
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96)||E' AS (\n'||
+    E'SELECT person_id,\n\t'||
+    STRING_AGG(column_sel, E',\n\t')||
+    E'\nFROM '||table_name||
+    CASE WHEN table_name ~ 'cat' THEN E'\nLEFT JOIN main.categories USING(question_id,category_id)\n' ELSE E'\n' END||
+    CASE WHEN table_name ~ 'post_treatment' THEN E'\nJOIN main.categories_post_treatment USING(question_id,post_treatment_id,category_pt_id)\n' ELSE E'\n' END||
+    E'GROUP BY person_id)\n'
+    subtables,
+    CASE WHEN ROW_NUMBER() OVER (PARTITION BY 1) >1 THEN 'USING (person_id)' ELSE '' END join_using
+FROM a
+GROUP BY table_name
+)
+SELECT
+'CREATE OR REPLACE VIEW all_data AS('
+'WITH '|| string_agg(subtables,E',\n')||
+E'\nSELECT bi.person_id, mp.region, mp.dept, mp.mpio,bi.zona"'|| (SELECT string_agg(column_name,E'",\n\t"') ||'"' FROM column_names)||
+E'\nFROM '|| (SELECT string_agg(table_id ||' '|| join_using, E'\nFULL OUTER JOIN '))||
+E'FULL OUTER JOIN main.basic_info bi USING(person_id)\nLEFT JOIN main.mpio mp USING(mpio_id))' query
+FROM b
+;
+```
+
+``` r
+dbSendQuery(cc_y, create_data_views$query)
+```
+
+    ## <PostgreSQLResult>
+
+Now in order to get the final data view in R, you just have to do:
+
+``` r
+answers <- dbReadTable(cc_y, "all_data")
+summary(answers)
+```
+
+    ##    person_id            region              dept               mpio          
+    ##  Min.   :150966919   Length:2220        Length:2220        Length:2220       
+    ##  1st Qu.:151493553   Class :character   Class :character   Class :character  
+    ##  Median :151880074   Mode  :character   Mode  :character   Mode  :character  
+    ##  Mean   :151918808                                                           
+    ##  3rd Qu.:152423397                                                           
+    ##  Max.   :152953695                                                           
+    ##                                                                              
+    ##       A1                  A2             A3                 A4           
+    ##  Length:2220        Min.   :18.00   Length:2220        Length:2220       
+    ##  Class :character   1st Qu.:22.00   Class :character   Class :character  
+    ##  Mode  :character   Median :26.00   Mode  :character   Mode  :character  
+    ##                     Mean   :25.57                                        
+    ##                     3rd Qu.:30.00                                        
+    ##                     Max.   :32.00                                        
+    ##                                                                          
+    ##    A4_other              A5                 A6                 A7           
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##       A8                A9             A10               A11       
+    ##  Length:2220        Mode :logical   Mode :logical   Min.   :1.000  
+    ##  Class :character   FALSE:1285      FALSE:1069      1st Qu.:3.000  
+    ##  Mode  :character   TRUE :935       TRUE :1151      Median :3.000  
+    ##                                                     Mean   :3.314  
+    ##                                                     3rd Qu.:4.000  
+    ##                                                     Max.   :6.000  
+    ##                                                                    
+    ##      B12             B12_other             B13             B13_other        
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##      B14                B15_1          B15_2          B15_3      
+    ##  Length:2220        Min.   :1.00   Min.   :1.00   Min.   :1.000  
+    ##  Class :character   1st Qu.:3.00   1st Qu.:3.00   1st Qu.:3.000  
+    ##  Mode  :character   Median :4.00   Median :4.00   Median :4.000  
+    ##                     Mean   :3.98   Mean   :4.02   Mean   :4.184  
+    ##                     3rd Qu.:5.00   3rd Qu.:5.00   3rd Qu.:5.000  
+    ##                     Max.   :6.00   Max.   :6.00   Max.   :6.000  
+    ##                     NA's   :1820   NA's   :1768   NA's   :1454   
+    ##      B15_4           B15_5           B15_6           B16           
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Length:2220       
+    ##  1st Qu.:4.000   1st Qu.:3.000   1st Qu.:3.000   Class :character  
+    ##  Median :5.000   Median :4.000   Median :4.000   Mode  :character  
+    ##  Mean   :4.834   Mean   :3.956   Mean   :4.065                     
+    ##  3rd Qu.:6.000   3rd Qu.:5.000   3rd Qu.:5.000                     
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000                     
+    ##  NA's   :933     NA's   :1533    NA's   :1372                      
+    ##   B16_other            C17_1              C17_2              C17_3          
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##     C17_4              C17_5              C17_6              C17_7          
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##     C17_8              C17_9              C17_10             C17_11         
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##     C17_12             C17_13             C17_14             C17_15         
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##     C17_16             C17_17             C17_18             C17_19         
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##     C17_20             C17_21             C17_22            C18_1        
+    ##  Length:2220        Length:2220        Length:2220        Mode :logical  
+    ##  Class :character   Class :character   Class :character   FALSE:880      
+    ##  Mode  :character   Mode  :character   Mode  :character   TRUE :1340     
+    ##                                                                          
+    ##                                                                          
+    ##                                                                          
+    ##                                                                          
+    ##    C18_2           C18_3           C18_4           C18_5        
+    ##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+    ##  FALSE:1957      FALSE:1328      FALSE:1719      FALSE:1660     
+    ##  TRUE :263       TRUE :892       TRUE :501       TRUE :560      
+    ##                                                                 
+    ##                                                                 
+    ##                                                                 
+    ##                                                                 
+    ##    C18_6           C18_7           C18_8           C18_9        
+    ##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+    ##  FALSE:1310      FALSE:946       FALSE:880       FALSE:1639     
+    ##  TRUE :366       TRUE :1274      TRUE :1340      TRUE :581      
+    ##  NA's :544                                                      
+    ##                                                                 
+    ##                                                                 
+    ##                                                                 
+    ##    C18_10          C18_11          C18_12           C19         
+    ##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+    ##  FALSE:752       FALSE:884       FALSE:1169      FALSE:485      
+    ##  TRUE :1468      TRUE :1336      TRUE :1051      TRUE :1735     
+    ##                                                                 
+    ##                                                                 
+    ##                                                                 
+    ##                                                                 
+    ##     C20              C21               C22             C23         
+    ##  Mode :logical   Length:2220        Mode :logical   Mode :logical  
+    ##  FALSE:370       Class :character   FALSE:476       FALSE:332      
+    ##  TRUE :1850      Mode  :character   TRUE :952       TRUE :1096     
+    ##                                     NA's :792       NA's :792      
+    ##                                                                    
+    ##                                                                    
+    ##                                                                    
+    ##     C24             C25             C26            C26_Otro        
+    ##  Mode :logical   Mode :logical   Mode :logical   Length:2220       
+    ##  FALSE:1687      FALSE:1760      FALSE:164       Class :character  
+    ##  TRUE :266       TRUE :193       TRUE :29        Mode  :character  
+    ##  NA's :267       NA's :267       NA's :2027                        
+    ##                                                                    
+    ##                                                                    
+    ##                                                                    
+    ##     C27             C28             C29             C30         
+    ##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+    ##  FALSE:1169      FALSE:475       FALSE:378       FALSE:476      
+    ##  TRUE :1051      TRUE :1745      TRUE :1367      TRUE :1269     
+    ##                                  NA's :475       NA's :475      
+    ##                                                                 
+    ##                                                                 
+    ##                                                                 
+    ##      C31              C31_pt1            C31_pt2            C31_pt3         
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##      C32             C32_other            C33             C33_1          
+    ##  Length:2220        Length:2220        Mode :logical   Length:2220       
+    ##  Class :character   Class :character   FALSE:1539      Class :character  
+    ##  Mode  :character   Mode  :character   TRUE :681       Mode  :character  
+    ##                                                                          
+    ##                                                                          
+    ##                                                                          
+    ##                                                                          
+    ##      D34_1           D34_2           D34_3           D34_4      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:1.000   1st Qu.:2.750   1st Qu.:2.000   1st Qu.:2.000  
+    ##  Median :3.000   Median :4.000   Median :3.000   Median :3.000  
+    ##  Mean   :2.747   Mean   :3.578   Mean   :3.403   Mean   :3.498  
+    ##  3rd Qu.:4.000   3rd Qu.:5.000   3rd Qu.:5.000   3rd Qu.:5.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##                                                                 
+    ##      D34_5           D34_6           D34_7           D34_8      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
+    ##  Median :3.000   Median :3.000   Median :3.000   Median :3.000  
+    ##  Mean   :2.968   Mean   :3.442   Mean   :2.676   Mean   :3.248  
+    ##  3rd Qu.:4.000   3rd Qu.:5.000   3rd Qu.:3.000   3rd Qu.:4.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##                                                                 
+    ##      D34_9           D34_10          D35_1           D35_2       
+    ##  Min.   :1.000   Min.   :1.000   Min.   : 1.00   Min.   : 1.000  
+    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.: 4.00   1st Qu.: 3.000  
+    ##  Median :3.000   Median :3.000   Median : 5.00   Median : 4.000  
+    ##  Mean   :3.113   Mean   :2.544   Mean   :13.33   Mean   : 9.074  
+    ##  3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.: 6.00   3rd Qu.: 6.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :99.00   Max.   :99.000  
+    ##                                                                  
+    ##      D35_3            D35_4            D35_5            D35_6       
+    ##  Min.   : 1.000   Min.   : 1.000   Min.   : 1.000   Min.   : 1.000  
+    ##  1st Qu.: 2.000   1st Qu.: 2.000   1st Qu.: 2.000   1st Qu.: 1.000  
+    ##  Median : 3.000   Median : 3.000   Median : 3.000   Median : 3.000  
+    ##  Mean   : 7.927   Mean   : 6.315   Mean   : 6.276   Mean   : 6.439  
+    ##  3rd Qu.: 4.000   3rd Qu.: 4.000   3rd Qu.: 4.000   3rd Qu.: 4.000  
+    ##  Max.   :99.000   Max.   :99.000   Max.   :99.000   Max.   :99.000  
+    ##                                                                     
+    ##      D35_7            D35_8            D35_9           D35_10     
+    ##  Min.   : 1.000   Min.   : 1.000   Min.   : 1.00   Min.   : 1.00  
+    ##  1st Qu.: 2.000   1st Qu.: 3.000   1st Qu.: 4.00   1st Qu.: 3.00  
+    ##  Median : 4.000   Median : 4.000   Median : 5.00   Median : 4.00  
+    ##  Mean   : 9.139   Mean   : 9.836   Mean   :12.54   Mean   :10.05  
+    ##  3rd Qu.: 5.000   3rd Qu.: 5.000   3rd Qu.: 6.00   3rd Qu.: 5.00  
+    ##  Max.   :99.000   Max.   :99.000   Max.   :99.00   Max.   :99.00  
+    ##                                                                   
+    ##      D35_11           D35_12          D35_13          D35_14      
+    ##  Min.   : 1.000   Min.   : 1.00   Min.   : 1.00   Min.   : 1.000  
+    ##  1st Qu.: 2.000   1st Qu.: 3.00   1st Qu.: 1.00   1st Qu.: 1.000  
+    ##  Median : 3.000   Median : 5.00   Median : 2.00   Median : 3.000  
+    ##  Mean   : 9.206   Mean   :12.63   Mean   : 8.56   Mean   : 8.086  
+    ##  3rd Qu.: 4.250   3rd Qu.: 6.00   3rd Qu.: 4.00   3rd Qu.: 4.000  
+    ##  Max.   :99.000   Max.   :99.00   Max.   :99.00   Max.   :99.000  
+    ##                                                                   
+    ##      D36                D37                D38_1           D38_2      
+    ##  Length:2220        Length:2220        Min.   :1.000   Min.   :1.000  
+    ##  Class :character   Class :character   1st Qu.:2.000   1st Qu.:3.000  
+    ##  Mode  :character   Mode  :character   Median :3.000   Median :4.000  
+    ##                                        Mean   :3.441   Mean   :4.304  
+    ##                                        3rd Qu.:4.000   3rd Qu.:6.000  
+    ##                                        Max.   :6.000   Max.   :6.000  
+    ##                                                                       
+    ##      D38_3           D38_4           D38_5           D38_6      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:3.000   1st Qu.:3.000   1st Qu.:4.000   1st Qu.:3.000  
+    ##  Median :4.000   Median :4.000   Median :5.000   Median :4.000  
+    ##  Mean   :4.065   Mean   :4.028   Mean   :4.833   Mean   :3.602  
+    ##  3rd Qu.:5.000   3rd Qu.:5.000   3rd Qu.:6.000   3rd Qu.:5.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##                                                                 
+    ##      D38_7           D38_8           D38_9           D38_10     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:3.000   1st Qu.:4.000   1st Qu.:3.000   1st Qu.:3.000  
+    ##  Median :4.000   Median :6.000   Median :4.000   Median :4.000  
+    ##  Mean   :4.383   Mean   :5.007   Mean   :4.239   Mean   :4.001  
+    ##  3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:5.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##                                                                 
+    ##      D39_1           D39_2           D39_3           D39_4           D39_5     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.00  
+    ##  1st Qu.:4.000   1st Qu.:4.000   1st Qu.:4.000   1st Qu.:3.750   1st Qu.:4.00  
+    ##  Median :5.000   Median :5.000   Median :5.000   Median :5.000   Median :6.00  
+    ##  Mean   :4.627   Mean   :4.898   Mean   :4.558   Mean   :4.523   Mean   :5.03  
+    ##  3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:6.00  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.00  
+    ##                                                                                
+    ##      D39_6           D39_7           D39_8           D39_9      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:3.000   1st Qu.:4.000   1st Qu.:5.000   1st Qu.:4.000  
+    ##  Median :4.000   Median :6.000   Median :6.000   Median :5.000  
+    ##  Mean   :4.313   Mean   :4.987   Mean   :5.182   Mean   :4.855  
+    ##  3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:6.000   3rd Qu.:6.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##                                                                 
+    ##      D39_10           D40             D41               E42         
+    ##  Min.   :1.000   Min.   : 1.000   Length:2220        Mode :logical  
+    ##  1st Qu.:4.000   1st Qu.: 7.000   Class :character   FALSE:1644     
+    ##  Median :5.000   Median : 8.000   Mode  :character   TRUE :576      
+    ##  Mean   :4.783   Mean   : 7.962                                     
+    ##  3rd Qu.:6.000   3rd Qu.:10.000                                     
+    ##  Max.   :6.000   Max.   :10.000                                     
+    ##                                                                     
+    ##      E43               E44              E45               E46         
+    ##  Length:2220        Mode :logical   Length:2220        Mode :logical  
+    ##  Class :character   FALSE:1586      Class :character   FALSE:97       
+    ##  Mode  :character   TRUE :58        Mode  :character   TRUE :479      
+    ##                     NA's :576                          NA's :1644     
+    ##                                                                       
+    ##                                                                       
+    ##                                                                       
+    ##      E47                E48             E48_other             E49           
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##      E50                E51                E52             E52_other        
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##      E53             E53_other             E54             E54_other        
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##      E55             E55_other             E56             E56_other        
+    ##  Length:2220        Length:2220        Length:2220        Length:2220       
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ## 
 
 ``` r
 unlink(tmp, recursive = T)

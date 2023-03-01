@@ -87,7 +87,7 @@ FULL OUTER JOIN b ON a.question_id=b.question_id AND a.question_title=b.question
 WHERE is_in IS NULL OR should_be_in IS NULL
 );
 
---CREATE VIEW name_columns AS
+CREATE VIEW column_names AS(
 WITH a AS(
 SELECT question_id, question_title,unnest(is_in)  table_name, nb_subquestion, post_treatment, question
 FROM question_answer_table qat
@@ -120,9 +120,44 @@ SELECT table_name, question_id, question_title, column_name, subquestion_id, pos
 FROM b
 LEFT JOIN main.subquestions sq USING(question_id,subquestion_id)
 ORDER BY REGEXP_REPLACE(column_name,'^[A-E]([0-9]{1,2})(_.*)?$','\1')::int,subquestion_id,column_name
-;
+);
 
 
+/*
 
-SELECT a.*,NULL,
+WITH a AS(
+SELECT
+    table_name,
     CASE
+        WHEN table_name='main.answer_yesno' THEN 'every(answer) FILTER (WHERE question_id='||question_id||') AS "'|| column_name||'"'
+        WHEN table_name='main.answer_freetext' THEN 'STRING_AGG(answer,'') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_post_treatment' THEN 'STRING_AGG(category_pt_lb_es,'') FILTER (WHERE question_id='||question_id||' AND post_treatment_id='||post_treatment_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_other' THEN 'STRING_AGG(answer,'') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_uniq' THEN 'STRING_AGG(category_lb_es,'') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_multi' THEN 'ARRAY_AGG(category_lb_es) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_numeric' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_cat_uniq' THEN 'STRING_AGG(category_lb_es.'') FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_yesno' THEN 'EVERY(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+    END column_sel
+FROM column_names
+), b as(
+SELECT
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96) table_id,
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96)||E' AS (\n'||
+    E'SELECT person_id,\n\t'||
+    STRING_AGG(column_sel, E',\n\t')||
+    E'\nFROM '||table_name||
+    CASE WHEN table_name ~ 'cat' THEN E'\nJOIN main.categories USING(question_id,category_id)\n' ELSE E'\n' END||')' subtables,
+    CASE WHEN ROW_NUMBER() OVER (PARTITION BY 1) >1 THEN 'USING (person_id)' ELSE '' END join_using
+FROM a
+GROUP BY table_name
+)
+SELECT
+'WITH '|| string_agg(subtables,E',\n')||
+E'\nSELECT "'|| (SELECT string_agg(column_name,E'",\n\t"') ||'"' FROM column_names)||
+E'\nFROM '|| (SELECT string_agg(table_id ||' '|| join_using, E'\nJOIN '))
+FROM b
+;
+*/

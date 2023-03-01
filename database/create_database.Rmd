@@ -441,9 +441,83 @@ knitr::include_graphics("./dataModel.png")
 ```
 
 
-# Preparing basic views
+# Basic information views
+
+```{sql connection=cc_y, cache=F, file="./cc_young_views.sql"}
+
+```
 
 
+A first view presents where the answer to the questions are, and where they should be:
+
+```{sql connection=cc_y,cache=F}
+SELECT * FROM question_answer_table
+```
+
+Another one presents all the characteristics of the questions/answers:
+
+```{sql connection=cc_y,cache=F}
+SELECT * FROM column_names
+```
+
+
+# Final data views
+
+
+```{sql connection=cc_y, output.var='create_data_views'}
+WITH a AS(
+SELECT
+    table_name,
+    CASE
+        WHEN table_name='main.answer_yesno' THEN 'every(answer) FILTER (WHERE question_id='||question_id||') AS "'|| column_name||'"'
+        WHEN table_name='main.answer_freetext' THEN 'STRING_AGG(answer,'''') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_post_treatment' THEN 'STRING_AGG(category_pt_lb_es,'''') FILTER (WHERE question_id='||question_id||' AND post_treatment_id='||post_treatment_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_other' THEN 'STRING_AGG(answer,'''') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_uniq' THEN 'STRING_AGG(category_lb_es,'''') FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_cat_multi' THEN 'ARRAY_AGG(category_lb_es) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_numeric' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_scale' THEN 'MAX(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_cat_uniq' THEN 'STRING_AGG(category_lb_es,'''') FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+        WHEN table_name='main.answer_subq_yesno' THEN 'EVERY(answer) FILTER (WHERE question_id='||question_id||' AND subquestion_id='||subquestion_id||') AS "'||column_name||'"'
+    END column_sel
+FROM column_names
+), b as(
+SELECT
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96) table_id,
+    CHR((ROW_NUMBER() OVER (PARTITION BY 1))::int +96)||E' AS (\n'||
+    E'SELECT person_id,\n\t'||
+    STRING_AGG(column_sel, E',\n\t')||
+    E'\nFROM '||table_name||
+    CASE WHEN table_name ~ 'cat' THEN E'\nLEFT JOIN main.categories USING(question_id,category_id)\n' ELSE E'\n' END||
+    CASE WHEN table_name ~ 'post_treatment' THEN E'\nJOIN main.categories_post_treatment USING(question_id,post_treatment_id,category_pt_id)\n' ELSE E'\n' END||
+    E'GROUP BY person_id)\n'
+    subtables,
+    CASE WHEN ROW_NUMBER() OVER (PARTITION BY 1) >1 THEN 'USING (person_id)' ELSE '' END join_using
+FROM a
+GROUP BY table_name
+)
+SELECT
+'CREATE OR REPLACE VIEW all_data AS('
+'WITH '|| string_agg(subtables,E',\n')||
+E'\nSELECT bi.person_id, mp.region, mp.dept, mp.mpio,bi.zona"'|| (SELECT string_agg(column_name,E'",\n\t"') ||'"' FROM column_names)||
+E'\nFROM '|| (SELECT string_agg(table_id ||' '|| join_using, E'\nFULL OUTER JOIN '))||
+E'FULL OUTER JOIN main.basic_info bi USING(person_id)\nLEFT JOIN main.mpio mp USING(mpio_id))' query
+FROM b
+;
+
+```
+
+
+```{r}
+dbSendQuery(cc_y,create_data_views$query)
+```
+Now in order to get the final data view in R, you just have to do:
+
+```{r}
+answers<-dbReadTable(cc_y,'all_data')
+summary(answers)
+```
 
 
 ```{r}
