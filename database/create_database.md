@@ -27,6 +27,11 @@ Marius Bottin and Juan Sebastian Cely
 - <a href="#7-description-of-the-structure-of-the-database"
   id="toc-7-description-of-the-structure-of-the-database">7 Description of
   the structure of the database</a>
+- <a href="#8-inserting-the-data-in-the-tables"
+  id="toc-8-inserting-the-data-in-the-tables">8 Inserting the data in the
+  tables</a>
+- <a href="#9-preparing-basic-views" id="toc-9-preparing-basic-views">9
+  Preparing basic views</a>
 
 ``` r
 stopifnot(require(openxlsx), require(kableExtra), require(RPostgreSQL), require(rpostgis), require(geodata), require(sp), require(knitr), require(dm), require(rsvg), require(DiagrammeRsvg))
@@ -138,6 +143,28 @@ The description of the variables goes in a table structured as follows:
 ``` r
 descr[1:15, ]
 ```
+
+<div class="kable-table">
+
+| title         | position | question                                                                 | type     | measurement |
+|:--------------|:---------|:-------------------------------------------------------------------------|:---------|:------------|
+| @\_id         | \_id     | Numérico                                                                 | Escala   | –           |
+| PONDERADOR    | 2        | Ponderador                                                               | Numérico | Escala      |
+| Region        | 3        | Región                                                                   | Cadena   | Nominal     |
+| Departamento  | 4        | Departamento                                                             | Cadena   | Nominal     |
+| Municipio     | 5        | Municipio                                                                | Cadena   | Nominal     |
+| Zona          | 6        | Zona                                                                     | Cadena   | Nominal     |
+| NCuestionario | 7        | N° Cuestionario                                                          | Numérico | Escala      |
+| CODANE        | 8        | CODANE                                                                   | Numérico | Escala      |
+| P1            | 9        | ¿Usted se encuentra en el rango de edad de 18 a 32 años de edad?         | Numérico | Nominal     |
+| A1            | 10       | 1\. Sexo                                                                 | Numérico | Nominal     |
+| A2            | 11       | 2\. ¿Cuántos años tiene?                                                 | Numérico | Escala      |
+| RANGO_EDAD    | 12       | Rango de edad                                                            | Numérico | Nominal     |
+| A3            | 13       | 3\. En el recibo de la luz de su domicilio, ¿qué estrato sale reportado? | Numérico | Nominal     |
+| NSE           | 14       | NSE                                                                      | Numérico | Nominal     |
+| A4            | 15       | 4\. ¿Qué hace usted principalmente?                                      | Numérico | Nominal     |
+
+</div>
 
 Unfortunately, the information from the dictionary in terms of types of
 questions and variables is not very useful…
@@ -471,18 +498,35 @@ subquestions or categories for choices questions:
 descr$title[grep("^[A-Z][0-9]{1,2}_[0-9]{1,2}", descr$title)]
 ```
 
-    ##   [1] "B12_1"  "B12_2"  "B12_3"  "B12_4"  "B12_5"  "B12_89" "B13_1"  "B13_2"  "B13_3"  "B13_4"  "B13_5"  "B13_6"  "B13_7"  "B13_8"  "B13_9"  "B13_10" "B13_11" "B13_12" "B13_13" "B13_14"
-    ##  [21] "B13_15" "B13_89" "B14_1"  "B14_2"  "B14_3"  "B14_4"  "B14_5"  "B14_6"  "B15_1"  "B15_2"  "B15_3"  "B15_4"  "B15_5"  "B15_6"  "B16_1"  "B16_2"  "B16_3"  "B16_4"  "B16_5"  "B16_6" 
-    ##  [41] "B16_7"  "B16_8"  "B16_9"  "B16_10" "B16_11" "B16_12" "B16_89" "C17_1"  "C17_2"  "C17_3"  "C17_4"  "C17_5"  "C17_6"  "C17_7"  "C17_8"  "C17_9"  "C17_10" "C17_11" "C17_12" "C17_13"
-    ##  [61] "C17_14" "C17_15" "C17_16" "C17_17" "C17_18" "C17_19" "C17_20" "C17_21" "C17_22" "C18_1"  "C18_2"  "C18_3"  "C18_4"  "C18_5"  "C18_6"  "C18_7"  "C18_8"  "C18_9"  "C18_10" "C18_11"
-    ##  [81] "C18_12" "C32_1"  "C32_2"  "C32_3"  "C32_4"  "C32_5"  "C32_6"  "C32_7"  "C32_8"  "C32_9"  "C32_10" "C32_11" "C32_89" "C33_1"  "D34_1"  "D34_2"  "D34_3"  "D34_4"  "D34_5"  "D34_6" 
-    ## [101] "D34_7"  "D34_8"  "D34_9"  "D34_10" "D35_1"  "D35_2"  "D35_3"  "D35_4"  "D35_5"  "D35_6"  "D35_7"  "D35_8"  "D35_9"  "D35_10" "D35_11" "D35_12" "D35_13" "D35_14" "C36_1"  "C36_2" 
-    ## [121] "C36_3"  "C36_4"  "C36_5"  "C36_6"  "C36_7"  "C36_8"  "C36_9"  "C36_10" "C36_11" "C36_12" "C36_13" "C36_14" "C36_15" "C36_16" "C37_1"  "C37_2"  "C37_3"  "C37_4"  "C37_5"  "C37_6" 
-    ## [141] "C37_7"  "C37_8"  "C37_9"  "C37_10" "C37_11" "C37_12" "C37_13" "C37_14" "C37_15" "C38_1"  "C39_1"  "C38_2"  "C39_2"  "C38_3"  "C39_3"  "C38_4"  "C39_4"  "C38_5"  "C39_5"  "C38_6" 
-    ## [161] "C39_6"  "C38_7"  "C39_7"  "C38_8"  "C39_8"  "C38_9"  "C39_9"  "C38_10" "C39_10" "D47_1"  "D47_2"  "D47_3"  "D47_4"  "D47_5"  "D47_6"  "D47_7"  "D48_1"  "D48_2"  "D48_3"  "D48_4" 
-    ## [181] "D48_5"  "D48_6"  "D48_7"  "D48_8"  "D48_89" "D49_1"  "D49_2"  "D49_3"  "D49_4"  "D52_1"  "D52_2"  "D52_3"  "D52_4"  "D52_5"  "D52_6"  "D52_7"  "D52_89" "D53_1"  "D53_2"  "D53_3" 
-    ## [201] "D53_4"  "D53_5"  "D53_6"  "D53_7"  "D53_8"  "D53_89" "D54_1"  "D54_2"  "D54_3"  "D54_4"  "D54_5"  "D54_6"  "D54_89" "D55_1"  "D55_2"  "D55_3"  "D55_4"  "D55_97" "D55_89" "D56_1" 
-    ## [221] "D56_2"  "D56_3"  "D56_4"  "D56_97" "D56_89"
+    ##   [1] "B12_1"  "B12_2"  "B12_3"  "B12_4"  "B12_5"  "B12_89" "B13_1"  "B13_2" 
+    ##   [9] "B13_3"  "B13_4"  "B13_5"  "B13_6"  "B13_7"  "B13_8"  "B13_9"  "B13_10"
+    ##  [17] "B13_11" "B13_12" "B13_13" "B13_14" "B13_15" "B13_89" "B14_1"  "B14_2" 
+    ##  [25] "B14_3"  "B14_4"  "B14_5"  "B14_6"  "B15_1"  "B15_2"  "B15_3"  "B15_4" 
+    ##  [33] "B15_5"  "B15_6"  "B16_1"  "B16_2"  "B16_3"  "B16_4"  "B16_5"  "B16_6" 
+    ##  [41] "B16_7"  "B16_8"  "B16_9"  "B16_10" "B16_11" "B16_12" "B16_89" "C17_1" 
+    ##  [49] "C17_2"  "C17_3"  "C17_4"  "C17_5"  "C17_6"  "C17_7"  "C17_8"  "C17_9" 
+    ##  [57] "C17_10" "C17_11" "C17_12" "C17_13" "C17_14" "C17_15" "C17_16" "C17_17"
+    ##  [65] "C17_18" "C17_19" "C17_20" "C17_21" "C17_22" "C18_1"  "C18_2"  "C18_3" 
+    ##  [73] "C18_4"  "C18_5"  "C18_6"  "C18_7"  "C18_8"  "C18_9"  "C18_10" "C18_11"
+    ##  [81] "C18_12" "C32_1"  "C32_2"  "C32_3"  "C32_4"  "C32_5"  "C32_6"  "C32_7" 
+    ##  [89] "C32_8"  "C32_9"  "C32_10" "C32_11" "C32_89" "C33_1"  "D34_1"  "D34_2" 
+    ##  [97] "D34_3"  "D34_4"  "D34_5"  "D34_6"  "D34_7"  "D34_8"  "D34_9"  "D34_10"
+    ## [105] "D35_1"  "D35_2"  "D35_3"  "D35_4"  "D35_5"  "D35_6"  "D35_7"  "D35_8" 
+    ## [113] "D35_9"  "D35_10" "D35_11" "D35_12" "D35_13" "D35_14" "C36_1"  "C36_2" 
+    ## [121] "C36_3"  "C36_4"  "C36_5"  "C36_6"  "C36_7"  "C36_8"  "C36_9"  "C36_10"
+    ## [129] "C36_11" "C36_12" "C36_13" "C36_14" "C36_15" "C36_16" "C37_1"  "C37_2" 
+    ## [137] "C37_3"  "C37_4"  "C37_5"  "C37_6"  "C37_7"  "C37_8"  "C37_9"  "C37_10"
+    ## [145] "C37_11" "C37_12" "C37_13" "C37_14" "C37_15" "C38_1"  "C39_1"  "C38_2" 
+    ## [153] "C39_2"  "C38_3"  "C39_3"  "C38_4"  "C39_4"  "C38_5"  "C39_5"  "C38_6" 
+    ## [161] "C39_6"  "C38_7"  "C39_7"  "C38_8"  "C39_8"  "C38_9"  "C39_9"  "C38_10"
+    ## [169] "C39_10" "D47_1"  "D47_2"  "D47_3"  "D47_4"  "D47_5"  "D47_6"  "D47_7" 
+    ## [177] "D48_1"  "D48_2"  "D48_3"  "D48_4"  "D48_5"  "D48_6"  "D48_7"  "D48_8" 
+    ## [185] "D48_89" "D49_1"  "D49_2"  "D49_3"  "D49_4"  "D52_1"  "D52_2"  "D52_3" 
+    ## [193] "D52_4"  "D52_5"  "D52_6"  "D52_7"  "D52_89" "D53_1"  "D53_2"  "D53_3" 
+    ## [201] "D53_4"  "D53_5"  "D53_6"  "D53_7"  "D53_8"  "D53_89" "D54_1"  "D54_2" 
+    ## [209] "D54_3"  "D54_4"  "D54_5"  "D54_6"  "D54_89" "D55_1"  "D55_2"  "D55_3" 
+    ## [217] "D55_4"  "D55_97" "D55_89" "D56_1"  "D56_2"  "D56_3"  "D56_4"  "D56_97"
+    ## [225] "D56_89"
 
 Here we look for the questions which correspond to categories or scales.
 
@@ -626,7 +670,8 @@ unique(data1$Departamento[!tolower(data1$Departamento) %in% tolower(municipios$N
 unique(data1$Municipio[!tolower(data1$Municipio) %in% tolower(municipios$NAME_2)])
 ```
 
-    ## [1] "Cúcuta"        "Bogotá, D.C."  "Sauza"         "Cali"          "Pasto"         "Silos"         "Bolívar valle"
+    ## [1] "Cúcuta"        "Bogotá, D.C."  "Sauza"         "Cali"         
+    ## [5] "Pasto"         "Silos"         "Bolívar valle"
 
 ``` r
 pgInsert(cc_y, c("rawdata", "municipios"), municipios, geom = "the_geom",
@@ -844,17 +889,519 @@ if (params$recreate_png_dataModel) {
         charToRaw %>%
         rsvg_png("./dataModel.png")
 }
-```
-
-    ## Warning: <PostgreSQLConnection> uses an old dbplyr interface
-    ## ℹ Please install a newer version of the package or contact the maintainer
-    ## This warning is displayed once every 8 hours.
-
-``` r
 knitr::include_graphics("./dataModel.png")
 ```
 
 <img src="./dataModel.png" width="908" />
+
+# 8 Inserting the data in the tables
+
+``` sql
+INSERT INTO main.module
+    VALUES
+        ('A','Sociodemográficos'),
+        ('B','Lo que piensan y sienten los jovenes'),
+        ('C','Cultura política de los jóvenes'),
+        ('D','Frente al medio ambiente'),
+        ('E','Educación');
+
+INSERT INTO main.mpio(dept,mpio,mpio_syno,the_geom)
+SELECT "NAME_1", "NAME_2",STRING_TO_ARRAY("VARNAME_2",'|'),the_geom
+FROM rawdata.municipios
+ORDER BY "NAME_1","NAME_2";
+
+
+
+/* put the region to the municipios which are in the survey*/
+WITH mn AS(
+SELECT mpio_id,dept,mpio
+FROM main.mpio
+UNION ALL
+SELECT mpio_id,dept,UNNEST(mpio_syno)
+FROM main.mpio
+), joined_ok AS(
+SELECT DISTINCT mpio_id,dept,mpio, INITCAP("Region") AS reg,"Departamento","Municipio"
+FROM rawdata.data d
+LEFT JOIN mn ON CASE WHEN d."Municipio"='Sauza' THEN 'Suazá' WHEN d."Municipio"= 'Bolívar valle' THEN 'Bolívar' ELSE REGEXP_REPLACE(d."Municipio",',','') END =mn.mpio AND REGEXP_REPLACE(d."Departamento",',','')=mn.dept
+)
+UPDATE main.mpio m
+SET region=jo.reg
+FROM joined_ok jo
+WHERE m.mpio_id=jo.mpio_id;
+
+INSERT INTO main.question(module_id,question_nb,question_subnb, question, question_type, nb_to_pick, nb_cat, nb_subquestion, other_option, post_treatment)
+SELECT
+    CASE
+        WHEN REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\1')::INT BETWEEN 1 AND 11 THEN 'A'
+        WHEN REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\1')::INT BETWEEN 12 AND 16 THEN 'B'
+        WHEN REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\1')::INT BETWEEN 17 AND 33 THEN 'C'
+        WHEN REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\1')::INT BETWEEN 34 AND 41 THEN 'D'
+        WHEN REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\1')::INT > 41 THEN 'E'
+
+        ELSE NULL
+    END module_id,
+    --title,
+    REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\1')::INT question_nb,
+    CASE
+        WHEN REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\3')='' THEN NULL
+        ELSE REGEXP_REPLACE(title,'^[A-D]([0-9]{1,2})(_([A-Za-z0-9]+))?','\3')
+    END question_subnb,
+    --"type",
+    REGEXP_REPLACE(REGEXP_REPLACE(question, '^[0-9]+\. ',''),'\n',' ','g') question,
+    CASE
+        WHEN "type" ~ '^Choice' THEN 'choice'
+        WHEN "type" ~ '^numeric' THEN 'numeric'
+        WHEN "type" ~ '^Yes' THEN 'yes/no'
+        WHEN "type" ~ '^Free' THEN 'free text'
+        WHEN "type" ~ '^Scale' THEN 'scale'
+        ELSE NULL
+    END question_type,
+    CASE
+        WHEN "type" ~ '^Choice' THEN REGEXP_REPLACE("type", '^Choice \(([0-9]{1,2})-[0-9]{1,2}\)$','\1')::int
+        ELSE NULL
+    END nb_to_pick,
+    CASE
+        WHEN "type" ~ '^Choice' THEN REGEXP_REPLACE("type", '^Choice \([0-9]{1,2}-([0-9]{1,2})\)$','\1')::int
+        WHEN "type" ~ '^Scale' THEN REGEXP_REPLACE("type", '^Scale \(([0-9]{1,2})\)$','\1')::int
+        ELSE NULL
+    END nb_cat,
+    CASE
+        WHEN subquestion_nb_rep IS NULL THEN 1
+        ELSE subquestion_nb_rep
+    END nb_subquestion,
+    CASE
+        WHEN "type" ~ '^Choice' AND other_option THEN true
+        WHEN "type" ~ '^Choice' AND other_option IS NULL THEN false
+        ELSE NULL
+    END other_option,
+    post_treatment
+
+FROM rawdata.main_info
+WHERE title ~ '^[A-D][0-9]{1,2}(_[A-Za-z0-9]+)?$'
+ORDER BY question_nb, question_subnb
+;
+
+INSERT INTO main.basic_info(person_id,mpio_id,zona,ponderador)
+WITH mn AS(
+SELECT mpio_id,dept,mpio
+FROM main.mpio
+UNION ALL
+SELECT mpio_id,dept,UNNEST(mpio_syno)
+FROM main.mpio
+)
+SELECT "@_id",mpio_id,"Zona","PONDERADOR"
+FROM rawdata.data d
+LEFT JOIN mn ON CASE WHEN d."Municipio"='Sauza' THEN 'Suazá' WHEN d."Municipio"= 'Bolívar valle' THEN 'Bolívar' ELSE REGEXP_REPLACE(d."Municipio",',','') END =mn.mpio AND REGEXP_REPLACE(d."Departamento",',','')=mn.dept
+;
+
+
+INSERT INTO main.categories (question_id, category_id, category_lb_es)
+SELECT q.question_id, number AS category_id, category AS category_lb_es
+FROM rawdata.categories c
+LEFT JOIN main.question q ON (REGEXP_REPLACE("questionTitle",'^[A-Z]([0-9]+)$','\1')::int = q.question_nb AND q.question_subnb IS NULL)
+WHERE
+    "questionTitle" ~ '^[A-Z][0-9]+$'
+    AND
+    q.question_type='choice'
+;
+
+INSERT INTO main.subquestions(question_id, subquestion_id, subquestion_lb_es)
+SELECT q.question_id, number::int AS subquestion_id, category AS subquestion_lb_es
+FROM rawdata.subquestions
+LEFT JOIN main.question q ON (REGEXP_REPLACE("questionTitle",'^[A-Z]([0-9]+)$','\1')::int = q.question_nb AND q.question_subnb IS NULL)
+WHERE
+    "questionTitle" ~ '^[A-Z][0-9]+$'
+    AND
+    q.nb_subquestion>1
+ORDER BY question_id, number::int
+;
+
+/* dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name, REGEXP_REPLACE(column_name,'^[A-E][0-9]{1,2}_([0-9]{1,2})$','\1') subquestion_id
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='yes/no' AND nb_subquestion>1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, '|| subquestion_id|| ' subquestion_id,  "' || column_name || '"=1 answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+*/
+
+INSERT INTO main.answer_subq_yesno
+WITH a AS(
+ SELECT "@_id" person_id, 18 question_id, 1 subquestion_id,  "C18_1"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 2 subquestion_id,  "C18_2"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 3 subquestion_id,  "C18_3"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 4 subquestion_id,  "C18_4"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 5 subquestion_id,  "C18_5"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 6 subquestion_id,  "C18_6"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 7 subquestion_id,  "C18_7"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 8 subquestion_id,  "C18_8"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 9 subquestion_id,  "C18_9"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 10 subquestion_id,  "C18_10"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 11 subquestion_id,  "C18_11"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 12 subquestion_id,  "C18_12"=1 answer FROM rawdata.data
+
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name, REGEXP_REPLACE(column_name,'^[A-E][0-9]{1,2}_([0-9]{1,2})$','\1') subquestion_id
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='scale' AND nb_subquestion>1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, '|| subquestion_id|| ' subquestion_id,  "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+*/
+
+
+INSERT INTO main.answer_subq_scale
+WITH a AS(
+ SELECT "@_id" person_id, 15 question_id, 1 subquestion_id,  "B15_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 2 subquestion_id,  "B15_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 3 subquestion_id,  "B15_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 4 subquestion_id,  "B15_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 5 subquestion_id,  "B15_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 6 subquestion_id,  "B15_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 1 subquestion_id,  "D34_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 2 subquestion_id,  "D34_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 3 subquestion_id,  "D34_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 4 subquestion_id,  "D34_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 5 subquestion_id,  "D34_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 6 subquestion_id,  "D34_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 7 subquestion_id,  "D34_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 8 subquestion_id,  "D34_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 9 subquestion_id,  "D34_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 10 subquestion_id,  "D34_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 1 subquestion_id,  "D35_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 2 subquestion_id,  "D35_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 3 subquestion_id,  "D35_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 4 subquestion_id,  "D35_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 5 subquestion_id,  "D35_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 6 subquestion_id,  "D35_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 7 subquestion_id,  "D35_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 8 subquestion_id,  "D35_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 9 subquestion_id,  "D35_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 10 subquestion_id,  "D35_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 11 subquestion_id,  "D35_11" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 12 subquestion_id,  "D35_12" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 13 subquestion_id,  "D35_13" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 14 subquestion_id,  "D35_14" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 1 subquestion_id,  "C38_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 2 subquestion_id,  "C38_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 3 subquestion_id,  "C38_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 4 subquestion_id,  "C38_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 5 subquestion_id,  "C38_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 6 subquestion_id,  "C38_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 7 subquestion_id,  "C38_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 8 subquestion_id,  "C38_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 9 subquestion_id,  "C38_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 10 subquestion_id,  "C38_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 1 subquestion_id,  "C39_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 2 subquestion_id,  "C39_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 3 subquestion_id,  "C39_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 4 subquestion_id,  "C39_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 5 subquestion_id,  "C39_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 6 subquestion_id,  "C39_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 7 subquestion_id,  "C39_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 8 subquestion_id,  "C39_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 9 subquestion_id,  "C39_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 10 subquestion_id,  "C39_10" answer FROM rawdata.data
+
+)
+
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+
+/* the following query was obtained, in part, by:
+WITH a AS(
+SELECT question_id, question_nb, column_name, REGEXP_REPLACE(column_name,'^[A-E][0-9]{1,2}_([0-9]{1,2})$','\1') subquestion_id
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='choice' AND nb_subquestion>1 AND nb_to_pick=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, '|| subquestion_id|| ' subquestion_id,  "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+INSERT INTO main.answer_subq_cat_uniq
+WITH a AS(
+ SELECT "@_id" person_id, 17 question_id, 1 subquestion_id,"C17_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 2 subquestion_id,"C17_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 3 subquestion_id,"C17_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 4 subquestion_id,"C17_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 5 subquestion_id,"C17_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 6 subquestion_id,"C17_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 7 subquestion_id,"C17_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 8 subquestion_id,"C17_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 9 subquestion_id,"C17_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 10 subquestion_id,"C17_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 11 subquestion_id,"C17_11" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 12 subquestion_id,"C17_12" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 13 subquestion_id,"C17_13" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 14 subquestion_id,"C17_14" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 15 subquestion_id,"C17_15" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 16 subquestion_id,"C17_16" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 17 subquestion_id,"C17_17" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 18 subquestion_id,"C17_18" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 19 subquestion_id,"C17_19" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 20 subquestion_id,"C17_20" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 21 subquestion_id,"C17_21" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 22 subquestion_id,"C17_22" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='yes/no' AND nb_subquestion=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+Then I used the result of the query, after checking for each variable which value corresponded to 'Sí'
+
+*/
+
+INSERT INTO main.answer_yesno
+WITH a AS(
+ SELECT "@_id" person_id, 9 question_id, "A9"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 10 question_id, "A10"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 19 question_id, "C19" =1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 20 question_id, "C20" =1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 22 question_id, "C22" =1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 23 question_id, "C23" = 1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 24 question_id, "C24" = 1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 25 question_id, "C25" = 1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 27 question_id, "C26"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 28 question_id, "C27"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 29 question_id, "C28"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 30 question_id, "C29"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 31 question_id, "C30"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 35 question_id, "C33"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 44 question_id, "D42"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 46 question_id, "D44"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 48 question_id, "D46"=1 answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='scale' AND nb_subquestion=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_scale
+WITH a AS(
+SELECT "@_id" person_id, 11 question_id, "A11" answer FROM rawdata.data UNION ALL
+SELECT "@_id" person_id, 42 question_id, "C40" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='choice' AND nb_subquestion=1 AND nb_to_pick=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_cat_uniq
+WITH a AS(
+ SELECT "@_id" person_id, 1 question_id, "A1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 3 question_id, "A3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 4 question_id, "A4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 5 question_id, "A5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 6 question_id, "A6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 7 question_id, "A7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 8 question_id, "A8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 21 question_id, "C21" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 43 question_id, "C41" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 45 question_id, "D43" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 47 question_id, "D45" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 52 question_id, "D50" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 53 question_id, "D51" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='numeric' AND nb_subquestion=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id,"' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_numeric
+SELECT "@_id" person_id, 2 question_id,"A2" answer FROM rawdata.data WHERE "A2" IS NOT NULL;
+
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='choice' AND nb_subquestion=1 AND nb_to_pick>1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, UNNEST(STRING_TO_ARRAY("' || column_name || '",'' ''))::int answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_cat_multi
+WITH a AS(
+ SELECT "@_id" person_id, 12 question_id, UNNEST(STRING_TO_ARRAY("B12",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 13 question_id, UNNEST(STRING_TO_ARRAY("B13",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 14 question_id, UNNEST(STRING_TO_ARRAY("B14",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 16 question_id, UNNEST(STRING_TO_ARRAY("B16",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 33 question_id, UNNEST(STRING_TO_ARRAY("C32",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 38 question_id, UNNEST(STRING_TO_ARRAY("C36",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 39 question_id, UNNEST(STRING_TO_ARRAY("C37",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 49 question_id, UNNEST(STRING_TO_ARRAY("D47",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 50 question_id, UNNEST(STRING_TO_ARRAY("D48",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 51 question_id, UNNEST(STRING_TO_ARRAY("D49",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 54 question_id, UNNEST(STRING_TO_ARRAY("D52",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 55 question_id, UNNEST(STRING_TO_ARRAY("D53",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 56 question_id, UNNEST(STRING_TO_ARRAY("D54",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 57 question_id, UNNEST(STRING_TO_ARRAY("D55",' '))::int answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 58 question_id, UNNEST(STRING_TO_ARRAY("D56",' '))::int answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+(SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'$')
+WHERE question_type='free text' AND nb_subquestion=1 AND question_subnb IS NULL
+)
+UNION ALL
+(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='free text' AND nb_subquestion=1 AND question_subnb IS NOT NULL
+)
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+*/
+
+INSERT INTO main.answer_freetext
+WITH a AS(
+ SELECT "@_id" person_id, 32 question_id, "C31" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 26 question_id, "C26_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 34 question_id, "C33_1" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL AND answer !=''
+;
+
+/* Yet another dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name
+FROM main.question q
+LEFT JOIN information_schema.columns c ON
+    c.table_schema='rawdata' AND
+    c.table_name='data' AND
+    c.column_name ~ ('^[A-E]'||q.question_nb::text||'_Otro$')
+WHERE other_option
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+*/
+
+INSERT INTO main.answer_other
+WITH a AS(
+ SELECT "@_id" person_id, 4 question_id, "A4_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 12 question_id, "B12_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 13 question_id, "B13_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 16 question_id, "B16_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 33 question_id, "C32_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 50 question_id, "D48_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 54 question_id, "D52_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 55 question_id, "D53_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 56 question_id, "D54_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 57 question_id, "D55_Otro" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 58 question_id, "D56_Otro" answer FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE answer IS NOT NULL;
+
+INSERT INTO main.categories_post_treatment
+SELECT question_id, post_treatment_id,category_pt_id::smallint,category_pt_lb_es
+FROM rawdata.post_treatment pt
+LEFT JOIN main.question q ON q.question_nb=pt.question_nb;
+
+INSERT INTO main.answer_post_treatment
+WITH a AS(
+SELECT "@_id" person_id,32 question_id, 1 post_treatment_id, "C31_COD1"::smallint category_pt_id
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id,32 question_id, 2 post_treatment_id, "C31_COD2"::smallint category_pt_id
+FROM rawdata.data
+UNION ALL
+SELECT "@_id" person_id,32 question_id, 3 post_treatment_id, "C31_COD3"::smallint category_pt_id
+FROM rawdata.data
+)
+SELECT *
+FROM a
+WHERE category_pt_id IS NOT NULL
+;
+```
+
+# 9 Preparing basic views
 
 ``` r
 unlink(tmp, recursive = T)

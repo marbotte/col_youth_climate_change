@@ -434,6 +434,17 @@ DiagrammeRsvg::export_svg(A) %>%charToRaw %>% rsvg_png("./dataModel.png")
 knitr::include_graphics("./dataModel.png")
 ```
 
+# Inserting the data in the tables
+
+```{sql connection=cc_y, cache=F, file="./cc_young_insert.sql"}
+
+```
+
+
+# Preparing basic views
+
+
+
 
 ```{r}
 unlink(tmp,recursive=T)

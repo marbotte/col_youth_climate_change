@@ -119,246 +119,143 @@ ORDER BY question_id, number::int
 
 /* dirty meta-programmation trick:
 WITH a AS(
-SELECT question_id, question_nb, column_name
+SELECT question_id, question_nb, column_name, REGEXP_REPLACE(column_name,'^[A-E][0-9]{1,2}_([0-9]{1,2})$','\1') subquestion_id
 FROM main.question q
 LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
 WHERE question_type='yes/no' AND nb_subquestion>1
 )
-SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, '|| subquestion_id|| ' subquestion_id,  "' || column_name || '"=1 answer FROM rawdata.data', E' UNION ALL\n')
 FROM a;
-
-Then I used the result of the query, after checking for each variable which value corresponded to 'Sí'
 
 */
 
 INSERT INTO main.answer_subq_yesno
 WITH a AS(
-SELECT "@_id" person_id, 18 question_id, 1 subquestion_id, CASE WHEN "C18_1"=1 THEN true WHEN "C18_1"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 2 subquestion_id, CASE WHEN "C18_2"=1 THEN true WHEN "C18_2"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 3 subquestion_id, CASE WHEN "C18_3"=1 THEN true WHEN "C18_3"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 4 subquestion_id, CASE WHEN "C18_4"=1 THEN true WHEN "C18_4"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 5 subquestion_id, CASE WHEN "C18_5"=1 THEN true WHEN "C18_5"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 6 subquestion_id, CASE WHEN "C18_6"=1 THEN true WHEN "C18_6"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 7 subquestion_id, CASE WHEN "C18_7"=1 THEN true WHEN "C18_7"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 8 subquestion_id, CASE WHEN "C18_8"=1 THEN true WHEN "C18_8"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 9 subquestion_id, CASE WHEN "C18_9"=1 THEN true WHEN "C18_9"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 10 subquestion_id, CASE WHEN "C18_10"=1 THEN true WHEN "C18_10"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 11 subquestion_id, CASE WHEN "C18_11"=1 THEN true WHEN "C18_11"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
-UNION ALL
-SELECT  "@_id" person_id, 18 question_id, 12 subquestion_id, CASE WHEN "C18_12"=1 THEN true WHEN "C18_12"=2 THEN false ELSE NULL END answer
-FROM rawdata.data
+ SELECT "@_id" person_id, 18 question_id, 1 subquestion_id,  "C18_1"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 2 subquestion_id,  "C18_2"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 3 subquestion_id,  "C18_3"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 4 subquestion_id,  "C18_4"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 5 subquestion_id,  "C18_5"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 6 subquestion_id,  "C18_6"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 7 subquestion_id,  "C18_7"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 8 subquestion_id,  "C18_8"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 9 subquestion_id,  "C18_9"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 10 subquestion_id,  "C18_10"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 11 subquestion_id,  "C18_11"=1 answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 18 question_id, 12 subquestion_id,  "C18_12"=1 answer FROM rawdata.data
+
 )
 SELECT *
 FROM a
 WHERE answer IS NOT NULL;
 
+/* dirty meta-programmation trick:
+WITH a AS(
+SELECT question_id, question_nb, column_name, REGEXP_REPLACE(column_name,'^[A-E][0-9]{1,2}_([0-9]{1,2})$','\1') subquestion_id
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='scale' AND nb_subquestion>1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, '|| subquestion_id|| ' subquestion_id,  "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
+
+*/
+
+
 INSERT INTO main.answer_subq_scale
 WITH a AS(
-SELECT "@_id" person_id, 15 question_id, 1 subquestion_id,"B15_1" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 15 question_id, 2 subquestion_id,"B15_2" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 15 question_id, 3 subquestion_id,"B15_3" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 15 question_id, 4 subquestion_id,"B15_4" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 15 question_id, 5 subquestion_id,"B15_5" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 15 question_id, 6 subquestion_id,"B15_6" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 1 subquestion_id,"D34_1" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 2 subquestion_id,"D34_2" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 3 subquestion_id,"D34_3" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 4 subquestion_id,"D34_4" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 5 subquestion_id,"D34_5" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 6 subquestion_id,"D34_6" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 7 subquestion_id,"D34_7" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 8 subquestion_id,"D34_8" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 9 subquestion_id,"D34_9" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 36 question_id, 10 subquestion_id,"D34_10" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 1 subquestion_id,"D34_1" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 2 subquestion_id,"D35_2" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 3 subquestion_id,"D35_3" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 4 subquestion_id,"D35_4" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 5 subquestion_id,"D35_5" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 6 subquestion_id,"D35_6" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 7 subquestion_id,"D35_7" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 8 subquestion_id,"D35_8" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 9 subquestion_id,"D35_9" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 10 subquestion_id,"D35_10" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 11 subquestion_id,"D35_11" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 12 subquestion_id,"D35_12" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 13 subquestion_id,"D35_13" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 37 question_id, 14 subquestion_id,"D35_14" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 1 subquestion_id,"C38_1" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 2 subquestion_id,"C38_2" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 3 subquestion_id,"C38_3" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 4 subquestion_id,"C38_4" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 5 subquestion_id,"C38_5" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 6 subquestion_id,"C38_6" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 7 subquestion_id,"C38_7" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 8 subquestion_id,"C38_8" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 9 subquestion_id,"C38_9" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 40 question_id, 10 subquestion_id,"C38_10" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 1 subquestion_id,"C39_1" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 2 subquestion_id,"C39_2" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 3 subquestion_id,"C39_3" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 4 subquestion_id,"C39_4" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 5 subquestion_id,"C39_5" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 6 subquestion_id,"C39_6" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 7 subquestion_id,"C39_7" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 8 subquestion_id,"C39_8" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 9 subquestion_id,"C39_9" answer
-FROM rawdata.data
-UNION ALL
-SELECT "@_id" person_id, 41 question_id, 10 subquestion_id,"C39_10" answer
-FROM rawdata.data
+ SELECT "@_id" person_id, 15 question_id, 1 subquestion_id,  "B15_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 2 subquestion_id,  "B15_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 3 subquestion_id,  "B15_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 4 subquestion_id,  "B15_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 5 subquestion_id,  "B15_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 15 question_id, 6 subquestion_id,  "B15_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 1 subquestion_id,  "D34_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 2 subquestion_id,  "D34_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 3 subquestion_id,  "D34_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 4 subquestion_id,  "D34_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 5 subquestion_id,  "D34_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 6 subquestion_id,  "D34_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 7 subquestion_id,  "D34_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 8 subquestion_id,  "D34_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 9 subquestion_id,  "D34_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 36 question_id, 10 subquestion_id,  "D34_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 1 subquestion_id,  "D35_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 2 subquestion_id,  "D35_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 3 subquestion_id,  "D35_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 4 subquestion_id,  "D35_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 5 subquestion_id,  "D35_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 6 subquestion_id,  "D35_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 7 subquestion_id,  "D35_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 8 subquestion_id,  "D35_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 9 subquestion_id,  "D35_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 10 subquestion_id,  "D35_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 11 subquestion_id,  "D35_11" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 12 subquestion_id,  "D35_12" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 13 subquestion_id,  "D35_13" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 37 question_id, 14 subquestion_id,  "D35_14" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 1 subquestion_id,  "C38_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 2 subquestion_id,  "C38_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 3 subquestion_id,  "C38_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 4 subquestion_id,  "C38_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 5 subquestion_id,  "C38_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 6 subquestion_id,  "C38_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 7 subquestion_id,  "C38_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 8 subquestion_id,  "C38_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 9 subquestion_id,  "C38_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 40 question_id, 10 subquestion_id,  "C38_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 1 subquestion_id,  "C39_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 2 subquestion_id,  "C39_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 3 subquestion_id,  "C39_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 4 subquestion_id,  "C39_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 5 subquestion_id,  "C39_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 6 subquestion_id,  "C39_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 7 subquestion_id,  "C39_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 8 subquestion_id,  "C39_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 9 subquestion_id,  "C39_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 41 question_id, 10 subquestion_id,  "C39_10" answer FROM rawdata.data
+
 )
+
 SELECT *
 FROM a
 WHERE answer IS NOT NULL;
 
 
 /* the following query was obtained, in part, by:
-SELECT 'SELECT "@_id" person_id, 17 question_id,' || REGEXP_REPLACE(column_name,'^C17_([0-9]+)$','\1') || ' subquestion_id,"'||column_name|| '" answer FROM rawdata.data UNION ALL' FROM information_schema.columns WHERE column_name ~ '17'
-That's a dirty meta-programmation trick but allows to avoid errors...
+WITH a AS(
+SELECT question_id, question_nb, column_name, REGEXP_REPLACE(column_name,'^[A-E][0-9]{1,2}_([0-9]{1,2})$','\1') subquestion_id
+FROM main.question q
+LEFT JOIN information_schema.columns c ON c.table_schema='rawdata' AND c.table_name='data' AND c.column_name ~ ('^[A-E]'||q.question_nb::text||'_.+$')
+WHERE question_type='choice' AND nb_subquestion>1 AND nb_to_pick=1
+)
+SELECT STRING_AGG('SELECT "@_id" person_id, '|| question_id||' question_id, '|| subquestion_id|| ' subquestion_id,  "' || column_name || '" answer FROM rawdata.data', E' UNION ALL\n')
+FROM a;
 */
 INSERT INTO main.answer_subq_cat_uniq
 WITH a AS(
- SELECT "@_id" person_id, 17 question_id,1 subquestion_id,"C17_1" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,2 subquestion_id,"C17_2" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,3 subquestion_id,"C17_3" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,4 subquestion_id,"C17_4" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,5 subquestion_id,"C17_5" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,6 subquestion_id,"C17_6" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,7 subquestion_id,"C17_7" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,8 subquestion_id,"C17_8" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,9 subquestion_id,"C17_9" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,10 subquestion_id,"C17_10" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,11 subquestion_id,"C17_11" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,12 subquestion_id,"C17_12" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,13 subquestion_id,"C17_13" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,14 subquestion_id,"C17_14" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,15 subquestion_id,"C17_15" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,16 subquestion_id,"C17_16" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,17 subquestion_id,"C17_17" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,18 subquestion_id,"C17_18" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,19 subquestion_id,"C17_19" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,20 subquestion_id,"C17_20" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,21 subquestion_id,"C17_21" answer FROM rawdata.data UNION ALL
- SELECT "@_id" person_id, 17 question_id,22 subquestion_id,"C17_22" answer FROM rawdata.data
-
+ SELECT "@_id" person_id, 17 question_id, 1 subquestion_id,"C17_1" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 2 subquestion_id,"C17_2" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 3 subquestion_id,"C17_3" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 4 subquestion_id,"C17_4" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 5 subquestion_id,"C17_5" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 6 subquestion_id,"C17_6" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 7 subquestion_id,"C17_7" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 8 subquestion_id,"C17_8" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 9 subquestion_id,"C17_9" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 10 subquestion_id,"C17_10" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 11 subquestion_id,"C17_11" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 12 subquestion_id,"C17_12" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 13 subquestion_id,"C17_13" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 14 subquestion_id,"C17_14" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 15 subquestion_id,"C17_15" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 16 subquestion_id,"C17_16" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 17 subquestion_id,"C17_17" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 18 subquestion_id,"C17_18" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 19 subquestion_id,"C17_19" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 20 subquestion_id,"C17_20" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 21 subquestion_id,"C17_21" answer FROM rawdata.data UNION ALL
+ SELECT "@_id" person_id, 17 question_id, 22 subquestion_id,"C17_22" answer FROM rawdata.data
 )
 SELECT *
 FROM a
@@ -475,7 +372,7 @@ FROM a;
 */
 
 INSERT INTO main.answer_numeric
-SELECT "@_id" person_id, 2 question_id,"A2" answer FROM rawdata.data WHERE "A2" IS NOT NULL
+SELECT "@_id" person_id, 2 question_id,"A2" answer FROM rawdata.data WHERE "A2" IS NOT NULL;
 
 
 /* Yet another dirty meta-programmation trick:
