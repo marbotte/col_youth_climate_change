@@ -1,0 +1,128 @@
+---
+title: 'Encuesta: Relaciones entre variables'
+author: "Juan Sebastian Cely"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+stopifnot(require(openxlsx), require(kableExtra), require(dm), require(rsvg), require(DiagrammeRsvg), require(tidyverse), require(rms), require(flextable), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify))
+knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
+options(knitr.table.format = "simple")
+```
+
+```{r data, include=FALSE}
+wb<-loadWorkbook("020-22 Base de Datos Anonimizada V4 (1).xlsx")
+names(wb)
+data1 <- readWorkbook(wb,sheet=1)
+codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
+```
+
+```{r tranformación y recodificación variables, include=FALSE}
+data1$Zona <- as.factor(data1$Zona)
+
+data1$A1 <- as.factor(data1$A1)
+
+levels(data1$A1) <- c("Hombre", "Mujer")
+
+data1 <- data1 %>%
+  mutate(age_range = RANGO_EDAD)
+data1 <- data1 %>%
+  mutate(age_range = case_when(
+    age_range == 1 ~ "De 18 a 20 años",
+    age_range == 2 ~ "De 21 a 24 años",
+    age_range == 3 ~ "De 25 a 29 años",
+    age_range == 4 ~ "De 30 a 32 años"
+))
+data1$age_range <- as.factor(data1$age_range)
+
+data1$A3 <- as.factor(data1$A3)
+
+ data1 <- data1 %>%
+  mutate(stratum = NSE)
+data1$stratum <- as.integer(data1$stratum)
+data1 <- data1 %>%
+  mutate(stratum = case_when(
+    stratum == 1 ~ "Bajo",
+    stratum == 2 ~ "Medio",
+    stratum == 3 ~ "Alto"
+))
+data1$stratum <- factor(data1$stratum, levels = c("Bajo", "Medio", "Alto"))
+
+data1$A5 <- as.factor(data1$A5)
+levels(data1$A5) <- c("Indígena", "Gitana(o) Rrom", "Raizal", "Palenquera(o)", "Afro", "Ninguna")
+
+data1 <- data1 %>%
+  mutate(etnia = case_when(
+    A5 != "Ninguna" ~ "Sí",
+    A5 == "Ninguna" ~ "No"
+))
+
+
+
+
+levels(data1$A6) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
+```
+
+# Emociones frente al cambio climático y zona de residencia
+
+```{r relación estrato edad}
+tab_est_age <- table(data1$age_range, data1$A3)
+kable(round(prop.table(tab_est_age) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "Set2")
+plot_est_age <- data1 %>%
+  ggplot(aes(x = A3, y = A2)) +
+  geom_boxplot(aes(colour = A3)) +
+  labs(x = "Estrato", y = "Edad") +
+  ggtitle("Distribución \n Edad por Estrato") +
+  papaja::theme_apa() +
+  scale_y_continuous(breaks = seq(18, 32, 2)) +
+  theme(legend.position="none") +
+  scale_color_manual(values = custom_palette)
+plot_est_age
+```
+
+
+```{r relación nivel educativo estrato}
+tab_est_edu <- table(data1$A6, data1$A3)
+kable(round(prop.table(tab_est_edu) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_est_edu <- data1 %>%
+  ggplot(aes(x = A6, fill = A3)) +
+  geom_bar(position = "fill") +
+  labs(x = "Nivel educativo", y = "Proporción", fill = "Estrato") +
+  ggtitle("Relación \n Estrato y Nivel Educativo") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_est_edu
+
+plot_est_edu_2 <- data1 %>%
+  ggplot(aes(x = A3, fill = A6)) +
+  geom_bar(position = "fill") +
+  labs(x = "Estrato", y = "Proporción", fill = "Nivel Educativo") +
+  ggtitle("Relación \n Estrato y Nivel Educativo") +
+  papaja::theme_apa() +
+  scale_fill_manual(values = custom_palette)
+plot_est_edu_2
+```
+
+```{r relaciones entre variables categóricas}
+# Convert data frame to a list of ggplot objects
+plots <- lapply(names(data), function(var) {
+  ggplot(data, aes(x = .data[[var]], fill = .data[[var]])) +
+    geom_bar() +
+    labs(x = var, y = "Count") +
+    theme_minimal()
+})
+
+# Combine the plots into a grid
+grid <- plot_grid(plotlist = plots, nrow = 2, ncol = 2)
+
+# Display the grid of plots
+grid
+```
+
+

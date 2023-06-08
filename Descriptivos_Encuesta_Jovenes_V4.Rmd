@@ -1,0 +1,1174 @@
+---
+title: 'Encuesta: Distribución y recodificación de variables'
+author: "Juan Sebastian Cely"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+stopifnot(require(openxlsx), require(kableExtra), require(dm), require(rsvg), require(DiagrammeRsvg), require(tidyverse), require(rms), require(flextable), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer))
+knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
+options(knitr.table.format = "simple")
+```
+
+```{r data, include=FALSE}
+wb<-loadWorkbook("020-22 Base de Datos Anonimizada V4 (1).xlsx")
+names(wb)
+data1 <- readWorkbook(wb,sheet=1)
+codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
+```
+
+# Emociones hacia el cambio climático
+La pregunta número 36 fue: ¿Cuáles son las DOS emociones que reflejan su forma de sentir cuando piensa en el cambio climático? Cada participante podía elegir un máximo de 2 emociones de un conjunto de 16 emociones.
+```{r variable emociones hacia cambio climático, echo=F}
+emo_clim <- grep("^C36_", names(data1), value=T)
+sums_emo_clim <- colSums(data1[, emo_clim])
+names(sums_emo_clim) <- c("Triste", "Motivado", "Temeroso", "Furioso", "Ansioso", "Frustrado", "Culpable", "Avergonzado", "Desesperado", "Herido", "Deprimido", "Optimista", "Indiferente", "Confiado", "Desesperanzado", "Tranquilo")
+sums_emo_clim <- data.frame(Emoción = names(sums_emo_clim), Frecuencia = unname(sums_emo_clim))
+sums_emo_clim <- sums_emo_clim %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / nrow(data1) * 100), 1))
+kable(sums_emo_clim, col.names = c("Emoción", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+sums <- rowSums(data1[emo_clim])
+table_sums <- as.data.frame(table(sums)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_sums, col.names = c("Nº emociones seleccionadas", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_emo <- sums_emo_clim %>%
+  ggplot(aes(x = Emoción, y = Porcentaje)) +
+  geom_col(fill = "#1F77B4") +
+  coord_flip() +
+  labs(x = "Emoción", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Emociones hacia el Cambio Climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+ geom_text(aes(label = paste0(Porcentaje, "%")), hjust = -0.2, color = "black", size = 4)
+plot_emo
+```
+
+
+## Variable "Emociones hacia el cambio climático" Recodificada
+El conjunto de 16 emociones fue agrupado en tres niveles: Con Eco-ansiedad, emociones ambivalentes, y emociones negativas.
+```{r recodificación emociones cambio climático, include=FALSE}
+neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
+amb_emo <- c("C36_13")
+pos_emo <- c("C36_2", "C36_12", "C36_14", "C36_16")
+data1$emo_category <- NA
+for (i in 1:nrow(data1)) {
+neg_emo_count <- sum(data1[i, neg_emo] == 1)
+pos_emo_count <- sum(data1[i, pos_emo] == 1)
+amb_emo_count <- sum(data1[i, amb_emo] == 1)
+if (neg_emo_count %in% c(1, 2) & pos_emo_count == 0 & amb_emo_count == 0) {
+data1$emo_category[i] <- "Con eco-ansiedad"
+} else if (neg_emo_count == 1 & pos_emo_count == 1 & amb_emo_count == 0) {
+data1$emo_category[i] <- "Ambivalente/Neutral"
+} else if (neg_emo_count == 1 & pos_emo_count == 0 & amb_emo_count == 1) {
+data1$emo_category[i] <- "Ambivalente/Neutral"
+} else if (neg_emo_count == 0 & pos_emo_count == 1 & amb_emo_count == 1) {
+data1$emo_category[i] <- "Ambivalente/Neutral"
+} else if (neg_emo_count == 0 & pos_emo_count == 0 & amb_emo_count == 1) {
+data1$emo_category[i] <- "Ambivalente/Neutral"
+} else if (neg_emo_count == 0 & pos_emo_count %in% c(1, 2) & amb_emo_count == 0) {
+data1$emo_category[i] <- "Sin eco-ansiedad"
+}
+}
+```
+
+
+```{r variable emo recodificada, echo=F}
+data1$emo_category <- factor(data1$emo_category, levels = c("Con eco-ansiedad", "Ambivalente/Neutral", "Sin eco-ansiedad"))
+table_emo_cat <- as.data.frame(table(data1$emo_category)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_emo_cat, col.names = c("Eco_ansiedad", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_emo_cat <- data1 %>%
+  count(emo_category) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = emo_category, y = prop, fill = emo_category)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Eco-ansiedad", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Eco-anxiety") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_emo_cat
+```
+
+
+```{r recodificación emociones cambio climático 2, include=FALSE}
+neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
+neu_emo <- c("C36_13")
+pos_emo <- c("C36_2", "C36_12", "C36_14", "C36_16")
+data1$emo_category <- NA
+for (i in 1:nrow(data1)) {
+neg_emo_count <- sum(data1[i, neg_emo] == 1)
+pos_emo_count <- sum(data1[i, pos_emo] == 1)
+neu_emo_count <- sum(data1[i, neu_emo] == 1)
+if (neg_emo_count %in% c(1, 2) & pos_emo_count == 0 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Paralyzing"
+} else if (neg_emo_count == 1 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Paralyzing"
+} else if (neg_emo_count == 1 & pos_emo_count == 1) {
+data1$emo_category[i] <- "Practical"
+} else if (neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Absent"
+} else if (pos_emo_count %in% c(1, 2) & neg_emo_count == 0 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Absent"
+} else if (pos_emo_count == 1 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Absent"
+}
+}
+```
+
+
+```{r variable emo recodificada 2, echo=F}
+data1$emo_category <- factor(data1$emo_category, levels = c("Paralyzing", "Practical", "Absent"))
+table_emo_cat <- as.data.frame(table(data1$emo_category)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_emo_cat, col.names = c("Eco-anxiety", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_emo_cat <- data1 %>%
+  count(emo_category) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = emo_category, y = prop, fill = emo_category)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Eco-anxiety", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Eco-anxiety") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_emo_cat
+```
+
+
+```{r recodificación emociones cambio climático 3, include=FALSE}
+neg_emo_st <- c("C36_11", "C36_15", "C36_9")
+neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_10")
+neu_emo <- c("C36_13")
+pos_emo <- c("C36_2", "C36_12", "C36_14", "C36_16")
+data1$emo_category <- NA
+for (i in 1:nrow(data1)) {
+neg_emo_st_count <- sum(data1[i, neg_emo_st] == 1)
+neg_emo_count <- sum(data1[i, neg_emo] == 1)
+pos_emo_count <- sum(data1[i, pos_emo] == 1)
+neu_emo_count <- sum(data1[i, neu_emo] == 1)
+if (neg_emo_st_count %in% c(1, 2) & neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Strong Paralyzing"
+} else if (neg_emo_st_count == 1 & neg_emo_count == 1 & pos_emo_count == 0 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Strong Paralyzing"
+} else if (neg_emo_st_count == 1 & neg_emo_count == 0 & pos_emo_count == 1 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Practical"
+} else if (neg_emo_st_count == 1 & neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Strong Paralyzing"
+} else if (neg_emo_st_count == 0 & neg_emo_count %in% c(1, 2) & pos_emo_count == 0 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Paralyzing"
+} else if (neg_emo_st_count == 0 & neg_emo_count == 1 & pos_emo_count == 1 & neu_emo_count == 0) {
+data1$emo_category[i] <- "Practical"
+} else if (neg_emo_st_count == 0 & neg_emo_count == 1 & pos_emo_count == 0 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Paralyzing"
+} else if (neg_emo_st_count == 0 & neg_emo_count == 0 & pos_emo_count %in% c(1, 2) & neu_emo_count == 0) {
+data1$emo_category[i] <- "Absent"
+} else if (neg_emo_st_count == 0 & neg_emo_count == 0 & pos_emo_count == 1 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Absent"
+} else if (neg_emo_st_count == 0 & neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 1) {
+data1$emo_category[i] <- "Absent"
+}
+}
+```
+
+
+```{r variable emo recodificada 3, echo=F}
+data1$emo_category <- factor(data1$emo_category, levels = c("Strong Paralyzing", "Paralyzing", "Practical", "Absent"))
+table_emo_cat <- as.data.frame(table(data1$emo_category)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_emo_cat, col.names = c("Eco-anxiety", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_emo_cat <- data1 %>%
+  count(emo_category) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = emo_category, y = prop, fill = emo_category)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Eco-anxiety", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Eco-anxiety") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_emo_cat
+```
+
+
+# Zona de residencia
+Al inicio de la encuesta se clasificó a los participantes en dos distintas categorías según su lugar de residencia. Estas fueron categorías son: "Urbana ciudades" y "Municipios rurales dispersos".
+```{r variable zone, echo=F}
+data1$Zona <- as.factor(data1$Zona)
+table_zona <- as.data.frame(table(data1$Zona)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_zona, col.names = c("Zona de Residencia", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_zona <- data1 %>%
+  count(Zona) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = Zona, y = prop, fill = Zona)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Zona de Residencia", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Zona de Residencia") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_zona
+```
+
+# Sexo
+La pregunta número 1 pedía a cada participante indicar su sexo.
+```{r variable sexo, echo=F}
+data1$A1 <- as.factor(data1$A1)
+levels(data1$A1) <- c("Hombre", "Mujer")
+table_sexo <- as.data.frame(table(data1$A1)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_sexo, col.names = c("Sexo", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_sexo <- data1 %>%
+  count(A1) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = A1, y = prop, fill = A1)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Sexo", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Sexo") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_sexo
+```
+
+
+# Edad
+La pregunta número 2 fue: ¿Cuántos años tiene? Todos los participantes debían tener 18 años o más y no más de 32 años.
+```{r variable edad, echo=F}
+kable(round(table(data1$A2) / length(data1$A2) * 100, digits = 1), col.names = c("Edad", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_edad <- data1 %>%
+  ggplot(aes(x = A2, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#FF7F0E", binwidth = 0.5) +
+  labs(x = "Edad", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Edad") +
+  papaja::theme_apa() +
+  scale_x_continuous(breaks = seq(18, 32, 2))
+plot_edad
+```
+
+
+```{r recodificación edad, include=FALSE}
+data1 <- data1 %>%
+  mutate(age_range = RANGO_EDAD)
+data1 <- data1 %>%
+  mutate(age_range = case_when(
+    age_range == 1 ~ "De 18 a 20 años",
+    age_range == 2 ~ "De 21 a 24 años",
+    age_range == 3 ~ "De 25 a 29 años",
+    age_range == 4 ~ "De 30 a 32 años"
+))
+```
+
+## Variable "Edad" Recodificada
+El rango de edad permitido para los participantes fue separado en 4 distintos grupos.
+```{r variable edad recodificada, echo=F}
+data1$age_range <- as.factor(data1$age_range)
+table_age_range <- as.data.frame(table(data1$age_range)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_age_range, col.names = c("Rango de edad", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_age_range <- data1 %>%
+  count(age_range) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = age_range, y = prop, fill = age_range)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Rango de edad", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Rango de Edad") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
+plot_age_range
+```
+
+
+# Estrato
+La pregunta número 3 fue: En el recibo de la luz de su domicilio, ¿qué estrato sale reportado? Todos los participantes debían indicar su estrato de acuerdo a la clasificación del Departamento de Planeación Nacional que va desde 1 hasta 6.
+```{r variable estrato, echo=F}
+data1$A3 <- as.factor(data1$A3)
+table_stra <- as.data.frame(table(data1$A3)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_stra, col.names = c("Estrato", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_estrato <- data1 %>%
+  count(A3) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = A3, y = prop, fill = A3)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Estrato", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Estrato") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_estrato
+```
+
+```{r recodificación estrato, include=FALSE}
+ data1 <- data1 %>%
+  mutate(stratum = NSE)
+data1$stratum <- as.integer(data1$stratum)
+data1 <- data1 %>%
+  mutate(stratum = case_when(
+    stratum == 1 ~ "Bajo",
+    stratum == 2 ~ "Medio",
+    stratum == 3 ~ "Alto"
+))
+```
+
+
+## Variable "Estrato" Recodificada
+La variable "Estrato" fue recodificada en tres distintos grupos: Estrato "Bajo", que incluye los estratos 1 y 2; Estrato "Medio", que incluye los estratos 3 y 4, y Estrato "Alto", que incluye los estratos 5 y 6.
+```{r variable estrato recodificada, echo=F}
+data1$stratum <- factor(data1$stratum, levels = c("Bajo", "Medio", "Alto"))
+table_stratum <- as.data.frame(table(data1$stratum)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_stratum, col.names = c("Estrato", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_stratum <- data1 %>%
+  count(stratum) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = stratum, y = prop, fill = stratum)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Estrato", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Estrato") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_stratum
+```
+
+# Etnia
+La pregunta número 5 fue:De acuerdo con su cultura, etnia o rasgos físicos, ¿usted se reconoce como:…? El participante debía elegir una opción de las 6 incluidas.
+```{r variable etnia, echo=F}
+data1$A5 <- as.factor(data1$A5)
+levels(data1$A5) <- c("Indígena", "Gitana(o) Rrom", "Raizal", "Palenquera(o)", "Afro", "Ninguna")
+table_et <- as.data.frame(table(data1$A5)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_et, col.names = c("Etnia", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_et <- data1 %>%
+  count(A5) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = A5, y = prop, fill = A5)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Etnia", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Etnia") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
+plot_et
+```
+
+```{r recodificación etnia, include=FALSE}
+data1 <- data1 %>%
+  mutate(etnia = case_when(
+    A5 != "Ninguna" ~ "Sí",
+    A5 == "Ninguna" ~ "No"
+))
+```
+
+
+## Variable "Etnia" Recodificada
+La variable "Etnia" fue recodificada en dos distintos niveles que distinguen si la persona pertenece a alguna de las etnias incluidas o no.
+```{r variable etnia recodificada, echo=F}
+data1$etnia <- as.factor(data1$etnia)
+table_etnia <- as.data.frame(table(data1$etnia)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_etnia, col.names = c("¿Pertenece a alguna etnia?", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_etnia <- data1 %>%
+  count(etnia) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = etnia, y = prop, fill = etnia)) +
+  geom_bar(stat = "identity") +
+  labs(x = "¿Pertenece a alguna etnia?", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Pertenecia a una etnia") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_etnia
+```
+
+# Nivel educativo
+La pregunta número 6 fue: ¿Cuál es el nivel educativo más alto alcanzado por usted?
+```{r variable nivel educativo, echo=F}
+data1$A6 <- as.factor(data1$A6)
+data1$high_edu <- data1$A6
+levels(data1$high_edu) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
+table_edu <- as.data.frame(table(data1$high_edu)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_edu, col.names = c("Educación", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "Blues")
+plot_edu <- data1 %>%
+  count(high_edu) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = high_edu, y = prop, fill = high_edu)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Educación", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Educación") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
+plot_edu
+```
+
+```{r recodificación nivel educativo, include=FALSE}
+data1 <- data1 %>%
+  mutate(high_edu = case_when(
+    A6 %in% c(1, 2, 3, 4) ~ "No",
+    A6 %in% c(5, 6) ~ "Sí"
+))
+```
+
+
+## Variable "Nivel educativo" Recodificada
+La variable "Nivel educativo" fue recodificada en dos distintos niveles que distinguen si la persona completó o no estudios de educación superior.
+```{r variable nivel educativo recodificada, echo=F}
+data1$high_edu <- as.factor(data1$high_edu)
+table_high_edu <- as.data.frame(table(data1$high_edu)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_high_edu, col.names = c("¿Educación superior?", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_high_edu <- data1 %>%
+  count(high_edu) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = high_edu, y = prop, fill = high_edu)) +
+  geom_bar(stat = "identity") +
+  labs(x = "¿Educación superior?", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Educación Superior") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_high_edu
+```
+
+# Hijos
+La pregunta número 9 fue: ¿Usted tiene hijos?
+```{r variable hijos, echo=F}
+data1$A9 <- as.factor(data1$A9)
+levels(data1$A9) <- c("Sí", "No")
+table_hijos <- as.data.frame(table(data1$A9)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_hijos, col.names = c("¿Tiene Hijos?", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_hijos <- data1 %>%
+  count(A9) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = A9, y = prop, fill = A9)) +
+  geom_bar(stat = "identity") +
+  labs(x = "¿Tiene hijos?", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Hijos") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_hijos
+```
+
+# Ideología política
+La pregunta número 11 fue: Ubique su posición ideológica, en una escala de 1 a 6 donde 1 es una posición de izquierda y 6 es una posición de derecha.
+```{r variable ideología política, echo=F}
+data1$A11 <- as.factor(data1$A11)
+data1$pol_ide <- data1$A11
+levels(data1$pol_ide) <- c("Izquierda Fuerte", "Izquierda", "Centro Izquierda", "Centro Derecha", "Derecha", "Derecha Fuerte")
+table_pol_ide <- as.data.frame(table(data1$pol_ide)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_pol_ide, col.names = c("Ideología política", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_pol_ide <- data1 %>%
+  count(pol_ide) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = pol_ide, y = prop, fill = pol_ide)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Ideología Política", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Ideología Política") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
+plot_pol_ide
+```
+
+```{r recodificación ideología política, include=FALSE}
+data1 <- data1 %>%
+  mutate(pol_ide = case_when(
+    A11 %in% c(1, 2) ~ "Izquierda",
+    A11 %in% c(3, 4) ~ "Centro",
+    A11 %in% c(5, 6) ~ "Derecha"
+  ))
+```
+
+
+## Variable "Ideología política" Recodificada
+La variable "Ideología política" fue recodificada en dos distintos niveles que distinguen si la persona se considera de izquierda o derecha.
+```{r variable ideología política recodificada, echo=F}
+data1$pol_ide <- factor(data1$pol_ide, levels = c("Derecha", "Centro", "Izquierda"))
+table_pol_ide <- as.data.frame(table(data1$pol_ide)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_pol_ide, col.names = c("Ideología política", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_pol_ide <- data1 %>%
+  count(pol_ide) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = pol_ide, y = prop, fill = pol_ide)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Ideología política", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Ideología política") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_pol_ide
+
+custom_colors <- c( "#56B4E9", "#1FC98B", "#F37607")
+
+plot_pol_ide <- data1 %>%
+  count(pol_ide) %>%
+  mutate(prop = (n / sum(n)) * 100) %>%
+  ggplot(aes(x = "", y = prop, fill = pol_ide)) +
+  geom_col(width = 0.2) +
+  labs(x = "Ideología política", y = "Porcentaje (%)", fill = "Ideología política") +
+  ggtitle("Distribución \n Ideología política") +
+  papaja::theme_apa() +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), 
+            position = position_stack(vjust = 0.5), 
+            color = "black", size = 4) +
+  coord_flip() +
+  scale_fill_manual(values = custom_colors) +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5))
+plot_pol_ide
+```
+
+# Medios de información
+La pregunta número 12 fue: ¿Cómo se informa usted de los temas del país? El participante podía elegir tantas opciones como quisiera.
+```{r variable medios, echo=F}
+media <- grep("^B12_", names(data1), value=T)
+media <- media[-which(media == "B12_Otro")]
+sums_media <- colSums(data1[, media])
+names(sums_media) <- c("Televisión", "Radio", "Prensa impresa", "Digital", "Redes Sociales", "Otro")
+sums_media <- data.frame(Medio = names(sums_media), Frecuencia = unname(sums_media))
+sums_media <- sums_media %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / nrow(data1) * 100), 1))
+kable(sums_media, col.names = c("Medio", "Frecuencia", "Proporción (%)"), booktabs = TRUE)
+
+sums <- rowSums(data1[media])
+table_sums <- as.data.frame(table(sums)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_sums, col.names = c("Nº medios seleccionados", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_media <- sums_media %>%
+  ggplot(aes(x = Medio, y = Porcentaje, fill = Medio)) +
+  geom_col() +
+  coord_flip() +
+  labs(x = "Medio", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Medios de información") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+ geom_text(aes(label = paste0(Porcentaje, "%")), hjust = -0.2, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
+plot_media
+```
+
+```{r recodificación medios de información, include=FALSE}
+traditional <- c("B12_1", "B12_2", "B12_3")
+other <- c("B12_4", "B12_5", "B12_89")
+data1$news <- NA
+for (i in 1:nrow(data1)) {
+traditional_count <- sum(data1[i, traditional] == 1)
+other_count <- sum(data1[i, other] == 1)
+if (traditional_count >= 1 & other_count == 0) {
+data1$news[i] <- "Tradicional"
+} else if (traditional_count >= 1 & other_count >= 1) {
+data1$news[i] <- "Mixto"
+} else if (traditional_count == 0 & other_count >= 1) {
+data1$news[i] <- "Alternativo"
+}
+}
+```
+
+
+## Variable "Medios de información" Recodificada
+La variable "Medios de información" fue recodificada en tres distintos niveles que distinguen si la persona solo se informa a través de medios tradicionales, si la persona se informa con medios tanto tradicionales como alternativos, o si la persona solo se informa a través de medios alternativos. Se catalogaron como medios tradicionales la televisión, la radio y la prensa impresa.
+```{r variable medios de información recodificada, echo=F}
+data1$news <- as.factor(data1$news)
+table_news <- as.data.frame(table(data1$news)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_news, col.names = c("Medios de información", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+custom_palette <- brewer.pal(3, "Accent")
+plot_news <- data1 %>%
+  count(news) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = news, y = prop, fill = news)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Medios de información", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Medios de información") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
+plot_news
+```
+
+# Variable Redes Sociales
+```{r variable redes sociales}
+data1$B12_5 <- as.factor(data1$B12_5)
+levels(data1$B12_5) <- c("No", "Sí")
+table_redes <- as.data.frame(table(data1$B12_5)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_redes, col.names = c("¿Se informa en Redes Sociales?", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_redes <- data1 %>%
+  count(B12_5) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = B12_5, y = prop, fill = B12_5)) +
+  geom_bar(stat = "identity") +
+  labs(x = "¿Se informa en Redes Sociales?", y = "Porcentaje (%)") +
+  ggtitle("Distribución uso de \n Redes Sociales para informarse") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_redes
+```
+# Medios de información por separado
+
+```{r, loop medios de información, echo=FALSE}
+selected_columns <- data1 %>%
+  select(starts_with("B12_"), -B12_Otro)
+
+# Create a new data frame with the selected columns
+new_data <- data.frame(selected_columns)
+new_data <- new_data %>%
+  rename(Televisión = B12_1,
+         Radio = B12_2,
+         Prensa_Impresa = B12_3,
+         Medios_Digitales = B12_4,
+         Redes_Sociales = B12_5,
+         Otro_medio = B12_89)
+# List of variables to iterate over
+variables <- names(new_data)
+
+# Create an empty list to store the results
+results <- list()
+
+# Iterate over each variable
+for (variable in variables) {
+  # Convert variable to factor
+  new_data[[variable]] <- as.factor(new_data[[variable]])
+  levels(new_data[[variable]]) <- c("No", "Sí")
+  
+  # Calculate table
+  table_data <- new_data %>%
+  count(!!sym(variable)) %>%
+  mutate(prop = round((n / sum(n)) * 100, digits = 1))
+  
+  # Create kable table
+  table_kable <- kable(table_data, col.names = c(paste0("¿Se informa con ", variable, "?"), "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+  
+  # Create plot
+  plot <- table_data %>%
+    ggplot(aes(x = !!sym(variable), y = prop, fill = !!sym(variable))) +
+    geom_bar(stat = "identity") +
+    labs(x = paste0("¿Se informa con ", variable, "?"), y = "Porcentaje (%)") +
+    ggtitle(paste0("Distribución uso de \n ", variable, " para informarse")) +
+    papaja::theme_apa() +
+    theme(legend.position = "none") +
+    geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+  
+  # Store the results
+  results[[variable]] <- list(table_kable = table_kable, plot = plot)
+}
+
+# Access the results for each variable
+print(results)
+
+```
+
+# Confianza hacia figuras e instituciones
+La pregunta número 17 fue: De las siguientes instituciones y figuras, ¿en cuáles confía? Los participantes debían responder para cada una de las 22 figuras e instituciones incluidas si confiaban en esta o no.
+```{r confianza en figuras e instituciones, echo=F}
+trust_in <- data1 %>%
+  dplyr::select(starts_with("C17_"), -c(C17_20, C17_21, C17_22)) %>%
+  rename(Registraduría = C17_1, Consejo_Nacional_Electoral = C17_2, Jurados_de_Votación = C17_3, Partidos_políticos = C17_4, Presidencia_de_Colombia = C17_5, Gobernación_departamental = C17_6, Alcaldía_municipal = C17_7, Congreso_de_la_República = C17_8, Defensoría_del_Pueblo = C17_9, La_Iglesia_católica = C17_10, Líderes_religiosos_cristianos_No_católicos = C17_11, Las_Fuerzas_Militares = C17_12, Policía_Nacional_de_Colombia = C17_13, Universidades_Privadas = C17_14, Universidades_Públicas = C17_15, Fiscalía_General_de_la_Nación = C17_16, Sindicatos = C17_17, Procuraduría_General_de_la_Nación = C17_18, Contraloría_General_de_la_República = C17_19) %>%
+  tidyr::gather(key = "Variable", value = "Value") %>%
+  dplyr::mutate(Value = replace(Value, is.na(Value), "na")) %>%
+  count(Variable, Value) %>%
+  spread(key = "Value", value = "n") %>%
+  dplyr::mutate(na = replace(na, is.na(na), 0)) %>%
+  rename(Institución_o_figura = "Variable",
+         Sí = "1",
+         No = "2", 
+         No_la_conoce = "3",
+         No_aplica = na)
+trust_in_props <- trust_in
+cols_to_sum <- 2:5
+row_sums <- rowSums(trust_in_props[cols_to_sum])
+trust_in_props[cols_to_sum] <- round(trust_in_props[cols_to_sum] / row_sums * 100, 1)
+trust_in_props$Institución_o_figura <- gsub("_", " ", trust_in_props$Institución_o_figura)
+trust_in_props <- trust_in_props %>%
+  arrange(desc(Sí))
+kable(trust_in_props, col.names = c("Institución o figura", "Sí", "No", "No la conoce", "No aplica"), booktabs = TRUE)
+
+custom_palette <- brewer.pal(4, "BrBG")
+trust_plot <- trust_in_props %>%
+  gather(key = "confianza", value = "porcentaje", -Institución_o_figura) %>%
+  ggplot(aes(x = Institución_o_figura, y = porcentaje, fill = confianza)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Institución o Figura", y = "Porcentaje (%)", fill = "¿Confía en la Institución?") +
+  papaja::theme_apa() +
+  scale_fill_manual(values = custom_palette, labels = c("No", "No aplica", "No la conoce", "Sí"))
+trust_plot
+
+totals_trust_in <- colSums(trust_in[, c(2,3,4,5)])
+totals_trust_in <- data.frame(Categoria = names(totals_trust_in), Frecuencia = unname(totals_trust_in))
+totals_trust_in <- totals_trust_in %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / sum(Frecuencia) * 100), 1))
+totals_trust_in$Categoria <- gsub("_", " ", totals_trust_in$Categoria)
+kable(totals_trust_in, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+```
+
+```{r medida desconfianza en figuras e instituciones, eval=FALSE, include=FALSE}
+c17 <- grep("^C17_", names(data1), value=T)
+c17 <- c17[!grepl("C17_6", c17)]
+for (column in c17) {
+data1[, column] <- ifelse(data1[, column] == 3, 2, data1[, column])
+}
+data1$dist_inst <- NA
+for (i in 1:nrow(data1)) {
+  data1$dist_inst[i] <- sum(data1[i, c17]) - 20
+}
+```
+
+
+## Creación de una medida de desconfianza en figuras e instituciones
+La creación de la medida de desconfianza en figuras e instituciones se realizó sumando los valores seleccionados para cada una de las figuras e instituciones. De este modo, una persona que confiara en todas las instituciones tendría un puntaje de 21 y una persona que desconfiara de todas las instituciones tendría un puntaje de 42. Las personas que no conocían a la institución o figura y, por tanto, seleccionaron el valor "3" fueron recodificadas con el valor "2", indicando desconfianza. A la suma total obtenida se les restó un valor de 20 para que el rango final de valores de la medida fuera de 1 hasta 22. La única institución no incluida dentro de la medida fue la de Gobernación departamental puesto que esta no aplicaba para una cantidad considerable de la muestra.
+```{r variable medida de desconfianza, eval=FALSE, echo=F}
+kable(round(table(data1$dist_inst) / length(data1$dist_inst) * 100, digits = 1), col.names = c("Puntaje desconfianza", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_dist <- data1 %>%
+  ggplot(aes(x = dist_inst, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#FF9896", binwidth = 1) +
+  labs(x = "Desconfianza", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Puntaje Desconfianza") +
+  papaja::theme_apa() +
+  scale_x_continuous(breaks = seq(1, 22, 2))
+plot_dist
+```
+
+
+
+# Asociarse a organizaciones ambientales
+La pregunta número 18 fue: ¿Usted qué está dispuesto a hacer para aportar/solucionar los problemas del país? Dentro de las opciones incluidas, la número 7 correspondía a la opción "Asociarme en organizaciones ambientales" la cual fue elegida de forma independiente por su relevancia para el proyecto.
+```{r variable asociarse a organizaciones ambientales, echo=F}
+data1$C18_7 <- as.factor(data1$C18_7)
+levels(data1$C18_7) <- c("Sí", "No")
+table_aso <- as.data.frame(table(data1$C18_7)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_aso, col.names = c("¿Se asociaría?", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_aso <- data1 %>%
+  count(C18_7) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = C18_7, y = prop, fill = C18_7)) +
+  geom_bar(stat = "identity") +
+  labs(x = "¿Se asociaría?", y = "Porcentaje (%)") +
+  ggtitle("Distribución Asociarse a \n Organizaciones Ambientales") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_aso
+```
+
+# Emociones hacia respuesta del gobierno frente al cambio climático
+La pregunta número 34 fue: "En una escala de 1 a 6, donde 1 es MUY POCO y 6 es MUY FUERTE, Cuando usted piensa en cómo el gobierno está respondiendo al cambio climático se siente:".
+El participante debía dar una respuesta para cada una de las 10 emociones incluidas.
+```{r variable emociones respuesta gobierno al cambio climático, echo=F}
+emo_gov <- data1 %>%
+  dplyr::select(starts_with("D34_")) %>%
+  rename(Tranquilo = D34_1, Angustiado = D34_2, Abandonado = D34_3, Temeroso = D34_4, Esperanzado = D34_5, Enojado = D34_6, Valorado = D34_7, Avergonzado = D34_8, Menospreciado = D34_9, Protegido = D34_10) %>%
+  tidyr::gather(key = "Variable", value = "Value") %>%
+  count(Variable, Value) %>%
+  spread(key = "Value", value = "n") %>%
+  rename(Emoción = "Variable",
+         Muy_poco = "1",
+         Muy_fuerte = "6")
+emo_gov_props <- emo_gov
+cols_to_sum <- 2:7
+row_sums <- rowSums(emo_gov_props[cols_to_sum])
+emo_gov_props[cols_to_sum] <- round(emo_gov_props[cols_to_sum] / row_sums * 100, 1)
+kable(emo_gov_props, col.names = c("Emoción", "Muy poco", "2", "3", "4", "5", "Muy fuerte"), booktabs = TRUE)
+
+totals_emo_gov <- colSums(emo_gov[, c(2,3,4,5,6,7)])
+totals_emo_gov <- data.frame(Categoria = names(totals_emo_gov), Frecuencia = unname(totals_emo_gov))
+totals_emo_gov <- totals_emo_gov %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / sum(Frecuencia) * 100), 1))
+totals_emo_gov$Categoria <- gsub("_", " ", totals_emo_gov$Categoria)
+kable(totals_emo_gov, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+```
+
+```{r medida negatividad emocional gobierno cambio climático, include=FALSE}
+neg_d34 <- c("D34_2", "D34_3", "D34_4", "D34_6", "D34_8", "D34_9")
+pos_d34 <- c("D34_1", "D34_5", "D34_7", "D34_10")
+data1$neg_emo_gov <- NA
+for (i in 1:nrow(data1)) {
+  data1$neg_emo_gov[i] <- sum(data1[i, neg_d34]) - sum(data1[i, pos_d34]) + 19
+}
+```
+
+
+## Creación de una medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático
+La creación de la medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático corresponde a la suma de las emociones negativas menos la suma de las emociones positivas. Al valor total, tras realizar la resta, se le suma un valor de 19 para que el rango de la medida de negatividad vaya desde 1 hasta 51.
+```{r variable medida negatividad emocional gobierno, echo=F}
+kable(round(table(data1$neg_emo_gov) / length(data1$neg_emo_gov) * 100, digits = 1), col.names = c("Puntaje negatividad emocional", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_neg_emo_gov <- data1 %>%
+  ggplot(aes(x = neg_emo_gov, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#BCBD22", binwidth = 1) +
+  labs(x = "Negatividad emocional", y = "Porcentaje (%)") +
+  ggtitle("Distribución puntaje negatividad emocional \n hacia las acciones del gobierno frente al cambio climático") +
+  papaja::theme_apa() +
+  scale_x_continuous(breaks = seq(1, 51, 5))
+plot_neg_emo_gov
+```
+
+# Impacto de actores frente al cambio climático
+La pregunta número 35 fue: En una escala de 1 a 6, donde 1 es MUY NEGATIVO y 6 es MUY POSITIVO, ¿cómo cree usted que impactan los siguientes actores en el cambio climático? EL participante debía responder a cada uno de los 14 actores incluidos.
+```{r variable impacto actores frente al cambio climático, echo=F}
+imp_act_clim <- data1 %>%
+  dplyr::select(starts_with("D35_")) %>%
+  rename(Científicos = D35_1, Profesores = D35_2, Grupos_religiosos = D35_3, Gobierno_nacional = D35_4, Gobierno_local = D35_5, Políticos = D35_6, Activistas = D35_7, Defensores_de_Derechos_humanos = D35_8, Líderes_ambientales = D35_9, Líderes_comunitarios = D35_10, Feministas = D35_11, Campesinos = D35_12, Grupos_al_margen_de_la_ley = D35_13, Fuerza_pública = D35_14) %>%
+  tidyr::gather(key = "Variable", value = "Value") %>%
+  count(Variable, Value) %>%
+  spread(key = "Value", value = "n") %>%
+  rename(Actor = "Variable",
+         Muy_negativo = "1",
+         Muy_positivo = "6",
+         No_sabe = "99")
+imp_act_clim_props <- imp_act_clim
+cols_to_sum <- 2:8
+row_sums <- rowSums(imp_act_clim_props[cols_to_sum])
+imp_act_clim_props[cols_to_sum] <- round(imp_act_clim_props[cols_to_sum] / row_sums * 100, 1)
+imp_act_clim_props$Actor <- gsub("_", " ", imp_act_clim_props$Actor)
+kable(imp_act_clim_props, col.names = c("Actor", "Muy negativo", "2", "3", "4", "5", "Muy positivo", "No sabe"), booktabs = TRUE)
+
+totals_imp_act_clim <- colSums(imp_act_clim[, c(2,3,4,5,6,7,8)])
+totals_imp_act_clim <- data.frame(Categoria = names(totals_imp_act_clim), Frecuencia = unname(totals_imp_act_clim))
+totals_imp_act_clim <- totals_imp_act_clim %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / sum(Frecuencia) * 100), 1))
+totals_imp_act_clim$Categoria <- gsub("_", " ", totals_imp_act_clim$Categoria)
+kable(totals_imp_act_clim, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+```
+
+```{r medida impacto positivo de actores frente al cambio climático, include=FALSE}
+d35 <- grep("^D35_", names(data1), value=T)
+for (column in d35) {
+data1[, column] <- ifelse(data1[, column] == 99, 4, data1[, column])
+}
+data1$imp_acto <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_acto[i] <- sum(data1[i, d35]) - 13
+}
+```
+
+
+## Creación de una medida del impacto positivo de distintos actores sobre el cambio climático
+La creación de la medida del grado de impacto positivo de distintos actores sobre el cambio climático se obtuvo sumando los puntajes seleccionados para cada uno de los actores. El valor igual a "99" que corresponde a quienes no saben sobre el impacto particular de un actor fue recodificado por el valor "4" indicando aproximadamente un impacto neutro. Al puntaje total obtenido se le restó un valor igual a 13 para que el rango final fuera desde 1 hasta 71.
+
+```{r variable medida impacto positivo actores, echo=F}
+plot_imp_acto <- data1 %>%
+  ggplot(aes(x = imp_acto, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#E377C2", binwidth = 1) +
+  labs(x = "Impacto positivo", y = "Porcentaje (%)") +
+  ggtitle("Distribución del grado de impacto positivo de distintos \n actores sobre el cambio climático") +
+  papaja::theme_apa() +
+  scale_x_continuous(breaks = seq(1, 71, 5))
+plot_imp_acto
+```
+
+# Pensamientos sobre el cambio climático
+La pregunta número 37 fue: "De las siguientes opciones, el cambio climático me hace pensar que:". Los participantes podían elegir un máximo de 3 opciones dentro de los 15 pensamientos incluidos.
+```{r variable pensamientos hacia cambio climático, echo=F}
+pen_clim <- grep("^C37_", names(data1), value=T)
+sums_pen_clim <- colSums(data1[, pen_clim])
+names(sums_pen_clim) <- c("Fracaso humanidad", "Futuro aterrador", "No me afecta", "Humanidad condenada", "Generación sin oportunidades", "Destruye lo que valoro", "Seguridad amenazada", "No tener hijos", "La Humanidad lo superará", "Proceso natural", "Avances nos salvarán", "Oportunidad para valorar", "Coordinación mundial salvación", "Castigo Dios", "Dios nos salvará")
+sums_pen_clim <- data.frame(Pensamiento = names(sums_pen_clim), Frecuencia = unname(sums_pen_clim))
+sums_pen_clim <- sums_pen_clim %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / 2220 * 100), 1))
+kable(sums_pen_clim, col.names = c("Pensamiento", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+sums <- rowSums(data1[pen_clim])
+sums <- as.factor(sums)
+table_sums_pen <- table(sums)
+kable(table_sums_pen, col.names = c("Nº pensamientos seleccionados", "Frecuencia"), booktabs = TRUE)
+
+plot_pen <- sums_pen_clim %>%
+  ggplot(aes(x = Pensamiento, y = Porcentaje)) +
+  geom_col(fill = "#9467bd") +
+  coord_flip() +
+  labs(x = "Pensamiento", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Pensamientos hacia el Cambio Climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none")
+plot_pen
+```
+
+```{r recodificación pensamientos hacia cambio climático, include=FALSE}
+positive <- c("C37_3", "C37_9", "C37_10", "C37_11", "C37_12", "C37_13", "C37_15")
+negative <- c("C37_1", "C37_2", "C37_4", "C37_5", "C37_6", "C37_7", "C37_8", "C37_14")
+data1$th <- NA
+for (i in 1:nrow(data1)) {
+pos_th_count <- sum(data1[i, positive] == 1)
+neg_th_count <- sum(data1[i, negative] == 1)
+if (pos_th_count %in% c(1, 2, 3) & neg_th_count == 0) {
+data1$th[i] <- "Positivo"
+} else if (pos_th_count == 2 & neg_th_count == 1) {
+data1$th[i] <- "Positivo"
+} else if (pos_th_count == 1 & neg_th_count == 1) {
+data1$th[i] <- "Positivo"
+} else if (pos_th_count == 1 & neg_th_count == 2) {
+data1$th[i] <- "Negativo"
+} else if (neg_th_count %in% c(1, 2, 3) & pos_th_count == 0) {
+data1$th[i] <- "Negativo"
+}
+}
+```
+
+
+## Variable "Pensamientos sobre cambio climático" Recodificada
+La variable "Pensamientos sobre cambio climático" fue recodificada en dos distintos niveles que distinguen si la persona tiene o no mayoritariamente pensamientos negativos.
+```{r variable pensamientos negativos cambio climático, echo=F}
+data1$th <- as.factor(data1$th)
+table_th <- as.data.frame(table(data1$th)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_th, col.names = c("Pensamiento", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_th <- data1 %>%
+  count(th) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = th, y = prop, fill = th)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Pensamiento", y = "Porcentaje (%)") +
+  ggtitle("Distribución Pensamientos \n sobre el cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none")
+plot_th
+```
+
+# Impacto acciones en su comodidad
+La pregunta número 38 fue: En una escala de 1 a 6, donde 1 es MUY NEGATIVAMENTE y 6 es MUY POSITIVAMENTE, ¿Cómo cree que las siguientes acciones afectarían A SU COMODIDAD? El participante debía dar una respuesta para cada una de las 10 acciones incluidas.
+```{r variable impacto acciones en comodidad, echo=F}
+imp_com <- data1 %>%
+  dplyr::select(starts_with("C38_")) %>%
+  rename(No_carro = C38_1, Prohibir_bolsas = C38_2, Compra_local = C38_3, Un_hijo_menos = C38_4, Bombillos_ahorradores = C38_5, Vegetariano_vegano = C38_6, Bici_caminar = C38_7, Plantar_árbol = C38_8, Reducir_aire_calefacción = C38_9, Reducir_electrónicos = C38_10) %>%
+  tidyr::gather(key = "Variable", value = "Value") %>%
+  count(Variable, Value) %>%
+  spread(key = "Value", value = "n") %>%
+  rename(Acción = "Variable",
+         Muy_negativo = "1",
+         Muy_positivo = "6")
+imp_com_props <- imp_com
+cols_to_sum <- 2:7
+row_sums <- rowSums(imp_com_props[cols_to_sum])
+imp_com_props[cols_to_sum] <- round(imp_com_props[cols_to_sum] / row_sums * 100, 1)
+imp_com_props$Acción <- gsub("_", " ", imp_com_props$Acción)
+kable(imp_com_props, col.names = c("Acción", "Muy negativo", "2", "3", "4", "5", "Muy positivo"), booktabs = TRUE)
+
+totals_imp_com <- colSums(imp_com[, c(2,3,4,5,6,7)])
+totals_imp_com <- data.frame(Categoria = names(totals_imp_com), Frecuencia = unname(totals_imp_com))
+totals_imp_com <- totals_imp_com %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / sum(Frecuencia) * 100), 1))
+totals_imp_com$Categoria <- gsub("_", " ", totals_imp_com$Categoria)
+kable(totals_imp_com, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+```
+
+```{r medida del impacto de ciertas acciones en comodidad, include=FALSE}
+c38 <- grep("^C38_", names(data1), value=T)
+data1$imp_como <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_como[i] <- sum(data1[i, c38]) - 9
+}
+```
+
+
+## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
+A partir de los valores elegidos para cada una de las acciones se creó una medida al sumar todos los valores. El puntaje mínimo es 10 si el impacto de todas las acciones es muy negativo y el puntaje máximo 60 si el impacto es muy positivo para todas. Al total obtenido se le resta un valor de 9 para que el rango vaya desde 1 hasta 51.
+```{r variable medida impacto acciones comodidad, echo=F}
+kable(round(table(data1$imp_como) / length(data1$imp_como) * 100, digits = 1), col.names = c("Impacto positivo en comodidad", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_imp_como <- data1 %>%
+  ggplot(aes(x = imp_como, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#8C564B", binwidth = 1) +
+  labs(x = "Impacto positivo", y = "Porcentaje (%)") +
+  ggtitle("Distribución puntaje impacto positivo \n de acciones en la comodidad") +
+  papaja::theme_apa() +
+  scale_x_continuous(breaks = seq(1, 51, 5))
+plot_imp_como
+```
+
+# Impacto acciones en cambio climático
+La pregunta número 39 fue: En una escala de 1 a 6, donde 1 es MUY NEGATIVAMENTE y 6 es MUY POSITIVAMENTE, ¿Cómo cree que las siguientes acciones afectarían AL CAMBIO CLIMÁTICO? El participante debía dar una respuesta para cada una de las 10 acciones incluidas.
+```{r variable impacto acciones en cambio climático, echo=F}
+imp_ind_act <- data1 %>%
+  dplyr::select(starts_with("C39_")) %>%
+  rename(No_carro = C39_1, Prohibir_bolsas = C39_2, Compra_local = C39_3, Un_hijo_menos = C39_4, Bombillos_ahorradores = C39_5, Vegetariano_vegano = C39_6, Bici_caminar = C39_7, Plantar_árbol = C39_8, Reducir_aire_calefacción = C39_9, Reducir_electrónicos = C39_10) %>%
+  tidyr::gather(key = "Variable", value = "Value") %>%
+  count(Variable, Value) %>%
+  spread(key = "Value", value = "n") %>%
+  rename(Acción = "Variable",
+         Muy_negativo = "1",
+         Muy_positivo = "6")
+imp_ind_act_props <- imp_ind_act
+cols_to_sum <- 2:7
+row_sums <- rowSums(imp_ind_act_props[cols_to_sum])
+imp_ind_act_props[cols_to_sum] <- round(imp_ind_act_props[cols_to_sum] / row_sums * 100, 1)
+imp_ind_act_props$Acción <- gsub("_", " ", imp_ind_act_props$Acción)
+kable(imp_ind_act_props, col.names = c("Acción", "Muy negativo", "2", "3", "4", "5", "Muy positivo"), booktabs = TRUE)
+
+totals_imp_ind_act <- colSums(imp_ind_act[, c(2,3,4,5,6,7)])
+totals_imp_ind_act <- data.frame(Categoria = names(totals_imp_ind_act), Frecuencia = unname(totals_imp_ind_act))
+totals_imp_ind_act <- totals_imp_ind_act %>%
+  dplyr::mutate(Porcentaje = round((Frecuencia / sum(Frecuencia) * 100), 1))
+totals_imp_ind_act$Categoria <- gsub("_", " ", totals_imp_ind_act$Categoria)
+kable(totals_imp_ind_act, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+```
+
+```{r medida del impacto de ciertas acciones en cambio climático, include=FALSE}
+c39 <- grep("^C39_", names(data1), value=T)
+data1$imp_cli <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_cli[i] <- sum(data1[i, c39]) - 9
+}
+```
+
+
+## Creación de una medida del impacto positivo de ciertas acciones en el cambio climático
+A partir de los valores elegidos para cada una de las acciones se creó una medida al sumar todos los valores. El puntaje mínimo es 10 si el impacto de todas las acciones es muy negativo y el puntaje máximo 60 si el impacto es muy positivo para todas. Al total obtenido se le resta un valor de 9 para que el rango vaya desde 1 hasta 51.
+```{r variable medida impacto acciones cambio climático, echo=F}
+kable(round(table(data1$imp_cli) / length(data1$imp_cli) * 100, digits = 1), col.names = c("Impacto positivo en cambio climático", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_imp_cli <- data1 %>%
+  ggplot(aes(x = imp_cli, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#2CA02C", binwidth = 1) +
+  labs(x = "Impacto positivo", y = "Porcentaje (%)") +
+  ggtitle("Distribución puntaje impacto positivo \n de acciones en cambio climático") +
+  papaja::theme_apa() +
+  scale_x_continuous(breaks = seq(1, 51, 5))
+plot_imp_cli
+```
+
+# Origen del cambio climático
+La pregunta número 40 fue: Indíqueme su apreciación en cuanto al origen del cambio climático actual, en una escala de 1 a 10, donde 1 es 100% debido a causas naturales y 10 es 100% debido a actividades humanas.
+```{r variable origen cambio climático, echo=F}
+data1$clim_ori <- data1$C40
+data1$clim_ori <- as.factor(data1$clim_ori)
+table_clim_ori <- as.data.frame(table(data1$clim_ori)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_clim_ori, col.names = c("Origen cambio climático", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_clim_ori <- data1 %>%
+  count(clim_ori) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = clim_ori, y = prop)) +
+  geom_col(fill = "#EE0A64") +
+  labs(x = "Responsabilidad humana en el cambio climático", y = "Porcentaje (%)") +
+  ggtitle("Distribución de la opinión sobre \n Origen del cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none")
+plot_clim_ori
+```
+
+```{r recodificación origen cambio climático, include=FALSE}
+data1 <- data1 %>%
+  mutate(clim_ori = case_when(
+    C40 >= 1 & C40 <= 5 ~ "Causas naturales",
+    C40 >= 6 & C40 <= 10 ~ "Causas humanas"
+    ))
+```
+
+
+## Variable "Origen del cambio climático" Recodificada
+La variable "Origen del cambio climático" fue recodificada en dos niveles que distinguen si la persona cree que en mayor grado el cambio climático tiene causas naturales o si considera que en mayor grado es causado por actividades humanas.
+```{r variable origen del cambio climático recodificada, echo=F}
+data1$clim_ori <- as.factor(data1$clim_ori)
+table_clim_ori <- as.data.frame(table(data1$clim_ori)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_clim_ori, col.names = c("Origen cambio climático", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_clim_ori <- data1 %>%
+  count(clim_ori) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = clim_ori, y = prop, fill = clim_ori)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Origen cambio climático", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Origen cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none")
+plot_clim_ori
+```
+
+# Mayor contribución al cambio climático
+La pregunta número 41 fue: En su opinión, ¿cuál de los siguientes factores a nivel global tiene la mayor contribución al cambio climático actualmente? El participante debía elegir una única opción dentro de los 4 factores incluidos.
+```{r variable contribución factores al cambio climático, echo=F}
+data1$C41 <- as.factor(data1$C41)
+data1$cont_clim <- data1$C41
+levels(data1$cont_clim) <- c("Agricultura y ganadería", "Quema de combustibles fósiles", "Deforestación", "Volcanes y/o actividad solar")
+table_cont_clim <- as.data.frame(table(data1$cont_clim)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_cont_clim, col.names = c("Factor", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_cont_clim <- data1 %>%
+  count(cont_clim) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = cont_clim, y = prop, fill = cont_clim)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Factor", y = "Porcentaje (%)") +
+  ggtitle("Distribución de opinión sobre \n contribución al cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none")
+plot_cont_clim
+```
+
+```{r recodificación contribución factores al cambio climático, include=FALSE}
+data1 <- data1 %>%
+  mutate(cont_clim = case_when(
+    C41 %in% c(1, 3, 4) ~ "Incorrecta",
+    C41 == 2 ~ "Correcta"
+))
+```
+
+
+## Variable "Mayor contribución al cambio climático" Recodificada
+La variable "Mayor contribución al cambio climático" fue recodificada en dos distintos niveles que distinguen si la persona respondió correctamente que la quema de combustibles fósiles es el factor que más contribuye al cambio climático.
+```{r variable contribución factores recodificada, echo=F}
+data1$cont_clim <- as.factor(data1$cont_clim)
+table_cont_clim <- as.data.frame(table(data1$cont_clim)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_cont_clim, col.names = c("Respuesta", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_cont_clim <- data1 %>%
+  count(cont_clim) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = cont_clim, y = prop, fill = cont_clim)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Respuesta", y = "Porcentaje (%)") +
+  ggtitle("Distribución respuesta a factor \n que más contribuye al cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none")
+plot_cont_clim
+```

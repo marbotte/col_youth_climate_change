@@ -1,0 +1,663 @@
+---
+title: "Survey young Colombians and climate change"
+author: "Juan Sebastian Cely"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+stopifnot(require(openxlsx), require(kableExtra), require(knitr), require(dm), require(rsvg), require(DiagrammeRsvg), require(tidyverse), require(rms), require(gtsummary), require(flextable), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex))
+knitr::opts_chunk$set(cache=F,fig.path="./figures",echo=T,tidy=T,tidy.opts=list(width.cutoff=70),cache.rebuild = F, formatSQL = TRUE)
+options(knitr.kable.NA = '--', knitr.table.format = "simple")
+```
+
+```{r data, include=FALSE}
+wb<-loadWorkbook("020-22 Base de Datos Anonimizada V4 (1).xlsx")
+names(wb)
+data1 <- readWorkbook(wb,sheet=1)
+codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
+```
+# Recodificación de variables
+
+```{r}
+# Emotions about climate change
+# Grouping emotions of young Colombians about climate change
+# We grouped the emotions reported by young Colombians about climate change. The 16 possible emotions were grouped in three different categories depending if they were mostly positive or negative. If one or two of the emotions chosen were negative, the answer was coded as "Negative". Conversely, if one or two emotions chosen were positive, the answer was coded as "Positive". Finally, if one of the chosen emotions was negative and the other positive, the answer was coded as "Neutral".
+neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
+pos_emo <- c("C36_2", "C36_12", "C36_13", "C36_14", "C36_16")
+data1$emo_category <- NA
+for (i in 1:nrow(data1)) {
+neg_emo_count <- sum(data1[i, neg_emo] == 1)
+pos_emo_count <- sum(data1[i, pos_emo] == 1)
+if (neg_emo_count %in% c(1, 2) & pos_emo_count == 0) {
+data1$emo_category[i] <- "negative"
+} else if (neg_emo_count == 1 & pos_emo_count == 1) {
+data1$emo_category[i] <- "positive"
+} else if (pos_emo_count %in% c(1, 2) & neg_emo_count == 0) {
+data1$emo_category[i] <- "positive"
+}
+}
+data1 <- data1 %>%
+  mutate(emo_cat = case_when(
+    emo_category == "positive" ~ 0,
+    emo_category == "negative" ~ 1
+))
+
+# Stratum
+ data1 <- data1 %>%
+  mutate(stratum = NSE)
+# Zone
+data1 <- data1 %>%
+  mutate(zone = case_when(
+    Zona == "Urbana ciudades" ~ "Urbano",
+    Zona == "Municipios rurales dispersos" ~ "Rural"
+))
+# Ethnic
+data1 <- data1 %>%
+  mutate(ethnic = case_when(
+    A5 <= 5 ~ "Yes",
+    A5 > 5 ~ "No"
+))
+# Education
+data1 <- data1 %>%
+  mutate(high_edu = case_when(
+    A6 == 1 ~ "No",
+    A6 == 2 ~ "No",
+    A6 == 3 ~ "No",
+    A6 == 4 ~ "No",
+    A6 == 5 ~ "Yes",
+    A6 == 6 ~ "Yes"
+))
+# Age
+data1 <- data1 %>%
+  mutate(age_range = RANGO_EDAD)
+# Political ideology
+data1 <- data1 %>%
+  mutate(pol_ide = case_when(
+    A11 == 1 ~ 0,
+    A11 == 2 ~ 0,
+    A11 == 3 ~ 0,
+    A11 == 4 ~ 1,
+    A11 == 5 ~ 1,
+    A11 == 6 ~ 1
+  ))
+# News
+traditional <- c("B12_1", "B12_2", "B12_3")
+other <- c("B12_4", "B12_5", "B12_89")
+data1$news <- NA
+for (i in 1:nrow(data1)) {
+traditional_count <- sum(data1[i, traditional] == 1)
+other_count <- sum(data1[i, other] == 1)
+if (traditional_count >= 1 & other_count == 0) {
+data1$news[i] <- 0
+} else if (traditional_count >= 1 & other_count >= 1) {
+data1$news[i] <- 1
+} else if (traditional_count == 0 & other_count >= 1) {
+data1$news[i] <- 2
+}
+}
+
+# Creating and index for the impact of individual actions on climate change
+# The question number 39 asked participant about the impact of ten individual actions on climate change. For each action they could choose a value between 1 and 6. Here a new index is created by adding the corresponding values selected for each of the individual actions. Thus, a participant could obtain a minimum score of 10 and a maximum score of 60.
+c39 <- grep("^C39_", names(data1), value=T)
+data1$imp_ind_act <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_ind_act[i] <- sum(data1[i, c39]) - 9
+}
+
+# Distrust in Institutions
+c17 <- grep("^C17_", names(data1), value=T)
+c17 <- c17[!grepl("C17_6", c17)]
+data1$trust_inst <- NA
+for (i in 1:nrow(data1)) {
+  data1$trust_inst[i] <- sum(data1[i, c17]) - 20
+}
+# Emotions regarding government actions against climate change
+neg_d34 <- c("D34_2", "D34_3", "D34_4", "D34_6", "D34_8", "D34_9")
+pos_d34 <- c("D34_1", "D34_5", "D34_7", "D34_10")
+data1$neg_emo_gov <- NA
+for (i in 1:nrow(data1)) {
+  data1$neg_emo_gov[i] <- sum(data1[i, neg_d34]) - sum(data1[i, pos_d34]) + 19
+}
+# Impact of politicians on climate change
+d35 <- grep("^D35_", names(data1), value=T)
+for (column in d35) {
+data1[, column] <- ifelse(data1[, column] == 99, 0, data1[, column])
+}
+d35_pol <- c("D35_4", "D35_5", "D35_6")
+data1$imp_pol <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_pol[i] <- sum(data1[i, d35_pol])
+}
+
+# Thoughts about climate change
+positive <- c("C37_3", "C37_9", "C37_10", "C37_11", "C37_12", "C37_13", "C37_15")
+negative <- c("C37_1", "C37_2", "C37_4", "C37_5", "C37_6", "C37_7", "C37_8", "C37_14")
+data1$th <- NA
+for (i in 1:nrow(data1)) {
+pos_th_count <- sum(data1[i, positive] == 1)
+neg_th_count <- sum(data1[i, negative] == 1)
+if (pos_th_count %in% c(1, 2, 3) & neg_th_count == 0) {
+data1$th[i] <- "positivo"
+} else if (pos_th_count == 2 & neg_th_count == 1) {
+data1$th[i] <- "positivo"
+} else if (pos_th_count == 1 & neg_th_count == 1) {
+data1$th[i] <- "neutro"
+} else if (pos_th_count == 1 & neg_th_count == 2) {
+data1$th[i] <- "negativo"
+} else if (neg_th_count %in% c(1, 2, 3) & pos_th_count == 0) {
+data1$th[i] <- "negativo"
+}
+}
+
+# Climate change origin
+data1 <- data1 %>%
+  mutate(clim_ori = case_when(
+    C40 >= 1 & C40 <= 5 ~ 0,
+    C40 >= 6 & C40 <= 10 ~ 1
+  ))
+# Contribution to climate change
+data1 <- data1 %>%
+  mutate(cont_clim = case_when(
+    C41 == 4 ~ 1,
+    C41 == 3 ~ 2,
+    C41 == 1 ~ 3,
+    C41 == 2 ~ 4
+  ))
+# Join an environmental organization
+data1 <- data1 %>%
+  mutate(C18_7_t = case_when(
+    C18_7 == 2 ~ 0,
+    C18_7 == 1 ~ 1,
+  ))
+# Transform into factors the categorical variables
+columns_to_change <- c("emo_cat", "stratum", "zone", "ethnic", "high_edu", "pol_ide", "age_range", "A1", "A9", "A10", "clim_ori", "cont_clim", "news", "C18_7_t")
+data1 <- data1 %>%
+  mutate(across(all_of(columns_to_change), as.factor))
+```
+
+
+# What is linked to the negative emotions regarding the problem of climate change?
+
+Las variables sociodemográficas excluidas fueron: La actividad principal de la persona, la composición del hogar y el parentesco con jefe de hogar.
+```{r, include=FALSE}
+for (independent_variable in c("stratum", "zone", "ethnic", "high_edu", "pol_ide", "age_range", "A2", "A1", "A9", "A10", "imp_ind_act", "clim_ori", "cont_clim", "news", "trust_inst", "neg_emo_gov",
+"imp_pol", "C18_7_t")) {
+  formula <- as.formula(paste("emo_cat ~", independent_variable))
+  model <- glm(formula, data = data1, family = binomial)
+  print(anova(model))
+  coef_estimates <- coef(model)
+  odds_ratio <- exp(coef_estimates)
+  print(odds_ratio)
+  print(summary(model))
+}
+# Stratum, Political ideology, Impact of individual actions, Climate change origin, Contribution to climate change, News source, Trust in Institutions, Negative emotions towards government action about climate change, and Willingness to join an environmental association showed significant results.
+```
+## Stratum and negative emotions
+
+```{r}
+xtabs(~ emo_cat + stratum, data = data1)
+mosaicplot(data1$emo_cat ~ data1$stratum)
+chisq.test(data1$emo_cat, data1$stratum, correct=FALSE)
+model_emo_str <- glm(emo_cat ~ stratum, data = data1, family = binomial)
+  summary(model_emo_str)
+  tbl_logreg <- tbl_regression(model_emo_str, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_str)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+xtabs(~ emo_cat + pol_ide, data = data1)
+mosaicplot(data1$pol_ide ~ data1$pol_ide)
+chisq.test(data1$pol_ide, data1$pol_ide, correct=FALSE)
+model_emo_ide <- glm(emo_cat ~ pol_ide, data = data1, family = binomial)
+  summary(model_emo_ide)
+  tbl_logreg <- tbl_regression(model_emo_ide, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_ide)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+## Beliefs about the impact of individual actions and negative emotions
+```{r}
+model_emo_imp <- glm(emo_cat ~ imp_ind_act, data = data1, family = binomial)
+  summary(model_emo_imp)
+  tbl_logreg <- tbl_regression(model_emo_imp, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_imp)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_imp$linear.predictors
+boxTidwell(logodds ~ imp_ind_act, data = data1)
+plot(logodds ~ imp_ind_act, data = data1)
+```
+
+```{r}
+xtabs(~ emo_cat + clim_ori, data = data1)
+mosaicplot(data1$emo_cat ~ data1$clim_ori)
+chisq.test(data1$emo_cat, data1$clim_ori, correct=FALSE)
+model_emo_clim <- glm(emo_cat ~ clim_ori, data = data1, family = binomial)
+  summary(model_emo_clim)
+  tbl_logreg <- tbl_regression(model_emo_clim, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_clim)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+
+```{r}
+xtabs(~ emo_cat + cont_clim, data = data1)
+mosaicplot(data1$emo_cat ~ data1$cont_clim)
+chisq.test(data1$emo_cat, data1$cont_clim, correct=FALSE)
+model_emo_cont <- glm(emo_cat ~ cont_clim, data = data1, family = binomial)
+  summary(model_emo_cont)
+  tbl_logreg <- tbl_regression(model_emo_cont, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_cont)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+xtabs(~ emo_cat + news, data = data1)
+mosaicplot(data1$emo_cat ~ data1$news)
+chisq.test(data1$emo_cat, data1$news, correct=FALSE)
+model_emo_news <- glm(emo_cat ~ news, data = data1, family = binomial)
+  summary(model_emo_news)
+  tbl_logreg <- tbl_regression(model_emo_news, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_news)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+model_emo_trust <- glm(emo_cat ~ trust_inst, data = data1, family = binomial(link = "logit"))
+  summary(model_emo_trust)
+  tbl_logreg <- tbl_regression(model_emo_trust, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_trust)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_trust$linear.predictors
+boxTidwell(logodds ~ trust_inst, data = data1)
+plot(logodds ~ trust_inst, data = data1)
+```
+
+```{r}
+model_emo_gov <- glm(emo_cat ~ neg_emo_gov, data = data1, family = binomial(link = "logit"))
+  summary(model_emo_gov)
+  tbl_logreg <- tbl_regression(model_emo_gov, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_emo_gov)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_gov$linear.predictors
+boxTidwell(logodds ~ neg_emo_gov, data = data1)
+plot(logodds ~ neg_emo_gov, data = data1)
+```
+
+```{r}
+xtabs(~ emo_cat + C18_7_t, data = data1)
+mosaicplot(data1$emo_cat ~ data1$C18_7_t)
+chisq.test(data1$emo_cat, data1$C18_7_t, correct=FALSE)
+model_C18_7 <- glm(emo_cat ~ C18_7_t, data = data1, family = binomial)
+  summary(model_C18_7)
+  tbl_logreg <- tbl_regression(model_C18_7, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data1$emo_cat
+predicted_response <- factor(round(fitted(model_C18_7)), levels = c(0, 1))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r, include=FALSE}
+set.seed(123)
+No <- which(data1$emo_cat == 0)
+Yes <- which(data1$emo_cat == 1)
+length(No)
+length(Yes)
+
+Yes.downsample <- sample(Yes, length(No))
+data2 <- data1[c(Yes.downsample, No),]
+table(data1$emo_cat)
+table(data2$emo_cat)
+```
+
+```{r, include=FALSE}
+for (independent_variable in c("stratum", "zone", "ethnic", "high_edu", "pol_ide", "age_range", "A2", "A1", "A9", "A10", "imp_ind_act", "clim_ori", "cont_clim", "news", "trust_inst", "neg_emo_gov",
+"imp_pol", "C18_7_t")) {
+  formula <- as.formula(paste("emo_cat ~", independent_variable))
+  model <- glm(formula, data = data2, family = binomial)
+  print(anova(model))
+  coef_estimates <- coef(model)
+  odds_ratio <- exp(coef_estimates)
+  print(odds_ratio)
+  print(summary(model))
+}
+# Political ideology, Impact of individual actions, Climate change origin, Contribution to climate change, News source, Trust in Institutions, Negative emotions towards government action about climate change, and Willingness to join an environmental association showed significant results.
+```
+
+```{r}
+xtabs(~ emo_cat + stratum, data = data2)
+mosaicplot(data2$emo_cat ~ data2$stratum)
+chisq.test(data2$emo_cat, data2$stratum, correct=FALSE)
+model_emo_str <- glm(emo_cat ~ stratum, data = data2, family = binomial)
+  summary(model_emo_str)
+  tbl_logreg <- tbl_regression(model_emo_str, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_str))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+
+```{r}
+model_emo_imp <- glm(emo_cat ~ imp_ind_act, data = data2, family = binomial)
+  summary(model_emo_imp)
+  tbl_logreg <- tbl_regression(model_emo_imp, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_imp))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_imp$linear.predictors
+boxTidwell(logodds ~ imp_ind_act, data = data2)
+plot(logodds ~ imp_ind_act, data = data2)
+```
+
+
+```{r}
+xtabs(~ emo_cat + clim_ori, data = data2)
+mosaicplot(data2$emo_cat ~ data2$clim_ori)
+chisq.test(data2$emo_cat, data2$clim_ori, correct=FALSE)
+model_emo_clim <- glm(emo_cat ~ clim_ori, data = data2, family = binomial)
+  summary(model_emo_clim)
+  tbl_logreg <- tbl_regression(model_emo_clim, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_clim))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+xtabs(~ emo_cat + cont_clim, data = data2)
+mosaicplot(data2$emo_cat ~ data2$cont_clim)
+chisq.test(data2$emo_cat, data2$cont_clim, correct=FALSE)
+model_emo_cont <- glm(emo_cat ~ cont_clim, data = data2, family = binomial)
+  summary(model_emo_cont)
+  tbl_logreg <- tbl_regression(model_emo_cont, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_cont))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+xtabs(~ emo_cat + news, data = data2)
+mosaicplot(data2$emo_cat ~ data2$news)
+chisq.test(data2$emo_cat, data2$news, correct=FALSE)
+model_emo_news <- glm(emo_cat ~ news, data = data2, family = binomial)
+  summary(model_emo_news)
+  tbl_logreg <- tbl_regression(model_emo_news, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_news))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+model_emo_trust <- glm(emo_cat ~ trust_inst, data = data2, family = binomial(link = "logit"))
+  summary(model_emo_trust)
+  tbl_logreg <- tbl_regression(model_emo_trust, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_trust))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_trust$linear.predictors
+boxTidwell(logodds ~ trust_inst, data = data2)
+plot(logodds ~ trust_inst, data = data2)
+```
+
+```{r}
+model_emo_gov <- glm(emo_cat ~ neg_emo_gov, data = data2, family = binomial(link = "logit"))
+  summary(model_emo_gov)
+  tbl_logreg <- tbl_regression(model_emo_gov, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_emo_gov))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_gov$linear.predictors
+boxTidwell(logodds ~ neg_emo_gov, data = data2)
+plot(logodds ~ neg_emo_gov, data = data2)
+```
+
+```{r}
+xtabs(~ emo_cat + C18_7_t, data = data2)
+mosaicplot(data2$emo_cat ~ data2$C18_7_t)
+chisq.test(data2$emo_cat, data2$C18_7_t, correct=FALSE)
+model_C18_7 <- glm(emo_cat ~ C18_7_t, data = data2, family = binomial)
+  summary(model_C18_7)
+  tbl_logreg <- tbl_regression(model_C18_7, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data2$emo_cat
+predicted_response <- round(fitted(model_C18_7))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+
+```{r}
+set.seed(12)
+No.upsampling <- sample(No, length(Yes), replace = TRUE)
+data3 <- data1[c(No.upsampling, Yes),]
+table(data1$emo_cat)
+table(data2$emo_cat)
+table(data3$emo_cat)
+```
+
+```{r, include=FALSE}
+for (independent_variable in c("stratum", "zone", "ethnic", "high_edu", "pol_ide", "age_range", "A2", "A1", "A9", "A10", "imp_ind_act", "clim_ori", "cont_clim", "news", "trust_inst", "neg_emo_gov",
+"imp_pol", "C18_7_t")) {
+  formula <- as.formula(paste("emo_cat ~", independent_variable))
+  model <- glm(formula, data = data3, family = binomial)
+  print(anova(model))
+  coef_estimates <- coef(model)
+  odds_ratio <- exp(coef_estimates)
+  print(odds_ratio)
+  print(summary(model))
+}
+# Stratum, Political ideology, Impact of individual actions, Climate change origin, Contribution to climate change, News source, Trust in Institutions, Negative emotions towards government action about climate change, and Willingness to join an environmental association showed significant results.
+```
+
+
+```{r}
+xtabs(~ emo_cat + stratum, data = data3)
+mosaicplot(data3$emo_cat ~ data3$stratum)
+chisq.test(data3$emo_cat, data3$stratum, correct=FALSE)
+model_emo_str <- glm(emo_cat ~ stratum, data = data3, family = binomial)
+  summary(model_emo_str)
+  tbl_logreg <- tbl_regression(model_emo_str, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_str))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+```{r}
+model_emo_imp <- glm(emo_cat ~ imp_ind_act, data = data3, family = binomial)
+  summary(model_emo_imp)
+  tbl_logreg <- tbl_regression(model_emo_imp, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_imp))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_imp$linear.predictors
+boxTidwell(logodds ~ imp_ind_act, data = data3)
+plot(logodds ~ imp_ind_act, data = data3)
+```
+
+```{r}
+xtabs(~ emo_cat + clim_ori, data = data3)
+mosaicplot(data3$emo_cat ~ data3$clim_ori)
+chisq.test(data3$emo_cat, data3$clim_ori, correct=FALSE)
+model_emo_clim <- glm(emo_cat ~ clim_ori, data = data3, family = binomial)
+  summary(model_emo_clim)
+  tbl_logreg <- tbl_regression(model_emo_clim, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_clim))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+xtabs(~ emo_cat + cont_clim, data = data3)
+mosaicplot(data3$emo_cat ~ data3$cont_clim)
+chisq.test(data3$emo_cat, data3$cont_clim, correct=FALSE)
+model_emo_cont <- glm(emo_cat ~ cont_clim, data = data3, family = binomial)
+  summary(model_emo_cont)
+  tbl_logreg <- tbl_regression(model_emo_cont, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_cont))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+
+```{r}
+xtabs(~ emo_cat + news, data = data3)
+mosaicplot(data3$emo_cat ~ data3$news)
+chisq.test(data3$emo_cat, data3$news, correct=FALSE)
+model_emo_news <- glm(emo_cat ~ news, data = data3, family = binomial)
+  summary(model_emo_news)
+  tbl_logreg <- tbl_regression(model_emo_news, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_news))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+```{r}
+model_emo_trust <- glm(emo_cat ~ trust_inst, data = data3, family = binomial(link = "logit"))
+  summary(model_emo_trust)
+  tbl_logreg <- tbl_regression(model_emo_trust, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_trust))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_trust$linear.predictors
+boxTidwell(logodds ~ trust_inst, data = data3)
+plot(logodds ~ trust_inst, data = data3)
+```
+
+```{r}
+model_emo_gov <- glm(emo_cat ~ neg_emo_gov, data = data3, family = binomial(link = "logit"))
+  summary(model_emo_gov)
+  tbl_logreg <- tbl_regression(model_emo_gov, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_emo_gov))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+logodds <- model_emo_gov$linear.predictors
+boxTidwell(logodds ~ neg_emo_gov, data = data3)
+plot(logodds ~ neg_emo_gov, data = data3)
+```
+
+```{r}
+xtabs(~ emo_cat + C18_7_t, data = data3)
+mosaicplot(data3$emo_cat ~ data3$C18_7_t)
+chisq.test(data3$emo_cat, data3$C18_7_t, correct=FALSE)
+model_C18_7 <- glm(emo_cat ~ C18_7_t, data = data3, family = binomial)
+  summary(model_C18_7)
+  tbl_logreg <- tbl_regression(model_C18_7, exponentiate = TRUE)
+tbl_logreg
+actual_response <- data3$emo_cat
+predicted_response <- round(fitted(model_C18_7))
+outcomes <- table(predicted_response, actual_response)
+outcomes
+confusion <- conf_mat(outcomes)
+summary(confusion)
+```
+# What is linked to knowledge about climate change?
+
+```{r}
+for (independent_variable in c("stratum", "zone", "ethnic", "high_edu", "pol_ide", "age_range", "A1", "imp_ind_act", "C41", "news", "trust_inst", "C17_20", "C17_21", "C17_22", "neg_emo_gov",
+"imp_pol", "C18_7")) {
+  formula <- as.formula(paste("C40 ~", independent_variable))
+  model1 <- lm(formula, data = data1)
+  print(anova(model1))
+  coef_estimates1 <- coef(model1)
+  odds_ratio1 <- exp(coef_estimates1)
+  print(odds_ratio1)
+}
+```
