@@ -6,9 +6,9 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-stopifnot(require(openxlsx), require(kableExtra), require(knitr), require(dm), require(rsvg), require(DiagrammeRsvg), require(tidyverse), require(rms), require(gtsummary), require(flextable), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex))
-knitr::opts_chunk$set(cache=F,fig.path="./figures",echo=T,tidy=T,tidy.opts=list(width.cutoff=70),cache.rebuild = F, formatSQL = TRUE)
-options(knitr.kable.NA = '--', knitr.table.format = "simple")
+stopifnot(require(openxlsx), require(kableExtra), require(dm), require(dplyr), require (ggplot2), require(rms), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify))
+knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
+options(knitr.table.format = "simple")
 ```
 
 ```{r data, include=FALSE}
