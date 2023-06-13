@@ -20,7 +20,7 @@ codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
 
 # Emociones hacia el cambio climático
 La pregunta número 36 fue: ¿Cuáles son las DOS emociones que reflejan su forma de sentir cuando piensa en el cambio climático? Cada participante podía elegir un máximo de 2 emociones de un conjunto de 16 emociones.
-```{r variable emociones hacia cambio climático, echo=F}
+```{r variable emociones hacia cambio climático, fig.align='center', echo=F}
 emo_clim <- grep("^C36_", names(data1), value=T)
 sums_emo_clim <- colSums(data1[, emo_clim])
 names(sums_emo_clim) <- c("Triste", "Motivado", "Temeroso", "Furioso", "Ansioso", "Frustrado", "Culpable", "Avergonzado", "Desesperado", "Herido", "Deprimido", "Optimista", "Indiferente", "Confiado", "Desesperanzado", "Tranquilo")
@@ -74,7 +74,7 @@ data1$eco_anx[i] <- "Sin eco-ansiedad"
 }
 ```
 
-```{r variable emo recodificada, echo=F}
+```{r variable emo recodificada, fig.align='center', echo=F}
 data1$eco_anx <- factor(data1$eco_anx, levels = c("Con eco-ansiedad", "Ambivalente/Neutral", "Sin eco-ansiedad"))
 table_eco_anx <- as.data.frame(table(data1$eco_anx)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -122,7 +122,7 @@ data1$eco_anx[i] <- "Absent"
 }
 ```
 
-```{r variable emo recodificada 2, echo=F}
+```{r variable emo recodificada 2, fig.align='center', echo=F}
 data1$eco_anx <- factor(data1$eco_anx, levels = c("Paralyzing", "Practical", "Absent"))
 table_eco_anx<- as.data.frame(table(data1$eco_anx)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -180,7 +180,7 @@ data1$eco_anx[i] <- "Absent"
 }
 ```
 
-```{r variable emo recodificada 3, echo=F}
+```{r variable emo recodificada 3, fig.align='center', echo=F}
 data1$emo_eco_anx <- factor(data1$eco_anx, levels = c("Strong Paralyzing", "Paralyzing", "Practical", "Absent"))
 table_eco_anx <- as.data.frame(table(data1$eco_anx)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -202,7 +202,7 @@ plot_eco_anx
 
 # Zona de residencia
 Al inicio de la encuesta se clasificó a los participantes en dos distintas categorías según su lugar de residencia. Estas fueron categorías son: "Urbana ciudades" y "Municipios rurales dispersos".
-```{r variable zone, echo=F}
+```{r variable zone, fig.align='center', echo=F}
 data1$Zona <- as.factor(data1$Zona)
 table_zona <- as.data.frame(table(data1$Zona)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -224,7 +224,7 @@ plot_zona
 
 # Sexo
 La pregunta número 1 pedía a cada participante indicar su sexo.
-```{r variable sexo, echo=F}
+```{r variable sexo, fig.align='center', echo=F}
 data1$A1 <- as.factor(data1$A1)
 levels(data1$A1) <- c("Hombre", "Mujer")
 table_sexo <- as.data.frame(table(data1$A1)) %>%
@@ -247,7 +247,7 @@ plot_sexo
 
 # Edad
 La pregunta número 2 fue: ¿Cuántos años tiene? Todos los participantes debían tener 18 años o más y no más de 32 años.
-```{r variable edad, echo=F}
+```{r variable edad, fig.align='center', echo=F}
 kable(round(table(data1$A2) / length(data1$A2) * 100, digits = 1), col.names = c("Edad", "Porcentaje (%)"), booktabs = TRUE)
 
 plot_edad <- data1 %>%
@@ -274,7 +274,7 @@ data1 <- data1 %>%
 
 ## Variable "Edad" Recodificada
 El rango de edad permitido para los participantes fue separado en 4 distintos grupos: "De 18 a 20 años", "De 21 a 24 años", "De 25 a 29 años", y "De 30 a 32 años".
-```{r variable edad recodificada, echo=F}
+```{r variable edad recodificada, fig.align='center', echo=F}
 data1$age_r <- as.factor(data1$age_r)
 table_age_r <- as.data.frame(table(data1$age_r)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -297,7 +297,7 @@ plot_age_r
 
 # Estrato
 La pregunta número 3 fue: En el recibo de la luz de su domicilio, ¿qué estrato sale reportado? Todos los participantes debían indicar su estrato de acuerdo a la clasificación del Departamento de Planeación Nacional que va desde 1 hasta 6.
-```{r variable estrato, echo=F}
+```{r variable estrato, fig.align='center', echo=F}
 data1$A3 <- as.factor(data1$A3)
 table_stra <- as.data.frame(table(data1$A3)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -330,7 +330,7 @@ data1 <- data1 %>%
 
 ## Variable "Estrato" Recodificada
 La variable "Estrato" fue recodificada en tres distintos grupos: Estrato "Bajo", que incluye los estratos 1 y 2; Estrato "Medio", que incluye los estratos 3 y 4, y Estrato "Alto", que incluye los estratos 5 y 6.
-```{r variable estrato recodificada, echo=F}
+```{r variable estrato recodificada, fig.align='center', echo=F}
 data1$strat <- factor(data1$strat, levels = c("Bajo", "Medio", "Alto"))
 table_strat <- as.data.frame(table(data1$strat)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -352,7 +352,7 @@ plot_strat
 
 # Etnia
 La pregunta número 5 fue:De acuerdo con su cultura, etnia o rasgos físicos, ¿usted se reconoce como:...? El participante debía elegir una opción de las 6 incluidas.
-```{r variable etnia, echo=F}
+```{r variable etnia, fig.align='center', echo=F}
 data1$A5 <- as.factor(data1$A5)
 levels(data1$A5) <- c("Indígena", "Gitana(o) Rrom", "Raizal", "Palenquera(o)", "Afro", "Ninguna")
 table_et <- as.data.frame(table(data1$A5)) %>%
@@ -385,7 +385,7 @@ data1 <- data1 %>%
 
 ## Variable "Etnia" Recodificada
 La variable "Etnia" fue recodificada en dos distintos niveles que distinguen si la persona se reconoce como perteneciente a alguna de las etnias incluidas o no.
-```{r variable etnia recodificada, echo=F}
+```{r variable etnia recodificada, fig.align='center', echo=F}
 data1$ethni <- as.factor(data1$ethni)
 table_ethni<- as.data.frame(table(data1$ethni)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -407,7 +407,7 @@ plot_ethni
 
 # Nivel educativo
 La pregunta número 6 fue: ¿Cuál es el nivel educativo más alto alcanzado por usted?
-```{r variable nivel educativo, echo=F}
+```{r variable nivel educativo, fig.align='center', echo=F}
 data1$A6 <- as.factor(data1$A6)
 levels(data1$A6) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
 table_edu <- as.data.frame(table(data1$A6)) %>%
@@ -443,7 +443,7 @@ data1 <- data1 %>%
 
 ## Variable "Nivel educativo" Recodificada
 La variable "Nivel educativo" fue recodificada en dos distintos niveles que distinguen si la persona completó o no estudios de educación superior.
-```{r variable nivel educativo recodificada, echo=F}
+```{r variable nivel educativo recodificada, fig.align='center', echo=F}
 data1$edu <- as.factor(data1$edu)
 table_edu <- as.data.frame(table(data1$edu)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -465,7 +465,7 @@ plot_edu
 
 # Hijos
 La pregunta número 9 fue: ¿Usted tiene hijos?
-```{r variable hijos, echo=F}
+```{r variable hijos, fig.align='center', echo=F}
 data1$A9 <- as.factor(data1$A9)
 levels(data1$A9) <- c("Sí", "No")
 table_hijos <- as.data.frame(table(data1$A9)) %>%
@@ -488,7 +488,7 @@ plot_hijos
 
 # Ideología política
 La pregunta número 11 fue: Ubique su posición ideológica, en una escala de 1 a 6 donde 1 es una posición de izquierda y 6 es una posición de derecha.
-```{r variable ideología política, echo=F}
+```{r variable ideología política, fig.align='center', echo=F}
 data1$A11 <- as.factor(data1$A11)
 data1$pol_ide <- data1$A11
 levels(data1$pol_ide) <- c("Izquierda Fuerte", "Izquierda", "Centro Izquierda", "Centro Derecha", "Derecha", "Derecha Fuerte")
@@ -563,7 +563,7 @@ plot_pol_ide
 
 # Medios de información
 La pregunta número 12 fue: ¿Cómo se informa usted de los temas del país? El participante podía elegir tantas opciones como quisiera.
-```{r variable medios, echo=F}
+```{r variable medios, fig.align='center', echo=F}
 media <- grep("^B12_", names(data1), value=T)
 media <- media[-which(media == "B12_Otro")]
 sums_media <- colSums(data1[, media])
@@ -651,7 +651,7 @@ for (variable in variables) {
 
 # Confianza hacia figuras e instituciones
 La pregunta número 17 fue: De las siguientes instituciones y figuras, ¿en cuáles confía? Los participantes debían responder para cada una de las 22 figuras e instituciones incluidas si confiaban en esta o no, o si no tenían conocimiento sobre esta.
-```{r confianza en figuras e instituciones, echo=F}
+```{r confianza en figuras e instituciones, fig.align='center', echo=F}
 trust_in <- data1 %>%
   dplyr::select(starts_with("C17_"), -c(C17_20, C17_21, C17_22)) %>%
   rename(Registraduría = C17_1, Consejo_Nacional_Electoral = C17_2, Jurados_de_Votación = C17_3, Partidos_políticos = C17_4, Presidencia_de_Colombia = C17_5, Gobernación_departamental = C17_6, Alcaldía_municipal = C17_7, Congreso_de_la_República = C17_8, Defensoría_del_Pueblo = C17_9, La_Iglesia_católica = C17_10, Líderes_religiosos_cristianos_No_católicos = C17_11, Las_Fuerzas_Militares = C17_12, Policía_Nacional_de_Colombia = C17_13, Universidades_Privadas = C17_14, Universidades_Públicas = C17_15, Fiscalía_General_de_la_Nación = C17_16, Sindicatos = C17_17, Procuraduría_General_de_la_Nación = C17_18, Contraloría_General_de_la_República = C17_19) %>%
@@ -742,7 +742,7 @@ plot_trust_unis
 
 # Asociarse a organizaciones ambientales
 La pregunta número 18 fue: ¿Usted qué está dispuesto a hacer para aportar/solucionar los problemas del país? Dentro de las opciones incluidas, la número 7 correspondía a la opción "Asociarme en organizaciones ambientales" la cual fue elegida de forma independiente por su relevancia para el proyecto.
-```{r variable asociarse a organizaciones ambientales, echo=F}
+```{r variable asociarse a organizaciones ambientales, fig.align='center', echo=F}
 data1$C18_7 <- as.factor(data1$C18_7)
 levels(data1$C18_7) <- c("Sí", "No")
 table_aso <- as.data.frame(table(data1$C18_7)) %>%
@@ -948,7 +948,7 @@ plot_imp_pol
 
 # Pensamientos sobre el cambio climático
 La pregunta número 37 fue: "De las siguientes opciones, el cambio climático me hace pensar que:". Los participantes podían elegir un máximo de 3 opciones dentro de los 15 pensamientos incluidos.
-```{r variable pensamientos hacia cambio climático, echo=F}
+```{r variable pensamientos hacia cambio climático, fig.align='center', echo=F}
 pen_clim <- grep("^C37_", names(data1), value=T)
 sums_pen_clim <- colSums(data1[, pen_clim])
 names(sums_pen_clim) <- c("Fracaso humanidad", "Futuro aterrador", "No me afecta", "Humanidad condenada", "Generación sin oportunidades", "Destruye lo que valoro", "Seguridad amenazada", "No tener hijos", "La Humanidad lo superará", "Proceso natural", "Avances nos salvarán", "Oportunidad para valorar", "Coordinación mundial salvación", "Castigo Dios", "Dios nos salvará")
@@ -1016,7 +1016,7 @@ data1$thoughts[i] <- "Ambivalentes/Neutrales"
 
 ## Variable "Pensamientos sobre cambio climático" Recodificada
 La variable "Pensamientos sobre cambio climático" fue recodificada en tres distintos niveles que distinguen si frente al cambio climático la persona tiene exclusivamente pensamientos negativos, si tiene pensamientos ambivalentes o neutrales, y si tiene pensamientos exclusivamente positivos.
-```{r variable pensamientos negativos cambio climático, echo=F}
+```{r variable pensamientos negativos cambio climático, fig.align='center', echo=F}
 data1$thoughts <- factor(data1$thoughts, levels = c("Negativos", "Ambivalentes/Neutrales", "Positivos"))
 table_thoughts <- as.data.frame(table(data1$thoughts)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -1073,7 +1073,7 @@ for (i in 1:nrow(data1)) {
 
 ## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
 Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se les restó un valor igual a la mediana de los valores que era posible elegir, lo que es igual a 3.5. Con esto la medida se convirtió en una escala que va desde -2.5 hasta 2.5.
-```{r variable medida impacto acciones comodidad, echo=F}
+```{r variable medida impacto acciones comodidad, fig.align='center', echo=F}
 plot_imp_como <- data1 %>%
   ggplot(aes(x = imp_como, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#8C564B", binwidth = 0.5) +
@@ -1121,7 +1121,7 @@ for (i in 1:nrow(data1)) {
 
 ## Creación de una medida del impacto de ciertas acciones en el cambio climático
 Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se les restó un valor igual a la mediana de los valores que era posible elegir, lo que es igual a 3.5. Con esto la medida se convirtió en una escala que va desde -2.5 hasta 2.5.
-```{r variable medida impacto acciones cambio climático, echo=F}
+```{r variable medida impacto acciones cambio climático, fig.align='center', echo=F}
 plot_imp_cli <- data1 %>%
   ggplot(aes(x = imp_cli, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#2CA02C", binwidth = 0.5) +
@@ -1134,7 +1134,7 @@ plot_imp_cli
 
 # Origen del cambio climático
 La pregunta número 40 fue: Indíqueme su apreciación en cuanto al origen del cambio climático actual, en una escala de 1 a 10, donde 1 es 100% debido a causas naturales y 10 es 100% debido a actividades humanas.
-```{r variable origen cambio climático, echo=F}
+```{r variable origen cambio climático, fig.align='center', echo=F}
 data1$clim_ori <- data1$C40
 data1$clim_ori <- as.factor(data1$clim_ori)
 table_clim_ori <- as.data.frame(table(data1$clim_ori)) %>%
@@ -1166,7 +1166,7 @@ data1 <- data1 %>%
 
 ## Variable "Origen del cambio climático" Recodificada
 La variable "Origen del cambio climático" fue recodificada en dos niveles que distinguen si la persona cree que en mayor grado el cambio climático tiene causas naturales o si considera que en mayor grado es causado por actividades humanas.
-```{r variable origen del cambio climático recodificada, echo=F}
+```{r variable origen del cambio climático recodificada, fig.align='center', echo=F}
 data1$clim_origin <- as.factor(data1$clim_origin)
 table_clim_origin <- as.data.frame(table(data1$clim_origin)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -1188,7 +1188,7 @@ plot_clim_origin
 
 # Mayor contribución al cambio climático
 La pregunta número 41 fue: En su opinión, ¿cuál de los siguientes factores a nivel global tiene la mayor contribución al cambio climático actualmente? El participante debía elegir una única opción dentro de los 4 factores incluidos.
-```{r variable contribución factores al cambio climático, echo=F}
+```{r variable contribución factores al cambio climático, fig.align='center', echo=F}
 data1$cont_clim <- data1$C41
 data1$cont_clim <- as.factor(data1$cont_clim)
 levels(data1$cont_clim) <- c("Agricultura y ganadería", "Quema de combustibles fósiles", "Deforestación", "Volcanes y/o actividad solar")
@@ -1222,7 +1222,7 @@ data1 <- data1 %>%
 
 ## Variable "Mayor contribución al cambio climático" Recodificada
 La variable "Mayor contribución al cambio climático" fue recodificada en dos distintos niveles que distinguen si la persona respondió correctamente que la quema de combustibles fósiles es el factor que más contribuye al cambio climático.
-```{r variable contribución factores recodificada, echo=F}
+```{r variable contribución factores recodificada, fig.align='center', echo=F}
 data1$cont_clim <- as.factor(data1$cont_clim)
 table_cont_clim <- as.data.frame(table(data1$cont_clim)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
