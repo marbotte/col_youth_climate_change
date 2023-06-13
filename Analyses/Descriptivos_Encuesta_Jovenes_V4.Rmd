@@ -8,7 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 stopifnot(require(openxlsx), require(kableExtra), require(dm), require(dplyr), require (ggplot2), require(rms), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify), require(tidyr))
 knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
-options(knitr.table.format = "latex")
+options(knitr.table.format = "simple")
 ```
 
 ```{r data, include=FALSE}
