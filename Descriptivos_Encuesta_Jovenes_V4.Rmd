@@ -3,14 +3,12 @@ title: 'Encuesta: Distribución y recodificación de variables'
 author: "Juan Sebastian Cely"
 date: "`r Sys.Date()`"
 output: pdf_document
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 stopifnot(require(openxlsx), require(kableExtra), require(dm), require(dplyr), require (ggplot2), require(rms), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify), require(tidyr))
 knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
-options(knitr.table.format = "simple")
+options(knitr.table.format = "latex")
 ```
 
 ```{r data, include=FALSE}
@@ -39,6 +37,7 @@ kable(table_sums, col.names = c("Nº emociones seleccionadas", "Frecuencia", "Po
 plot_emo <- sums_emo_clim %>%
   ggplot(aes(x = Emoción, y = Porcentaje)) +
   geom_col(fill = "#1F77B4") +
+  ylim(0, 38) +
   coord_flip() +
   labs(x = "Emoción", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Emociones hacia el Cambio Climático") +
@@ -86,6 +85,7 @@ plot_eco_anx <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = eco_anx, y = prop, fill = eco_anx)) +
   geom_bar(stat = "identity") +
+  ylim(0, 75) +
   labs(x = "Eco-ansiedad", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Eco-anxiety") +
   papaja::theme_apa() +
@@ -133,6 +133,7 @@ plot_eco_anx <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = eco_anx, y = prop, fill = eco_anx)) +
   geom_bar(stat = "identity") +
+  ylim(0, 75) +
   labs(x = "Eco-anxiety", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Eco-anxiety") +
   papaja::theme_apa() +
@@ -190,6 +191,7 @@ plot_eco_anx<- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = eco_anx, y = prop, fill = eco_anx)) +
   geom_bar(stat = "identity") +
+  ylim(0, 55) +
   labs(x = "Eco-anxiety", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Eco-anxiety") +
   papaja::theme_apa() +
@@ -211,6 +213,7 @@ plot_zona <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = Zona, y = prop, fill = Zona)) +
   geom_bar(stat = "identity") +
+  ylim(0, 95) +
   labs(x = "Zona de Residencia", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Zona de Residencia") +
   papaja::theme_apa() +
@@ -233,6 +236,7 @@ plot_sexo <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = A1, y = prop, fill = A1)) +
   geom_bar(stat = "identity") +
+  ylim(0, 55) +
   labs(x = "Sexo", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Sexo") +
   papaja::theme_apa() +
@@ -281,6 +285,7 @@ plot_age_r <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = age_r, y = prop, fill = age_r)) +
   geom_bar(stat = "identity") +
+  ylim(0, 32) +
   coord_flip() +
   labs(x = "Rango de edad", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Rango de Edad") +
@@ -303,6 +308,7 @@ plot_estrato <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = A3, y = prop, fill = A3)) +
   geom_bar(stat = "identity") +
+  ylim(0, 35) +
   labs(x = "Estrato", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Estrato") +
   papaja::theme_apa() +
@@ -335,6 +341,7 @@ plot_strat <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = strat, y = prop, fill = strat)) +
   geom_bar(stat = "identity") +
+  ylim(0, 55) +
   labs(x = "Estrato", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Estrato") +
   papaja::theme_apa() +
@@ -357,6 +364,7 @@ plot_et <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = A5, y = prop, fill = A5)) +
   geom_bar(stat = "identity") +
+  ylim(0, 100) +
   coord_flip() +
   labs(x = "Etnia", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Etnia") +
@@ -388,6 +396,7 @@ plot_ethni <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = ethni, y = prop, fill = ethni)) +
   geom_bar(stat = "identity") +
+  ylim(0, 95) +
   labs(x = "¿Pertenece a alguna etnia?", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Pertenecia a una etnia") +
   papaja::theme_apa() +
@@ -411,6 +420,7 @@ plot_edu <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = A6, y = prop, fill = A6)) +
   geom_bar(stat = "identity") +
+  ylim(0, 50) +
   coord_flip() +
   labs(x = "Educación", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Educación") +
@@ -444,6 +454,7 @@ plot_edu <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = edu, y = prop, fill = edu)) +
   geom_bar(stat = "identity") +
+  ylim(0, 85) +
   labs(x = "¿Educación superior?", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Educación Superior") +
   papaja::theme_apa() +
@@ -466,6 +477,7 @@ plot_hijos <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = A9, y = prop, fill = A9)) +
   geom_bar(stat = "identity") +
+  ylim(0, 65) +
   labs(x = "¿Tiene hijos?", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Hijos") +
   papaja::theme_apa() +
@@ -489,6 +501,7 @@ plot_pol_ide <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = pol_ide, y = prop, fill = pol_ide)) +
   geom_bar(stat = "identity") +
+  ylim(0, 40) +
   coord_flip() +
   labs(x = "Ideología Política", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Ideología Política") +
@@ -509,7 +522,7 @@ data1 <- data1 %>%
 
 ## Variable "Ideología política" Recodificada
 La variable "Ideología política" fue recodificada en tres distintos niveles que distinguen si la persona se considera de izquierda, de centro, o de derecha.
-```{r variable ideología política recodificada, echo=F}
+```{r variable ideología política recodificada, fig.align='center', echo=F}
 data1$ideology <- factor(data1$ideology, levels = c("Derecha", "Centro", "Izquierda"))
 table_pol_ide <- as.data.frame(table(data1$ideology)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -520,6 +533,7 @@ plot_pol_ide <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = ideology, y = prop, fill = ideology)) +
   geom_bar(stat = "identity") +
+  ylim(0, 60) +
   labs(x = "Ideología política", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Ideología política") +
   papaja::theme_apa() +
@@ -568,6 +582,7 @@ custom_palette <- brewer.pal(6, "BrBG")
 plot_media <- sums_media %>%
   ggplot(aes(x = Medio, y = Porcentaje, fill = Medio)) +
   geom_col() +
+  ylim(0, 80) +
   coord_flip() +
   labs(x = "Medio", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Medios de información") +
@@ -580,7 +595,7 @@ plot_media
 
 ## Medios de información por separado
 Se exploró cada uno de los medios de información por separado para determinar el porcentaje de los participantes de utilizaba cada uno de estos.
-```{r, loop medios de información, echo=FALSE}
+```{r, loop medios de información, fig.align='center', echo=FALSE}
 selected_columns <- data1 %>%
   select(starts_with("B12_"), -B12_Otro)
 
@@ -617,6 +632,7 @@ for (variable in variables) {
   plot <- table_data %>%
     ggplot(aes(x = !!sym(variable), y = prop, fill = !!sym(variable))) +
     geom_bar(stat = "identity") +
+    ylim(0, 100) +
     labs(x = paste0("¿Se informa con ", variable, "?"), y = "Porcentaje (%)") +
     ggtitle(paste0("Distribución uso de \n ", variable, " para informarse")) +
     papaja::theme_apa() +
@@ -628,7 +644,9 @@ for (variable in variables) {
 }
 
 # Access the results for each variable
-print(results)
+for (variable in variables) {
+  print(results[[variable]]$plot)
+}
 ```
 
 # Confianza hacia figuras e instituciones
@@ -664,7 +682,12 @@ trust_plot <- trust_in_props %>%
   coord_flip() +
   labs(x = "Institución o Figura", y = "Porcentaje (%)", fill = "¿Confía en la Institución?") +
   papaja::theme_apa() +
-  scale_fill_manual(values = custom_palette, labels = c("No", "No aplica", "No la conoce", "Sí"))
+  scale_fill_manual(values = custom_palette, labels = c("No", "No aplica", "No la conoce", "Sí")) +
+  theme(legend.key.size = unit(0.5, 'cm'), #change legend key size
+        legend.key.height = unit(0.5, 'cm'), #change legend key height
+        legend.key.width = unit(0.5, 'cm'), #change legend key width
+        legend.title = element_text(size=10), #change legend title font size
+        legend.text = element_text(size=8)) #change legend text font size
 trust_plot
 
 totals_trust_in <- colSums(trust_in[, c(2,3,4,5)])
@@ -675,7 +698,7 @@ totals_trust_in$Categoria <- gsub("_", " ", totals_trust_in$Categoria)
 kable(totals_trust_in, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
 ```
 
-```{r medida desconfianza en figuras e instituciones, eval=FALSE, include=FALSE}
+```{r medida confianza en figuras e instituciones, include=FALSE}
 trust_vote_inst <- data1 %>%
   select(C17_5, C17_7, C17_8)
 trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 2, -1))
@@ -691,23 +714,29 @@ data1$trust_unis <- rowSums(trust_unis)
 
 ## Confianza en figuras e instituciones agrupadas
 Algunas de las instituciones y figuras se reunieron en dos variables diferentes de acuerdo a cierta categoría que las encerraba. Así, la primera variable corresponde a la confianza frente a instituciones cuyos cargos son de eleccióm popular. La segunda variable corresponde a la confianza frente a universidades, ya sean públicas o privadas.
-```{r variable medida de confianza, eval=FALSE, echo=F}
+```{r variable medida de confianza, warning=FALSE, fig.align='center', echo=F}
 plot_trust_vote_inst <- data1 %>%
   ggplot(aes(x = trust_vote_inst, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#FF9896", binwidth = 1) +
+  ylim(0, 60) +
   labs(x = "Confianza", y = "Porcentaje (%)") +
   ggtitle("Distribución Puntaje Confianza en \n Instituciones con cargos de elección popular") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-3, 3, 1))
+  scale_x_continuous(breaks = seq(-3, 3, 1)) +
+  geom_text(stat = "count", aes(label = paste0(round((..count.. / sum(..count..)) * 100, 1), "%")),
+            vjust = -0.5, color = "black", size = 4)
 plot_trust_vote_inst
 
 plot_trust_unis <- data1 %>%
   ggplot(aes(x = trust_unis, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#FF9896", binwidth = 1) +
+  ylim(0, 60) +
   labs(x = "Confianza", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Puntaje Confianza en Universidades") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-2, 2, 1))
+  scale_x_continuous(breaks = seq(-2, 2, 1)) +
+  geom_text(stat = "count", aes(label = paste0(round((..count.. / sum(..count..)) * 100, 1), "%")),
+            vjust = -0.5, color = "black", size = 4)
 plot_trust_unis
 ```
 
@@ -725,6 +754,7 @@ plot_aso <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = C18_7, y = prop, fill = C18_7)) +
   geom_bar(stat = "identity") +
+  ylim(0, 65) +
   labs(x = "¿Se asociaría?", y = "Porcentaje (%)") +
   ggtitle("Distribución Asociarse a \n Organizaciones Ambientales") +
   papaja::theme_apa() +
@@ -770,9 +800,8 @@ for (i in 1:nrow(data1)) {
 
 ## Creación de una medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático
 La creación de la medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático corresponde a la suma de las emociones negativas menos la suma de las emociones positivas. Al valor total, tras realizar la resta, se le suma un valor de 19 para que el rango de la medida de negatividad vaya desde 1 hasta 51.
-```{r variable medida negatividad emocional gobierno, echo=F}
-kable(round(table(data1$neg_emo_gov) / length(data1$neg_emo_gov) * 100, digits = 1), col.names = c("Puntaje negatividad emocional", "Porcentaje (%)"), booktabs = TRUE)
 
+```{r variable medida negatividad emocional gobierno, fig.align='center', echo=F}
 plot_neg_emo_gov <- data1 %>%
   ggplot(aes(x = neg_emo_gov, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#BCBD22", binwidth = 1) +
@@ -811,63 +840,109 @@ totals_imp_act_clim$Categoria <- gsub("_", " ", totals_imp_act_clim$Categoria)
 kable(totals_imp_act_clim, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
 ```
 
-## Impacto de actores relevantes en el cambio climático
-Fueron elegidos los actores considerados como más relevantes frente al fenómeno del cambio climático. Para cada uno se exploró su distribución en relación a su impacto sobre el cambio climático.
-```{r medida impacto de actores frente al cambio climático, echo=FALSE}
+## Impacto de actores relevantes en el cambio climático Recodificada
+Fueron elegidos los actores considerados como más relevantes frente al fenómeno del cambio climático. Para cada uno se exploró su distribución en relación a su impacto sobre el cambio climático. Los valores negativos representan un impacto negativo, y los valores positivos un impacto positivo. La escala va desde -3 hasta 3.
+
+```{r plot cientificos, fig.align='center', echo=FALSE}
 # Impact of scientists on climate change
 data1$imp_scien <- data1$D35_1
 data1$imp_scien[data1$imp_scien == 99] <- 3.5
-data1$imp_scien <- data1$imp_scien - 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_scien <- new_values[match(data1$imp_scien, value_mapping)]
+data1$imp_scien <- as.factor(data1$imp_scien)
 
+custom_palette <- brewer.pal(7, "Greens")
 plot_imp_scien <- data1 %>%
-  ggplot(aes(x = imp_scien, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#BCBD22", binwidth = 0.5) +
+  count(imp_scien) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_scien, y = prop, fill = imp_scien)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 40) +
   labs(x = "Impacto en cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución Impacto de los científicos \n en el cambio climático") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-2.5, 2.5, 0.5))
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_imp_scien
+```
 
+
+```{r plot activistas, fig.align='center', echo=FALSE}
 # Impact of activists on climate change
 data1$imp_act <- data1$D35_7
 data1$imp_act[data1$imp_act == 99] <- 3.5
-data1$imp_act <- data1$imp_act - 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_act <- new_values[match(data1$imp_act, value_mapping)]
+data1$imp_act <- as.factor(data1$imp_act)
 
+custom_palette <- brewer.pal(7, "Greens")
 plot_imp_act <- data1 %>%
-  ggplot(aes(x = imp_act, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#BCBD22", binwidth = 0.5) +
+  count(imp_act) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_act, y = prop, fill = imp_act)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 40) +
   labs(x = "Impacto en cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución Impacto de los activistas \n en el cambio climático") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-2.5, 2.5, 0.5))
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_imp_act
+```
 
+
+```{r plot religious groups, fig.align='center', echo=FALSE}
 # Impact of religious groups on climate change
 data1$imp_rel <- data1$D35_3
 data1$imp_rel[data1$imp_rel == 99] <- 3.5
-data1$imp_rel <- data1$imp_rel - 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_rel <- new_values[match(data1$imp_rel, value_mapping)]
+data1$imp_rel <- as.factor(data1$imp_rel)
 
+custom_palette <- brewer.pal(7, "Greens")
 plot_imp_rel <- data1 %>%
-  ggplot(aes(x = imp_rel, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#BCBD22", binwidth = 0.5) +
+  count(imp_rel) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_rel, y = prop, fill = imp_rel)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 40) +
   labs(x = "Impacto en cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución Impacto de grupos religiosos \n en el cambio climático") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-2.5, 2.5, 0.5))
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_imp_rel
+```
 
+
+```{r plot politicians, fig.align='center', echo=FALSE}
 # Impact of politicians on climate change
 data1$imp_pol <- data1$D35_6
 data1$imp_pol[data1$imp_pol == 99] <- 3.5
-data1$imp_pol <- data1$imp_pol - 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_pol <- new_values[match(data1$imp_pol, value_mapping)]
+data1$imp_pol <- as.factor(data1$imp_pol)
 
+custom_palette <- brewer.pal(7, "Greens")
 plot_imp_pol <- data1 %>%
-  ggplot(aes(x = imp_pol, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#BCBD22", binwidth = 0.5) +
+  count(imp_pol) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_pol, y = prop, fill = imp_pol)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 40) +
   labs(x = "Impacto en cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución Impacto de los políticos \n en el cambio climático") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-2.5, 2.5, 0.5))
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_imp_pol
 ```
 
@@ -890,11 +965,13 @@ kable(table_sums_pen, col.names = c("Nº pensamientos seleccionados", "Frecuenci
 plot_pen <- sums_pen_clim %>%
   ggplot(aes(x = Pensamiento, y = Porcentaje)) +
   geom_col(fill = "#9467bd") +
+  ylim(0, 45) +
   coord_flip() +
   labs(x = "Pensamiento", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Pensamientos hacia el Cambio Climático") +
   papaja::theme_apa() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+ geom_text(aes(label = paste0(Porcentaje, "%")), hjust = -0.2, color = "black", size = 4)
 plot_pen
 ```
 
@@ -950,10 +1027,12 @@ plot_thoughts <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = thoughts, y = prop, fill = thoughts)) +
   geom_bar(stat = "identity") +
+  ylim(0, 60) +
   labs(x = "Pensamiento", y = "Porcentaje (%)") +
   ggtitle("Distribución Pensamientos \n sobre el cambio climático") +
   papaja::theme_apa() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_thoughts
 ```
 
@@ -1067,10 +1146,12 @@ plot_clim_ori <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = clim_ori, y = prop)) +
   geom_col(fill = "#EE0A64") +
+  ylim(0, 40) +
   labs(x = "Responsabilidad humana en el cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución de la opinión sobre \n Origen del cambio climático") +
   papaja::theme_apa() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_clim_ori
 ```
 
@@ -1096,10 +1177,12 @@ plot_clim_origin <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = clim_origin, y = prop, fill = clim_origin)) +
   geom_bar(stat = "identity") +
+  ylim(0, 90) +
   labs(x = "Origen cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Origen cambio climático") +
   papaja::theme_apa() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_clim_origin
 ```
 
@@ -1118,11 +1201,13 @@ plot_cont_clim <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = cont_clim, y = prop, fill = cont_clim)) +
   geom_bar(stat = "identity") +
+  ylim(0, 60) +
   coord_flip() +
   labs(x = "Factor", y = "Porcentaje (%)") +
   ggtitle("Distribución de opinión sobre \n contribución al cambio climático") +
   papaja::theme_apa() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
 plot_cont_clim
 ```
 
@@ -1148,9 +1233,11 @@ plot_cont_clim <- data1 %>%
   mutate(prop = (n / sum(n))*100) %>%
   ggplot(aes(x = cont_clim, y = prop, fill = cont_clim)) +
   geom_bar(stat = "identity") +
+  ylim(0, 70) +
   labs(x = "Respuesta", y = "Porcentaje (%)") +
   ggtitle("Distribución respuesta a factor \n que más contribuye al cambio climático") +
   papaja::theme_apa() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_cont_clim
 ```
