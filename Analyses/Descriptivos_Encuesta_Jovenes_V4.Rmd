@@ -3,6 +3,8 @@ title: 'Encuesta: Distribución y recodificación de variables'
 author: "Juan Sebastian Cely"
 date: "`r Sys.Date()`"
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -48,7 +50,7 @@ plot_emo
 ```
 
 ## Variable "Emociones hacia el cambio climático" Recodificada
-El conjunto de 16 emociones fue agrupado en tres niveles: Con Eco-ansiedad, emociones ambivalentes y/o neutrales, y emociones negativas.
+El conjunto de 16 emociones fue agrupado en tres niveles: Con Eco-ansiedad, emociones ambivalentes y/o neutrales, y Sin Eco-ansiedad.
 ```{r recodificación emociones cambio climático, include=FALSE}
 neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
 amb_emo <- c("C36_13")
@@ -1179,6 +1181,38 @@ plot_clim_origin <- data1 %>%
   geom_bar(stat = "identity") +
   ylim(0, 90) +
   labs(x = "Origen cambio climático", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Origen cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_clim_origin
+```
+
+
+```{r recodificación origen cambio climático 2, include=FALSE}
+data1$C40 <- as.factor(data1$C40)
+data1 <- data1 %>%
+  mutate(clim_origin = case_when(
+    C40 %in% c(1,2,3,4,5,6,7) ~ "Incorrecta",
+    C40 %in% c(8,9,10) ~ "Correcta"
+    ))
+```
+
+## Variable "Origen del cambio climático" Recodificada Opción 2
+La variable "Origen del cambio climático" fue recodificada en dos niveles que distinguen si la persona se aproxima a una respuesta correcta o no respecto al porcentaje de contribución al cambio climático de factores naturales y factores humanos.
+```{r variable origen del cambio climático recodificada 2, fig.align='center', echo=F}
+data1$clim_origin <- as.factor(data1$clim_origin)
+table_clim_origin <- as.data.frame(table(data1$clim_origin)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_clim_origin, col.names = c("Respuesta Origen Cambio Climático", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_clim_origin <- data1 %>%
+  count(clim_origin) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = clim_origin, y = prop, fill = clim_origin)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 80) +
+  labs(x = "Respuesta frente al Origen del cambio climático", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Origen cambio climático") +
   papaja::theme_apa() +
   theme(legend.position="none") +

@@ -2,7 +2,7 @@
 title: 'Encuesta: Relaciones entre variables'
 author: "Juan Sebastian Cely"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: github_document
 editor_options: 
   chunk_output_type: console
 ---
@@ -21,101 +21,7 @@ codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
 ```
 
 ```{r tranformación y recodificación variables, include=FALSE}
-# Variables that were categorical from the beginning.
-data1 <- data1 %>%
-  mutate(zone = Zona,
-         sex = A1,
-         age_r = RANGO_EDAD,
-         strat = A3,
-         ethni = A5,
-         edu = A6,
-         kids = A9,
-         ideology = A11,
-         tv = B12_1,
-         radio = B12_2,
-         press = B12_3,
-         digital = B12_4,
-         social_media = B12_5,
-         other_media = B12_89,
-         aso_env_group = C18_7,
-         clim_origin = C40,
-         cont_clim = C41)
-
-# Transform into factors
-columns_to_change <- c("zone", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "tv", "radio", "press", "digital", "social_media", "other_media", "aso_env_group", "clim_origin", "cont_clim")
-data1 <- data1 %>%
-  mutate(across(all_of(columns_to_change), as.factor))
-
-# Change the levels order and/or their names
-# Variable zone where the person lives
-levels(data1$zone) <- c("Rural", "Urbana")
-# Variable sex
-levels(data1$sex) <- c("Hombre", "Mujer")
-# Variable age range
-data1 <- data1 %>%
-  mutate(age_r = case_when(
-    age_r == 1 ~ "De 18 a 20 años",
-    age_r == 2 ~ "De 21 a 24 años",
-    age_r == 3 ~ "De 25 a 29 años",
-    age_r == 4 ~ "De 30 a 32 años"
-))
-# Variable social stratum
-data1 <- data1 %>%
-  mutate(strat = case_when(
-    strat %in% c(1,2) ~ "Bajo",
-    strat %in% c(3,4) ~ "Medio",
-    strat %in% c(5,6) ~ "Alto"
-))
-data1$strat<- factor(data1$strat, levels = c("Bajo", "Medio", "Alto"))
-# Variable be part of some ethnic group or not
-levels(data1$ethni) <- c("Indígena", "Gitana(o) Rrom", "Raizal", "Palenquera(o)", "Afro", "Ninguna")
-data1 <- data1 %>%
-  mutate(ethni = case_when(
-    ethni != "Ninguna" ~ "Sí",
-    ethni == "Ninguna" ~ "No"
-))
-# Variable university education or not
-levels(data1$edu) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
-data1 <- data1 %>%
-  mutate(edu = case_when(
-    edu %in% c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo") ~ "No",
-    edu %in% c("Pregrado", "Posgrado") ~ "Sí"
-))
-# Variable Having kids or not
-levels(data1$kids) <- c("Sí", "No")
-# Variable political ideology
-data1 <- data1 %>%
-  mutate(ideology = case_when(
-    ideology %in% c(1, 2) ~ "Izquierda",
-    ideology %in% c(3, 4) ~ "Centro",
-    ideology %in% c(5, 6) ~ "Derecha"
-  ))
-# Variables related to sources of information
-media <- c("tv", "radio", "press", "digital", "social_media", "other_media")
-new_levels <- c("No", "Sí")
-for (var in media) {
-  levels(data1[[var]]) <- new_levels
-}
-# Variable join an environmental group
-levels(data1$aso_env_group) <- c("Sí", "No")
-# Variable climate change origin
-data1 <- data1 %>%
-  mutate(clim_origin = case_when(
-    clim_origin %in% c(1,2,3,4,5) ~ "Causas naturales",
-    clim_origin %in% c(6,7,8,9,10) ~ "Causas humanas"
-    ))
-# Variable contribution to climate change
-levels(data1$cont_clim) <- c("Agricultura y ganadería", "Quema de combustibles fósiles", "Deforestación", "Volcanes y/o actividad solar")
-data1 <- data1 %>%
-  mutate(cont_clim = case_when(
-    cont_clim %in% c(1, 3, 4) ~ "Incorrecta",
-    cont_clim == 2 ~ "Correcta"
-))
-columns_to_change <- c("zone", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "tv", "radio", "press", "digital", "social_media", "other_media", "aso_env_group", "clim_origin", "cont_to_clim")
-data1 <- data1 %>%
-  mutate(across(all_of(columns_to_change), as.factor))
-# Variables that were re coded as categorical variables
-# Variable eco-anxiety
+# Eco-anxiety
 neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
 amb_emo <- c("C36_13")
 pos_emo <- c("C36_2", "C36_12", "C36_14", "C36_16")
@@ -138,7 +44,144 @@ data1$eco_anx[i] <- "Ambivalente/Neutral"
 data1$eco_anx[i] <- "Sin eco-ansiedad"
 }
 }
-# Variable thoughts about climate change
+data1$eco_anx <- factor(data1$eco_anx, levels = c("Con eco-ansiedad", "Ambivalente/Neutral", "Sin eco-ansiedad"))
+
+# Residential area
+data1$Zona <- as.factor(data1$Zona)
+
+# Sex
+data1$A1 <- as.factor(data1$A1)
+levels(data1$A1) <- c("Hombre", "Mujer")
+data1$sex <- data1$A1
+
+# Age range
+data1$RANGO_EDAD <- as.factor(data1$RANGO_EDAD)
+data1$age_r <- data1$RANGO_EDAD
+data1 <- data1 %>%
+  mutate(age_r = case_when(
+    age_r == 1 ~ "De 18 a 20 años",
+    age_r == 2 ~ "De 21 a 24 años",
+    age_r == 3 ~ "De 25 a 29 años",
+    age_r == 4 ~ "De 30 a 32 años"
+))
+data1$age_r <- as.factor(data1$age_r)
+
+# Stratum
+data1$A3 <- as.factor(data1$A3)
+data1$strat <- data1$A3
+data1 <- data1 %>%
+  mutate(strat = case_when(
+    strat %in% c(1,2) ~ "Bajo",
+    strat %in% c(3,4) ~ "Medio",
+    strat %in% c(5,6) ~ "Alto"
+))
+data1$strat <- factor(data1$strat, levels = c("Bajo", "Medio", "Alto"))
+
+# Ethnics
+data1$ethni <- data1$A5
+data1 <- data1 %>%
+  mutate(ethni = case_when(
+    ethni != "Ninguna" ~ "Sí",
+    ethni == "Ninguna" ~ "No"
+))
+data1$ethni <- as.factor(data1$ethni)
+
+# Education
+data1$A6 <- as.factor(data1$A6)
+levels(data1$A6) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
+data1$edu <- data1$A6
+data1 <- data1 %>%
+  mutate(edu = case_when(
+    edu %in% c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo") ~ "No",
+    edu %in% c("Pregrado", "Posgrado") ~ "Sí"
+))
+data1$edu <- as.factor(data1$edu)
+
+# Kids
+data1$A9 <- as.factor(data1$A9)
+levels(data1$A9) <- c("Sí", "No")
+data1$kids <- data1$A9
+
+# Political ideology
+data1$A11 <- as.factor(data1$A11)
+data1 <- data1 %>%
+  mutate(ideology = case_when(
+    A11 %in% c(1, 2) ~ "Izquierda",
+    A11 %in% c(3, 4) ~ "Centro",
+    A11 %in% c(5, 6) ~ "Derecha"
+  ))
+data1$ideology <- factor(data1$ideology, levels = c("Derecha", "Centro", "Izquierda"))
+
+# Information sources
+media <- grep("^B12_", names(data1), value = TRUE)
+data1 <- data1 %>%
+  mutate(across(all_of(media), ~ factor(., levels = c("No", "Sí")))) %>%
+  rename(Televisión = B12_1,
+         Radio = B12_2,
+         Prensa_Impresa = B12_3,
+         Medios_Digitales = B12_4,
+         Redes_Sociales = B12_5,
+         Otro_medio = B12_89)
+
+# Trust in particular Institutions and figures
+trust_vote_inst <- data1 %>%
+  select(C17_5, C17_7, C17_8)
+trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 2, -1))
+trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 3, 0))
+data1$trust_vote_inst <- rowSums(trust_vote_inst)
+
+trust_unis <- data1 %>%
+  select(C17_14, C17_15)
+trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 2, -1))
+trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 3, 0))
+data1$trust_unis <- rowSums(trust_unis)
+
+# Join an environmental organization
+data1$C18_7 <- as.factor(data1$C18_7)
+levels(data1$C18_7) <- c("Sí", "No")
+data1$env_aso <- data1$C18_7
+
+# Negative emotions towards actions taken by the government regarding climate change
+neg_d34 <- c("D34_2", "D34_3", "D34_4", "D34_6", "D34_8", "D34_9")
+pos_d34 <- c("D34_1", "D34_5", "D34_7", "D34_10")
+data1$neg_emo_gov <- NA
+for (i in 1:nrow(data1)) {
+  data1$neg_emo_gov[i] <- sum(data1[i, neg_d34]) - sum(data1[i, pos_d34]) + 19
+}
+
+# Impact of scientists on climate change
+data1$imp_scien <- data1$D35_1
+data1$imp_scien[data1$imp_scien == 99] <- 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_scien <- new_values[match(data1$imp_scien, value_mapping)]
+data1$imp_scien <- as.factor(data1$imp_scien)
+
+# Impact of activists on climate change
+data1$imp_act <- data1$D35_7
+data1$imp_act[data1$imp_act == 99] <- 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_act <- new_values[match(data1$imp_act, value_mapping)]
+data1$imp_act <- as.factor(data1$imp_act)
+
+# Impact of religious groups on climate change
+data1$imp_rel <- data1$D35_3
+data1$imp_rel[data1$imp_rel == 99] <- 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_rel <- new_values[match(data1$imp_rel, value_mapping)]
+data1$imp_rel <- as.factor(data1$imp_rel)
+
+# Impact of politicians on climate change
+data1$imp_pol <- data1$D35_6
+data1$imp_pol[data1$imp_pol == 99] <- 3.5
+value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
+new_values <- c(-3, -2, -1, 0, 1, 2, 3)
+data1$imp_pol <- new_values[match(data1$imp_pol, value_mapping)]
+data1$imp_pol <- as.factor(data1$imp_pol)
+
+# Thoughts about climate change
 pos_thought <- c("C37_9", "C37_11", "C37_12", "C37_13", "C37_15")
 neg_thought<- c("C37_1", "C37_2", "C37_4", "C37_5", "C37_6", "C37_7", "C37_8", "C37_14")
 neut_thought <- c("C37_3", "C37_10")
@@ -175,12 +218,59 @@ data1$thoughts[i] <- "Ambivalentes/Neutrales"
 data1$thoughts[i] <- "Ambivalentes/Neutrales"
 }
 }
-columns_to_change2 <- c("eco_anx", "thoughts")
+data1$thoughts <- factor(data1$thoughts, levels = c("Negativos", "Ambivalentes/Neutrales", "Positivos"))
+
+# Impact of individual actions on comfort
+c38 <- grep("^C38_", names(data1), value=T)
+data1$imp_como <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_como[i] <- sum(data1[i, c38]) / 10 - 3.5
+}
+
+# Impact of individual actions on climate change
+c39 <- grep("^C39_", names(data1), value=T)
+data1$imp_cli <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_cli[i] <- sum(data1[i, c39]) / 10 - 3.5
+}
+
+# Climate change origin
+data1$C40 <- as.factor(data1$C40)
 data1 <- data1 %>%
-  mutate(across(all_of(columns_to_change), as.factor))
-data1_cat <- data1 %>%
-  dplyr::select("zone", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "tv", "radio", "press", "digital", "social_media", "other_media", "aso_env_group", "clim_origin", "cont_clim", "eco_anx", "thoughts")
+  mutate(clim_origin = case_when(
+    C40 %in% c(1,2,3,4,5,6,7) ~ "Incorrecta",
+    C40 %in% c(8,9,10) ~ "Correcta"
+    ))
+data1$clim_origin <- as.factor(data1$clim_origin)
+
+# Contribution to climate change
+data1$C41 <- as.factor(data1$C41)
+data1 <- data1 %>%
+  mutate(cont_clim = case_when(
+    C41 %in% c(1, 3, 4) ~ "Incorrecta",
+    C41 == 2 ~ "Correcta"
+))
+data1$cont_clim <- as.factor(data1$cont_clim)
 ```
+
+```{r data frames para variables continuas y variables categoricas, include=FALSE}
+data2 <- data1 %>%
+  select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, env_aso, neg_emo_gov, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
+
+data_cont <- data2 %>%
+  select(trust_vote_inst, trust_unis, neg_emo_gov, imp_como, imp_cli)
+
+data_cat <- data2 %>%
+  select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, clim_origin, cont_clim)
+```
+
+
+```{r analisis de variables continuas, include=FALSE}
+# Correlation matrix
+cor_matrix <- round(cor(data_cont), 2)
+kable(cor_matrix)
+```
+
 
 ```{r análisis de componentes múltiples}
 chisq.test(data1_cat$eco_anx, data1_cat$clim_origin)
