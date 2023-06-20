@@ -255,20 +255,29 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 
 ```{r data frames para variables continuas y variables categoricas, include=FALSE}
 data2 <- data1 %>%
-  select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, env_aso, neg_emo_gov, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
+  select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
 
-data_cont <- data2 %>%
-  select(trust_vote_inst, trust_unis, neg_emo_gov, imp_como, imp_cli)
+#data_cont <- data2 %>%
+  #select(trust_vote_inst, trust_unis, neg_emo_gov, imp_como, imp_cli)
 
-data_cat <- data2 %>%
-  select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, clim_origin, cont_clim)
+#data_cat <- data2 %>%
+  #select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, clim_origin, cont_clim)
 ```
 
 
 ```{r analisis de variables continuas, include=FALSE}
 # Correlation matrix
-cor_matrix <- round(cor(data_cont), 2)
+cor_matrix <- round(cor(data2[, sapply(data2, is.numeric)]), 2)
 kable(cor_matrix)
+
+# PCA
+res.pca <- PCA(data2[, sapply(data2, is.numeric)])
+kable(res.pca$eig) # Percentage of variance: Better than variables by themselves
+fviz_eig(res.pca, addlabels = TRUE)
+res.pca$var$coord # Correlation of each variable with the components
+fviz_contrib(res.pca, choice = "var")
+fviz_contrib(res.pca, choice = "var", axes = 2)
+fviz_pca_ind(res.pca, col.ind = data2$eco_anx, label = "point")
 ```
 
 
