@@ -706,40 +706,74 @@ trust_vote_inst <- data1 %>%
 trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 2, -1))
 trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 3, 0))
 data1$trust_vote_inst <- rowSums(trust_vote_inst)
+data1$trust_vote_inst <- as.factor(data1$trust_vote_inst)
 
 trust_unis <- data1 %>%
   select(C17_14, C17_15)
 trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 2, -1))
 trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 3, 0))
 data1$trust_unis <- rowSums(trust_unis)
+data1$trust_unis <- as.factor(data1$trust_unis)
 ```
 
 ## Confianza en figuras e instituciones agrupadas
 Algunas de las instituciones y figuras se reunieron en dos variables diferentes de acuerdo a cierta categoría que las encerraba. Así, la primera variable corresponde a la confianza frente a instituciones cuyos cargos son de eleccióm popular. La segunda variable corresponde a la confianza frente a universidades, ya sean públicas o privadas.
 ```{r variable medida de confianza, warning=FALSE, fig.align='center', echo=F}
+#plot_trust_vote_inst <- data1 %>%
+  #ggplot(aes(x = trust_vote_inst, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  #geom_histogram(fill = "#FF9896", binwidth = 1) +
+  #ylim(0, 60) +
+  #labs(x = "Confianza", y = "Porcentaje (%)") +
+  #ggtitle("Distribución Puntaje Confianza en \n Instituciones con cargos de elección popular") +
+  #papaja::theme_apa() +
+  #scale_x_continuous(breaks = seq(-3, 3, 1)) +
+  #geom_text(stat = "count", aes(label = paste0(round((..count.. / sum(..count..)) * 100, 1), "%")),
+            #vjust = -0.5, color = "black", size = 4)
+#plot_trust_vote_inst
+
+#plot_trust_unis <- data1 %>%
+ # ggplot(aes(x = trust_unis, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  #geom_histogram(fill = "#FF9896", binwidth = 1) +
+  #ylim(0, 60) +
+  #labs(x = "Confianza", y = "Porcentaje (%)") +
+  #ggtitle("Distribución \n Puntaje Confianza en Universidades") +
+  #papaja::theme_apa() +
+  #scale_x_continuous(breaks = seq(-2, 2, 1)) +
+  #geom_text(stat = "count", aes(label = paste0(round((..count.. / sum(..count..)) * 100, 1), "%")),
+            #vjust = -0.5, color = "black", size = 4)
+#plot_trust_unis
+
+custom_palette <- brewer.pal(7, "BrBG")
 plot_trust_vote_inst <- data1 %>%
-  ggplot(aes(x = trust_vote_inst, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#FF9896", binwidth = 1) +
+  count(trust_vote_inst) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = trust_vote_inst, y = prop, fill = trust_vote_inst)) +
+  geom_bar(stat = "identity") +
   ylim(0, 60) +
   labs(x = "Confianza", y = "Porcentaje (%)") +
   ggtitle("Distribución Puntaje Confianza en \n Instituciones con cargos de elección popular") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-3, 3, 1)) +
-  geom_text(stat = "count", aes(label = paste0(round((..count.. / sum(..count..)) * 100, 1), "%")),
-            vjust = -0.5, color = "black", size = 4)
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_trust_vote_inst
 
+
+custom_palette <- brewer.pal(7, "BrBG")
 plot_trust_unis <- data1 %>%
-  ggplot(aes(x = trust_unis, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#FF9896", binwidth = 1) +
+  count(trust_unis) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = trust_unis, y = prop, fill = trust_unis)) +
+  geom_bar(stat = "identity") +
   ylim(0, 60) +
   labs(x = "Confianza", y = "Porcentaje (%)") +
   ggtitle("Distribución \n Puntaje Confianza en Universidades") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(-2, 2, 1)) +
-  geom_text(stat = "count", aes(label = paste0(round((..count.. / sum(..count..)) * 100, 1), "%")),
-            vjust = -0.5, color = "black", size = 4)
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_trust_unis
+
 ```
 
 # Asociarse a organizaciones ambientales
@@ -1066,16 +1100,24 @@ kable(totals_imp_com, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"
 ```
 
 ```{r medida del impacto de ciertas acciones en comodidad, include=FALSE}
+#c38 <- grep("^C38_", names(data1), value=T)
+#data1$imp_como <- NA
+#for (i in 1:nrow(data1)) {
+  #data1$imp_como[i] <- sum(data1[i, c38]) / 10 - 3.5
+#}
+
 c38 <- grep("^C38_", names(data1), value=T)
 data1$imp_como <- NA
 for (i in 1:nrow(data1)) {
-  data1$imp_como[i] <- sum(data1[i, c38]) / 10 - 3.5
+  data1$imp_como[i] <- round(sum(data1[i, c38]) / 10) 
 }
+data1$imp_como <- as.factor(data1$imp_como)
+levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
 ```
 
 ## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
 Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se les restó un valor igual a la mediana de los valores que era posible elegir, lo que es igual a 3.5. Con esto la medida se convirtió en una escala que va desde -2.5 hasta 2.5.
-```{r variable medida impacto acciones comodidad, fig.align='center', echo=F}
+```{r variable medida impacto acciones comodidad cont, fig.align='center', eval=FALSE, echo=F}
 plot_imp_como <- data1 %>%
   ggplot(aes(x = imp_como, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#8C564B", binwidth = 0.5) +
@@ -1083,6 +1125,23 @@ plot_imp_como <- data1 %>%
   ggtitle("Distribución puntaje impacto \n de acciones en la comodidad") +
   papaja::theme_apa() +
   scale_x_continuous(breaks = seq(-2.5, 2.5, 0.5))
+plot_imp_como
+```
+
+```{r variable medida impacto acciones comodidad cat, fig.align='center', echo=F}
+custom_palette <- brewer.pal(6, "BrBG")
+plot_imp_como <- data1 %>%
+  count(imp_como) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_como, y = prop, fill = imp_como)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 50) +
+  labs(x = "Impacto", y = "Porcentaje (%)") +
+  ggtitle("Distribución puntaje impacto de acciones individuales \n contra el cambio climático en la comodidad") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_imp_como
 ```
 
@@ -1114,16 +1173,24 @@ kable(totals_imp_ind_act, col.names = c("Categoría", "Frecuencia", "Porcentaje 
 ```
 
 ```{r medida del impacto de ciertas acciones en cambio climático, include=FALSE}
+#c39 <- grep("^C39_", names(data1), value=T)
+#data1$imp_cli <- NA
+#for (i in 1:nrow(data1)) {
+  #data1$imp_cli[i] <- sum(data1[i, c39]) / 10 - 3.5
+#}
+
 c39 <- grep("^C39_", names(data1), value=T)
 data1$imp_cli <- NA
 for (i in 1:nrow(data1)) {
-  data1$imp_cli[i] <- sum(data1[i, c39]) / 10 - 3.5
+  data1$imp_cli[i] <- round(sum(data1[i, c39]) / 10)
 }
+data1$imp_cli <- as.factor(data1$imp_cli)
+levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
 ```
 
 ## Creación de una medida del impacto de ciertas acciones en el cambio climático
 Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se les restó un valor igual a la mediana de los valores que era posible elegir, lo que es igual a 3.5. Con esto la medida se convirtió en una escala que va desde -2.5 hasta 2.5.
-```{r variable medida impacto acciones cambio climático, fig.align='center', echo=F}
+```{r variable medida impacto acciones cambio climático cont, fig.align='center', eval=FALSE, echo=F}
 plot_imp_cli <- data1 %>%
   ggplot(aes(x = imp_cli, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#2CA02C", binwidth = 0.5) +
@@ -1131,6 +1198,23 @@ plot_imp_cli <- data1 %>%
   ggtitle("Distribución puntaje impacto \n de acciones en cambio climático") +
   papaja::theme_apa() +
   scale_x_continuous(breaks = seq(-2.5, 2.5, 0.5))
+plot_imp_cli
+```
+
+```{r variable medida impacto cambio climático cat, fig.align='center', echo=F}
+custom_palette <- brewer.pal(6, "BrBG")
+plot_imp_cli <- data1 %>%
+  count(imp_cli) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_cli, y = prop, fill = imp_cli)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 50) +
+  labs(x = "Impacto", y = "Porcentaje (%)") +
+  ggtitle("Distribución puntaje impacto de acciones individuales \n contra el cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
 plot_imp_cli
 ```
 

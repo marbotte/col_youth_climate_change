@@ -8,7 +8,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-stopifnot(require(openxlsx), require(kableExtra), require(dm), require(dplyr), require (ggplot2), require(rms), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify), require(FactoMineR), require(factoextra))
+stopifnot(require(openxlsx), require(kableExtra), require(dm), require(dplyr), require (ggplot2), require(rms), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify), require(FactoMineR), require(factoextra), require(Factoshiny))
 knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
 options(knitr.table.format = "simple")
 ```
@@ -78,6 +78,8 @@ data1 <- data1 %>%
 data1$strat <- factor(data1$strat, levels = c("Bajo", "Medio", "Alto"))
 
 # Ethnics
+data1$A5 <- as.factor(data1$A5)
+levels(data1$A5) <- c("Indígena", "Gitana(o) Rrom", "Raizal", "Palenquera(o)", "Afro", "Ninguna")
 data1$ethni <- data1$A5
 data1 <- data1 %>%
   mutate(ethni = case_when(
@@ -113,9 +115,7 @@ data1 <- data1 %>%
 data1$ideology <- factor(data1$ideology, levels = c("Derecha", "Centro", "Izquierda"))
 
 # Information sources
-media <- grep("^B12_", names(data1), value = TRUE)
 data1 <- data1 %>%
-  mutate(across(all_of(media), ~ factor(., levels = c("No", "Sí")))) %>%
   rename(Televisión = B12_1,
          Radio = B12_2,
          Prensa_Impresa = B12_3,
@@ -123,18 +123,35 @@ data1 <- data1 %>%
          Redes_Sociales = B12_5,
          Otro_medio = B12_89)
 
+vars_to_convert <- c("Televisión",
+         "Radio",
+         "Prensa_Impresa",
+         "Medios_Digitales",
+         "Redes_Sociales",
+         "Otro_medio")
+
+for (var in vars_to_convert) {
+  data1[[var]] <- factor(data1[[var]])
+}
+new_levels <- c("No", "Sí")
+for (var in vars_to_convert) {
+  levels(data1[[var]]) <- new_levels
+}
+
 # Trust in particular Institutions and figures
 trust_vote_inst <- data1 %>%
   select(C17_5, C17_7, C17_8)
 trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 2, -1))
 trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 3, 0))
 data1$trust_vote_inst <- rowSums(trust_vote_inst)
+data1$trust_vote_inst <- as.factor(data1$trust_vote_inst)
 
 trust_unis <- data1 %>%
   select(C17_14, C17_15)
 trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 2, -1))
 trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 3, 0))
 data1$trust_unis <- rowSums(trust_unis)
+data1$trust_unis <- as.factor(data1$trust_unis)
 
 # Join an environmental organization
 data1$C18_7 <- as.factor(data1$C18_7)
@@ -224,15 +241,19 @@ data1$thoughts <- factor(data1$thoughts, levels = c("Negativos", "Ambivalentes/N
 c38 <- grep("^C38_", names(data1), value=T)
 data1$imp_como <- NA
 for (i in 1:nrow(data1)) {
-  data1$imp_como[i] <- sum(data1[i, c38]) / 10 - 3.5
+  data1$imp_como[i] <- round(sum(data1[i, c38]) / 10) 
 }
+data1$imp_como <- as.factor(data1$imp_como)
+levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
 
 # Impact of individual actions on climate change
 c39 <- grep("^C39_", names(data1), value=T)
 data1$imp_cli <- NA
 for (i in 1:nrow(data1)) {
-  data1$imp_cli[i] <- sum(data1[i, c39]) / 10 - 3.5
+  data1$imp_cli[i] <- round(sum(data1[i, c39]) / 10)
 }
+data1$imp_cli <- as.factor(data1$imp_cli)
+levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
 
 # Climate change origin
 data1$C40 <- as.factor(data1$C40)
@@ -256,25 +277,21 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 ```{r data frames para variables continuas y variables categoricas, include=FALSE}
 data2 <- data1 %>%
   select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
-
-#data_cont <- data2 %>%
-  #select(trust_vote_inst, trust_unis, neg_emo_gov, imp_como, imp_cli)
-
-#data_cat <- data2 %>%
-  #select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, clim_origin, cont_clim)
 ```
 
 
-```{r analisis de variables continuas, include=FALSE}
+```{r analisis de variables continuas, eval=FALSE, include=FALSE}
 # Correlation matrix
 cor_matrix <- round(cor(data2[, sapply(data2, is.numeric)]), 2)
 kable(cor_matrix)
+
+corrplot::corrplot(cor(data2[, sapply(data2, is.numeric)]), diag = FALSE)
 
 # PCA
 res.pca <- PCA(data2[, sapply(data2, is.numeric)])
 kable(res.pca$eig) # Percentage of variance: Better than variables by themselves
 fviz_eig(res.pca, addlabels = TRUE)
-res.pca$var$coord # Correlation of each variable with the components
+corrplot::corrplot(res.pca$var$coord) # Correlation of each variable with the components
 fviz_contrib(res.pca, choice = "var")
 fviz_contrib(res.pca, choice = "var", axes = 2)
 fviz_pca_ind(res.pca, col.ind = data2$eco_anx, label = "point")
@@ -282,12 +299,19 @@ fviz_pca_ind(res.pca, col.ind = data2$eco_anx, label = "point")
 
 
 ```{r análisis de componentes múltiples}
-chisq.test(data1_cat$eco_anx, data1_cat$clim_origin)
-result_mca <- MCA(data1_cat, graph = TRUE)
-res.mca <- MCA(data1_cat, graph = FALSE)
-fviz_mca_biplot(res.mca, 
-               repel = TRUE,
-               ggtheme = theme_minimal())
+res.mca <- MCA(data2, method = "burt")
+summary(res.mca, ncp = 3, nbelements = Inf)
+dimdesc(res.mca)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 30")
+
+res.mca <- MCA(data2, method = "burt", quali.sup = c(1, 24))
+summary(res.mca, ncp = 3, nbelements = Inf)
+dimdesc(res.mca)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.8)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.8, selectMod = "contrib 20")
+plot(res.mca, invisible = c("ind", "var"), autoLab = "y", cex = 0.8)
+plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.8, habillage = "eco_anx")
 ```
 
 # Emociones frente al cambio climático y zona de residencia
