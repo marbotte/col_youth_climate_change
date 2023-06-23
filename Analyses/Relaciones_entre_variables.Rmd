@@ -89,13 +89,13 @@ data1 <- data1 %>%
 data1$ethni <- as.factor(data1$ethni)
 
 # Education
-data1$A6 <- as.factor(data1$A6)
-levels(data1$A6) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
-data1$edu <- data1$A6
+data1$education <- as.factor(data1$A6)
+levels(data1$education) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
+
 data1 <- data1 %>%
   mutate(edu = case_when(
-    edu %in% c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo") ~ "No",
-    edu %in% c("Pregrado", "Posgrado") ~ "Sí"
+    education %in% c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo") ~ "No",
+    education %in% c("Pregrado", "Posgrado") ~ "Sí"
 ))
 data1$edu <- as.factor(data1$edu)
 
@@ -276,7 +276,54 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 
 ```{r data frames para variables continuas y variables categoricas, include=FALSE}
 data2 <- data1 %>%
-  select(eco_anx, Zona, sex, age_r, strat, ethni, A6, edu, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
+  select(Zona, sex, age_r, strat, ethni, education, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, eco_anx, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
+# Not included: Negative emotions towards government actions against climate change, binary coding of education
+```
+
+
+```{r análisis de componentes múltiples}
+result <- data.frame(Variable = character(), Category = character(), Frequency = integer(), stringsAsFactors = FALSE)
+
+# Loop through each variable and compute frequencies
+for (var in names(data2)) {
+  freq_table <- table(data2[[var]])  # Compute frequencies
+  var_result <- data.frame(Variable = var, Category = names(freq_table), Frequency = as.vector(freq_table))  # Convert table to data frame
+  result <- rbind(result, var_result)  # Append to the result data frame
+}
+# Print the resulting data frame
+print(result)
+
+res.mca <- MCA(data2, graph = FALSE)
+summary(res.mca, ncp = 3, nbelements = Inf)
+dimdesc(res.mca)
+plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = c("ind", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 20")
+```
+
+
+```{r análisis de componentes múltiples 2, include=FALSE, eval=FALSE}
+res.mca <- MCA(data2, quali.sup = 1:16, graph = FALSE)
+summary(res.mca, ncp = 3, nbelements = Inf)
+dimdesc(res.mca)
+plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = c("ind", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = c("ind", "var"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 20")
+```
+
+
+```{r análisis de componentes múltiples 3, include=FALSE, eval=FALSE}
+res.mca <- MCA(data2, quali.sup = c(17, 23), graph = FALSE)
+summary(res.mca, ncp = 3, nbelements = Inf)
+dimdesc(res.mca)
+plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = c("ind", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = c("ind", "var"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 20")
 ```
 
 
@@ -295,23 +342,6 @@ corrplot::corrplot(res.pca$var$coord) # Correlation of each variable with the co
 fviz_contrib(res.pca, choice = "var")
 fviz_contrib(res.pca, choice = "var", axes = 2)
 fviz_pca_ind(res.pca, col.ind = data2$eco_anx, label = "point")
-```
-
-
-```{r análisis de componentes múltiples}
-res.mca <- MCA(data2, method = "burt")
-summary(res.mca, ncp = 3, nbelements = Inf)
-dimdesc(res.mca)
-plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
-plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 30")
-
-res.mca <- MCA(data2, method = "burt", quali.sup = c(1, 24))
-summary(res.mca, ncp = 3, nbelements = Inf)
-dimdesc(res.mca)
-plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.8)
-plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.8, selectMod = "contrib 20")
-plot(res.mca, invisible = c("ind", "var"), autoLab = "y", cex = 0.8)
-plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.8, habillage = "eco_anx")
 ```
 
 # Emociones frente al cambio climático y zona de residencia
@@ -357,22 +387,6 @@ plot_est_edu_2 <- data1 %>%
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette)
 plot_est_edu_2
-```
-
-```{r relaciones entre variables categóricas}
-# Convert data frame to a list of ggplot objects
-plots <- lapply(names(data), function(var) {
-  ggplot(data, aes(x = .data[[var]], fill = .data[[var]])) +
-    geom_bar() +
-    labs(x = var, y = "Count") +
-    theme_minimal()
-})
-
-# Combine the plots into a grid
-grid <- plot_grid(plotlist = plots, nrow = 2, ncol = 2)
-
-# Display the grid of plots
-grid
 ```
 
 
