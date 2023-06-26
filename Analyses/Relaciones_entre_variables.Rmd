@@ -65,9 +65,10 @@ data1 <- data1 %>%
     age_r == 4 ~ "De 30 a 32 años"
 ))
 data1$age_r <- as.factor(data1$age_r)
+data1$edad <- data1$A2
 
 # Stratum
-data1$A3 <- as.factor(data1$A3)
+data1$estrato <- as.factor(data1$A3)
 data1$strat <- data1$A3
 data1 <- data1 %>%
   mutate(strat = case_when(
@@ -94,8 +95,8 @@ levels(data1$education) <- c("Básica Primaria", "Básica Secundaria", "Secundar
 
 data1 <- data1 %>%
   mutate(edu = case_when(
-    education %in% c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo") ~ "No",
-    education %in% c("Pregrado", "Posgrado") ~ "Sí"
+    education %in% c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado") ~ "No",
+    education %in% c("Posgrado") ~ "Sí"
 ))
 data1$edu <- as.factor(data1$edu)
 
@@ -138,6 +139,15 @@ for (var in vars_to_convert) {
   levels(data1[[var]]) <- new_levels
 }
 
+data1 <- data1 %>%
+  mutate(Internet = case_when(
+    Medios_Digitales == "Sí" & Redes_Sociales == "Sí" ~ "Sí",
+    Medios_Digitales == "Sí" & Redes_Sociales == "No" ~ "Sí",
+    Medios_Digitales == "No" & Redes_Sociales == "Sí" ~ "Sí",
+    Medios_Digitales == "No" & Redes_Sociales == "No" ~ "No"
+  ))
+data1$Internet <- as.factor(data1$Internet)
+
 # Trust in particular Institutions and figures
 trust_vote_inst <- data1 %>%
   select(C17_5, C17_7, C17_8)
@@ -146,12 +156,20 @@ trust_vote_inst[] <- lapply(trust_vote_inst, function(x) replace(x, x == 3, 0))
 data1$trust_vote_inst <- rowSums(trust_vote_inst)
 data1$trust_vote_inst <- as.factor(data1$trust_vote_inst)
 
-trust_unis <- data1 %>%
-  select(C17_14, C17_15)
-trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 2, -1))
-trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 3, 0))
-data1$trust_unis <- rowSums(trust_unis)
-data1$trust_unis <- as.factor(data1$trust_unis)
+data1 <- data1 %>%
+  mutate(trust_vote_inst = case_when(
+    trust_vote_inst %in% c("-3", "-2", "-1") ~ "No",
+    trust_vote_inst == "0"  ~ "Neutral",
+    trust_vote_inst %in% c("1", "2", "3") ~ "Sí"
+  ))
+data1$trust_vote_inst <- as.factor(data1$trust_vote_inst)
+
+#trust_unis <- data1 %>%
+  #select(C17_14, C17_15)
+#trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 2, -1))
+#trust_unis[] <- lapply(trust_unis, function(x) replace(x, x == 3, 0))
+#data1$trust_unis <- rowSums(trust_unis)
+#data1$trust_unis <- as.factor(data1$trust_unis)
 
 # Join an environmental organization
 data1$C18_7 <- as.factor(data1$C18_7)
@@ -174,12 +192,28 @@ new_values <- c(-3, -2, -1, 0, 1, 2, 3)
 data1$imp_scien <- new_values[match(data1$imp_scien, value_mapping)]
 data1$imp_scien <- as.factor(data1$imp_scien)
 
+data1 <- data1 %>%
+  mutate(imp_scien = case_when(
+    imp_scien %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_scien == "0"  ~ "No sabe",
+    imp_scien %in% c("1", "2", "3") ~ "Positivo"
+  ))
+data1$imp_scien <- as.factor(data1$imp_scien)
+
 # Impact of activists on climate change
 data1$imp_act <- data1$D35_7
 data1$imp_act[data1$imp_act == 99] <- 3.5
 value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
 new_values <- c(-3, -2, -1, 0, 1, 2, 3)
 data1$imp_act <- new_values[match(data1$imp_act, value_mapping)]
+data1$imp_act <- as.factor(data1$imp_act)
+
+data1 <- data1 %>%
+  mutate(imp_act = case_when(
+    imp_act %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_act == "0"  ~ "No sabe",
+    imp_act %in% c("1", "2", "3") ~ "Positivo"
+  ))
 data1$imp_act <- as.factor(data1$imp_act)
 
 # Impact of religious groups on climate change
@@ -190,12 +224,28 @@ new_values <- c(-3, -2, -1, 0, 1, 2, 3)
 data1$imp_rel <- new_values[match(data1$imp_rel, value_mapping)]
 data1$imp_rel <- as.factor(data1$imp_rel)
 
+data1 <- data1 %>%
+  mutate(imp_rel = case_when(
+    imp_rel %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_rel == "0"  ~ "No sabe",
+    imp_rel %in% c("1", "2", "3") ~ "Positivo"
+  ))
+data1$imp_rel <- as.factor(data1$imp_rel)
+
 # Impact of politicians on climate change
 data1$imp_pol <- data1$D35_6
 data1$imp_pol[data1$imp_pol == 99] <- 3.5
 value_mapping <- c(1, 2, 3, 3.5, 4, 5, 6)
 new_values <- c(-3, -2, -1, 0, 1, 2, 3)
 data1$imp_pol <- new_values[match(data1$imp_pol, value_mapping)]
+data1$imp_pol <- as.factor(data1$imp_pol)
+
+data1 <- data1 %>%
+  mutate(imp_pol = case_when(
+    imp_pol %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_pol == "0"  ~ "No sabe",
+    imp_pol %in% c("1", "2", "3") ~ "Positivo"
+  ))
 data1$imp_pol <- as.factor(data1$imp_pol)
 
 # Thoughts about climate change
@@ -246,6 +296,13 @@ for (i in 1:nrow(data1)) {
 data1$imp_como <- as.factor(data1$imp_como)
 levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
 
+data1 <- data1 %>%
+  mutate(imp_como = case_when(
+    imp_como %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_como %in% c("1", "2", "3") ~ "Positivo"
+  ))
+data1$imp_como <- as.factor(data1$imp_como)
+
 # Impact of individual actions on climate change
 c39 <- grep("^C39_", names(data1), value=T)
 data1$imp_cli <- NA
@@ -254,6 +311,13 @@ for (i in 1:nrow(data1)) {
 }
 data1$imp_cli <- as.factor(data1$imp_cli)
 levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
+
+data1 <- data1 %>%
+  mutate(imp_cli = case_when(
+    imp_cli %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_cli %in% c("1", "2", "3") ~ "Positivo"
+  ))
+data1$imp_cli <- as.factor(data1$imp_cli)
 
 # Climate change origin
 data1$C40 <- as.factor(data1$C40)
@@ -276,8 +340,8 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 
 ```{r data frames para variables continuas y variables categoricas, include=FALSE}
 data2 <- data1 %>%
-  select(Zona, sex, age_r, strat, ethni, education, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, Otro_medio, trust_vote_inst, trust_unis, eco_anx, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
-# Not included: Negative emotions towards government actions against climate change, binary coding of education
+  select(Zona, sex, edad, estrato, ethni, education, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, trust_vote_inst, eco_anx, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, clim_origin, cont_clim)
+# Not included: Negative emotions towards government actions against climate change, Alternative media
 ```
 
 
@@ -293,10 +357,17 @@ for (var in names(data2)) {
 # Print the resulting data frame
 print(result)
 
-res.mca <- MCA(data2, graph = FALSE)
+res.mca <- MCA(data2, graph = FALSE, quanti.sup = 3)
+fviz_eig(res.mca, addlabels = TRUE, title = "Inertia of MCA Dimensions")
+fviz_mca_ind(res.mca, geom = "point", pointsize = 2)
+fviz_mca_ind(res.mca, geom = "point", pointsize = 2, hab = "eco_anx", addEllipses = TRUE, alpha = 0.2)
+fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "clim_origin", addEllipses = TRUE, alpha = 0.2)
+fviz_mca_biplot(res.mca, geom.ind = "point", repel = TRUE, alpha.ind = 0.1)
+fviz_mca_var(res.mca, choice = "var.cat", repel = TRUE)
+fviz_mca_var(res.mca, choice = "var", repel = TRUE)
 summary(res.mca, ncp = 3, nbelements = Inf)
 dimdesc(res.mca)
-plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.7)
+plot(res.mca, invisible = "var", cex = 0.7, label = "none", hab = "clim_origin", select = 0)
 plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
 plot(res.mca, invisible = c("ind", "quali.sup"), autoLab = "y", cex = 0.7)
 plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 20")
@@ -304,14 +375,15 @@ plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 
 
 
 ```{r análisis de componentes múltiples 2, include=FALSE, eval=FALSE}
-res.mca <- MCA(data2, quali.sup = 1:16, graph = FALSE)
+res.mca <- MCA(data2, quali.sup = c(15:25), graph = FALSE , quanti.sup = 3)
+fviz_eig(res.mca, addlabels = TRUE, title = "Inertia of MCA Dimensions")
+fviz_mca_ind(res.mca, geom = "point", pointsize = 2)
+fviz_mca_ind(res.mca, geom = "point", pointsize = 2, hab = "clim_origin")
+fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "clim_origin", alpha = 0.2)
+fviz_mca_biplot(res.mca, geom.ind = "point", repel = TRUE, alpha.ind = 0.1)
+fviz_mca_var(res.mca, choice = "var.cat", repel = TRUE)
 summary(res.mca, ncp = 3, nbelements = Inf)
 dimdesc(res.mca)
-plot(res.mca, invisible = c("var", "quali.sup"), autoLab = "y", cex = 0.7)
-plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7)
-plot(res.mca, invisible = c("ind", "quali.sup"), autoLab = "y", cex = 0.7)
-plot(res.mca, invisible = c("ind", "var"), autoLab = "y", cex = 0.7)
-plot(res.mca, invisible = "ind", autoLab = "y", cex = 0.7, selectMod = "contrib 20")
 ```
 
 
@@ -346,31 +418,45 @@ fviz_pca_ind(res.pca, col.ind = data2$eco_anx, label = "point")
 
 # Emociones frente al cambio climático y zona de residencia
 
-```{r relación estrato edad}
-tab_est_age <- table(data1$age_r, data1$A3)
-kable(round(prop.table(tab_est_age) * 100, 1), booktabs = TRUE)
+```{r relación nivel educativo zona}
+tab_edu_zona <- table(data2$Zona, data2$education)
+kable(round(prop.table(tab_edu_zona) * 100, 1), booktabs = TRUE)
 
-custom_palette <- brewer.pal(6, "Set2")
-plot_est_age <- data1 %>%
-  ggplot(aes(x = strat, y = A2)) +
-  geom_boxplot(aes(colour = strat)) +
-  labs(x = "Estrato", y = "Edad") +
-  ggtitle("Distribución \n Edad por Estrato") +
+custom_palette <- brewer.pal(4, "BrBG")
+plot_edu_zona <- data2 %>%
+  ggplot(aes(x = education, fill = Zona)) +
+  geom_bar(position = "fill") +
+  labs(x = "Nivel educativo", y = "Proporción", fill = "Zona") +
+  ggtitle("Relación \n Zona y Nivel Educativo") +
   papaja::theme_apa() +
-  scale_y_continuous(breaks = seq(18, 32, 2)) +
-  theme(legend.position="none") +
-  scale_color_manual(values = custom_palette)
-plot_est_age
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_edu_zona
+```
+
+```{r relación estrato zona}
+tab_est_zona <- table(data2$Zona, data2$estrato)
+kable(round(prop.table(tab_est_zona) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(4, "BrBG")
+plot_est_zona <- data2 %>%
+  ggplot(aes(x = estrato, fill = Zona)) +
+  geom_bar(position = "fill") +
+  labs(x = "Estrato", y = "Proporción", fill = "Zona") +
+  ggtitle("Relación \n Zona y Estrato") +
+  papaja::theme_apa() +
+  scale_fill_manual(values = custom_palette)
+plot_est_zona
 ```
 
 
 ```{r relación nivel educativo estrato}
-tab_est_edu <- table(data1$A6, data1$A3)
+tab_est_edu <- table(data2$education, data2$estrato)
 kable(round(prop.table(tab_est_edu) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
-plot_est_edu <- data1 %>%
-  ggplot(aes(x = A6, fill = A3)) +
+plot_est_edu <- data2 %>%
+  ggplot(aes(x = education, fill = estrato)) +
   geom_bar(position = "fill") +
   labs(x = "Nivel educativo", y = "Proporción", fill = "Estrato") +
   ggtitle("Relación \n Estrato y Nivel Educativo") +
@@ -379,14 +465,104 @@ plot_est_edu <- data1 %>%
   scale_fill_manual(values = custom_palette)
 plot_est_edu
 
-plot_est_edu_2 <- data1 %>%
-  ggplot(aes(x = A3, fill = A6)) +
+plot_est_edu_2 <- data2 %>%
+  ggplot(aes(x = estrato, fill = education)) +
   geom_bar(position = "fill") +
   labs(x = "Estrato", y = "Proporción", fill = "Nivel Educativo") +
   ggtitle("Relación \n Estrato y Nivel Educativo") +
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette)
 plot_est_edu_2
+```
+
+
+```{r chi-square}
+table1 <- table(data2$clim_origin, data2$imp_cli)
+table1
+chisq.test(table1)
+
+table2 <- table(data2$clim_origin, data2$eco_anx)
+table2
+chisq.test(table2)
+
+table3 <- table(data2$clim_origin, data2$thoughts)
+table3
+chisq.test(table3)
+
+table4 <- table(data2$clim_origin, data2$ideology)
+table4
+chisq.test(table4)
+
+table9 <- table(data2$clim_origin, data2$trust_vote_inst)
+table9
+chisq.test(table9)
+
+table5 <- table(data2$eco_anx, data2$thoughts)
+table5
+chisq.test(table5)
+
+table6 <- table(data2$eco_anx, data2$ideology)
+table6
+chisq.test(table6)
+
+table7 <- table(data2$eco_anx, data2$cont_clim)
+table7
+chisq.test(table7)
+
+table8 <- table(data2$eco_anx, data2$trust_vote_inst)
+table8
+chisq.test(table8)
+
+table9 <- table(data2$eco_anx, data2$imp_como)
+table9
+chisq.test(table9)
+```
+
+
+```{r relación nivel educativo estrato}
+tab_ori_eco_anx <- table(data2$clim_origin, data2$eco_anx)
+kable(round(prop.table(tab_ori_eco_anx) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_ori_eco_anx <- data2 %>%
+  ggplot(aes(x = eco_anx, fill = clim_origin)) +
+  geom_bar(position = "fill") +
+  labs(x = "Eco-ansiedad", y = "Proporción", fill = "Origen \nCambio climático") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_ori_eco_anx
+```
+
+
+```{r relación nivel educativo estrato}
+tab_como_eco_anx <- table(data2$imp_como, data2$eco_anx)
+kable(round(prop.table(tab_ori_eco_anx) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_como_eco_anx <- data2 %>%
+  ggplot(aes(x = eco_anx, fill = imp_como)) +
+  geom_bar(position = "fill") +
+  labs(x = "Eco-ansiedad", y = "Proporción", fill = "Impacto acciones \nIndividuales en \nComodidad") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_como_eco_anx
+```
+
+
+```{r relación nivel educativo estrato}
+tab_ori_imp_cli <- table(data2$clim_origin, data2$imp_cli)
+kable(round(prop.table(tab_ori_imp_cli) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_ori_imp_cli <- data2 %>%
+  ggplot(aes(x = clim_origin, fill = imp_cli)) +
+  geom_bar(position = "fill") +
+  labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Impacto acciones \nIndividuales en \nCambio climático") +
+  papaja::theme_apa() +
+  scale_fill_manual(values = custom_palette)
+plot_ori_imp_cli
 ```
 
 

@@ -682,7 +682,7 @@ trust_plot <- trust_in_props %>%
   ggplot(aes(x = Institución_o_figura, y = porcentaje, fill = confianza)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  labs(x = "Institución o Figura", y = "Porcentaje (%)", fill = "¿Confía en la Institución?") +
+  labs(x = "Institución o Figura", y = "Porcentaje (%)", fill = "¿Confía \n en la \n Institución?") +
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette, labels = c("No", "No aplica", "No la conoce", "Sí")) +
   theme(legend.key.size = unit(0.5, 'cm'), #change legend key size
