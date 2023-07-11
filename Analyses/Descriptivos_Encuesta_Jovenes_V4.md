@@ -1,7 +1,7 @@
 Encuesta: Distribución y recodificación de variables
 ================
 Juan Sebastian Cely
-2023-06-13
+2023-07-10
 
 # Emociones hacia el cambio climático
 
@@ -38,45 +38,29 @@ podía elegir un máximo de 2 emociones de un conjunto de 16 emociones.
 ## Variable “Emociones hacia el cambio climático” Recodificada
 
 El conjunto de 16 emociones fue agrupado en tres niveles: Con
-Eco-ansiedad, emociones ambivalentes y/o neutrales, y emociones
-negativas.
+Eco-ansiedad, emociones ambivalentes y/o neutrales, y Sin Eco-ansiedad.
 
-| Eco_ansiedad        | Frecuencia | Porcentaje (%) |
-|:--------------------|-----------:|---------------:|
-| Con eco-ansiedad    |       1581 |           71.2 |
-| Ambivalente/Neutral |        385 |           17.3 |
-| Sin eco-ansiedad    |        254 |           11.4 |
+| Emociones              | Frecuencia | Porcentaje (%) |
+|:-----------------------|-----------:|---------------:|
+| Negativas              |       1581 |           71.2 |
+| Ambivalentes/Neutrales |        385 |           17.3 |
+| Positivas              |        254 |           11.4 |
 
 <img src="./figuresvariable emo recodificada-1.png" width="80%" style="display: block; margin: auto;" />
 
 ## Variable “Emociones hacia el cambio climático” Recodificada Opción 2
 
-El conjunto de 16 emociones fue agrupado en tres niveles: Con
-Eco-ansiedad paralizante, con eco-ansiedad práctica, y ausencia de
-eco-ansiedad.
+El conjunto de 16 emociones fue agrupado en tres niveles: Emociones de
+alta activación, Emociones de baja activación y emociones ambivalentes o
+neutras.
 
-| Eco-anxiety | Frecuencia | Porcentaje (%) |
-|:------------|-----------:|---------------:|
-| Paralyzing  |       1614 |           72.7 |
-| Practical   |        309 |           13.9 |
-| Absent      |        297 |           13.4 |
+| Emociones          | Frecuencia | Porcentaje (%) |
+|:-------------------|-----------:|---------------:|
+| Baja activación    |        258 |           11.6 |
+| Ambivalente/Neutra |       1003 |           45.2 |
+| Alta activación    |        959 |           43.2 |
 
 <img src="./figuresvariable emo recodificada 2-1.png" width="80%" style="display: block; margin: auto;" />
-
-## Variable “Emociones hacia el cambio climático” Recodificada Opción 3
-
-El conjunto de 16 emociones fue agrupado en cuatro niveles: Con
-Eco-ansiedad fuertemente paralizante, con eco-ansiedad paralizante, con
-eco-ansiedad práctica, y ausencia de eco-ansiedad.
-
-| Eco-anxiety       | Frecuencia | Porcentaje (%) |
-|:------------------|-----------:|---------------:|
-| Absent            |        297 |           13.4 |
-| Paralyzing        |       1173 |           52.8 |
-| Practical         |        309 |           13.9 |
-| Strong Paralyzing |        441 |           19.9 |
-
-<img src="./figuresvariable emo recodificada 3-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Zona de residencia
 
@@ -197,13 +181,6 @@ La variable “Etnia” fue recodificada en dos distintos niveles que
 distinguen si la persona se reconoce como perteneciente a alguna de las
 etnias incluidas o no.
 
-| ¿Pertenece a alguna etnia? | Frecuencia | Porcentaje (%) |
-|:---------------------------|-----------:|---------------:|
-| No                         |       2035 |           91.7 |
-| Sí                         |        185 |            8.3 |
-
-<img src="./figuresvariable etnia recodificada-1.png" width="80%" style="display: block; margin: auto;" />
-
 # Nivel educativo
 
 La pregunta número 6 fue: ¿Cuál es el nivel educativo más alto alcanzado
@@ -225,13 +202,6 @@ por usted?
 La variable “Nivel educativo” fue recodificada en dos distintos niveles
 que distinguen si la persona completó o no estudios de educación
 superior.
-
-| ¿Educación superior? | Frecuencia | Porcentaje (%) |
-|:---------------------|-----------:|---------------:|
-| No                   |       1811 |           81.6 |
-| Sí                   |        409 |           18.4 |
-
-<img src="./figuresvariable nivel educativo recodificada-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Hijos
 
@@ -273,7 +243,7 @@ centro, o de derecha.
 | Centro             |       1249 |           56.3 |
 | Izquierda          |        548 |           24.7 |
 
-<img src="./figuresvariable ideología política recodificada-1.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresvariable ideología política recodificada-2.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresvariable ideología política recodificada-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Medios de información
 
@@ -301,9 +271,7 @@ El participante podía elegir tantas opciones como quisiera.
 
 ## Medios de información por separado
 
-Se exploró cada uno de los medios de información por separado para
-determinar el porcentaje de los participantes de utilizaba cada uno de
-estos.
+Se exploró cada uno de los medios de información de forma individual.
 <img src="./figuresloop medios de información-1.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-2.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-3.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-4.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-5.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-6.png" width="80%" style="display: block; margin: auto;" />
 
 # Confianza hacia figuras e instituciones
@@ -346,12 +314,9 @@ no tenían conocimiento sobre esta.
 
 ## Confianza en figuras e instituciones agrupadas
 
-Algunas de las instituciones y figuras se reunieron en dos variables
-diferentes de acuerdo a cierta categoría que las encerraba. Así, la
-primera variable corresponde a la confianza frente a instituciones cuyos
-cargos son de eleccióm popular. La segunda variable corresponde a la
-confianza frente a universidades, ya sean públicas o privadas.
-<img src="./figuresvariable medida de confianza-1.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresvariable medida de confianza-2.png" width="80%" style="display: block; margin: auto;" />
+Las instituciones donde los cargos ocupados son de elección popular se
+agruparon para conformar una nueva variable.
+<img src="./figuresvariable medida de confianza-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Asociarse a organizaciones ambientales
 
@@ -367,45 +332,6 @@ por su relevancia para el proyecto.
 | No             |        946 |           42.6 |
 
 <img src="./figuresvariable asociarse a organizaciones ambientales-1.png" width="80%" style="display: block; margin: auto;" />
-
-# Emociones hacia respuesta del gobierno frente al cambio climático
-
-La pregunta número 34 fue: “En una escala de 1 a 6, donde 1 es MUY POCO
-y 6 es MUY FUERTE, Cuando usted piensa en cómo el gobierno está
-respondiendo al cambio climático se siente:”. El participante debía dar
-una respuesta para cada una de las 10 emociones incluidas.
-
-| Emoción       | Muy poco |    2 |    3 |    4 |    5 | Muy fuerte |
-|:--------------|---------:|-----:|-----:|-----:|-----:|-----------:|
-| Abandonado    |     13.8 | 15.2 | 25.9 | 19.2 | 13.6 |       12.2 |
-| Angustiado    |      9.7 | 15.3 | 24.4 | 21.3 | 16.8 |       12.6 |
-| Avergonzado   |     15.8 | 15.6 | 27.2 | 20.9 | 10.5 |       10.0 |
-| Enojado       |     11.8 | 15.1 | 27.3 | 20.3 | 13.5 |       11.9 |
-| Esperanzado   |     20.4 | 18.0 | 26.5 | 19.8 | 10.4 |        5.0 |
-| Menospreciado |     16.8 | 17.1 | 30.2 | 18.1 |  9.7 |        8.2 |
-| Protegido     |     29.4 | 20.0 | 28.2 | 14.3 |  5.1 |        2.9 |
-| Temeroso      |     11.2 | 14.4 | 26.3 | 21.6 | 14.5 |       12.0 |
-| Tranquilo     |     27.6 | 18.7 | 23.5 | 15.5 | 10.6 |        4.0 |
-| Valorado      |     21.8 | 24.6 | 29.4 | 15.3 |  6.1 |        2.7 |
-
-| Categoría  | Frecuencia | Porcentaje (%) |
-|:-----------|-----------:|---------------:|
-| Muy poco   |       3957 |           17.8 |
-| 2          |       3866 |           17.4 |
-| 3          |       5971 |           26.9 |
-| 4          |       4138 |           18.6 |
-| 5          |       2459 |           11.1 |
-| Muy fuerte |       1809 |            8.1 |
-
-## Creación de una medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático
-
-La creación de la medida de negatividad emocional hacia las acciones del
-gobierno frente al cambio climático corresponde a la suma de las
-emociones negativas menos la suma de las emociones positivas. Al valor
-total, tras realizar la resta, se le suma un valor de 19 para que el
-rango de la medida de negatividad vaya desde 1 hasta 51.
-
-<img src="./figuresvariable medida negatividad emocional gobierno-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Impacto de actores frente al cambio climático
 
@@ -537,10 +463,9 @@ respuesta para cada una de las 10 acciones incluidas.
 ## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
 
 Se creó una medida que promedia los valores asignados a cada una de las
-acciones individuales y se les restó un valor igual a la mediana de los
-valores que era posible elegir, lo que es igual a 3.5. Con esto la
-medida se convirtió en una escala que va desde -2.5 hasta 2.5.
-<img src="./figuresvariable medida impacto acciones comodidad-1.png" width="80%" style="display: block; margin: auto;" />
+acciones individuales y se recodificaron en una escala que va desde -3
+hasta 3.
+<img src="./figuresvariable medida impacto acciones comodidad cat-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Impacto acciones en cambio climático
 
@@ -574,10 +499,9 @@ respuesta para cada una de las 10 acciones incluidas.
 ## Creación de una medida del impacto de ciertas acciones en el cambio climático
 
 Se creó una medida que promedia los valores asignados a cada una de las
-acciones individuales y se les restó un valor igual a la mediana de los
-valores que era posible elegir, lo que es igual a 3.5. Con esto la
-medida se convirtió en una escala que va desde -2.5 hasta 2.5.
-<img src="./figuresvariable medida impacto acciones cambio climático-1.png" width="80%" style="display: block; margin: auto;" />
+acciones individuales y se recodificaron en una escala que va desde -3
+hasta 3.
+<img src="./figuresvariable medida impacto cambio climático cat-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Origen del cambio climático
 
@@ -603,16 +527,18 @@ debido a causas naturales y 10 es 100% debido a actividades humanas.
 ## Variable “Origen del cambio climático” Recodificada
 
 La variable “Origen del cambio climático” fue recodificada en dos
-niveles que distinguen si la persona cree que en mayor grado el cambio
-climático tiene causas naturales o si considera que en mayor grado es
-causado por actividades humanas.
+niveles que distinguen si la persona se aproxima a una respuesta
+correcta o no respecto al porcentaje de contribución al cambio climático
+de las actividades humanas. Solo quienes eligieron las opciones que
+constituyen un rango del 80 al 100% de origen del cambio climátivo por
+actividades humanas se clasificaron como una respuesta correcta.
 
-| Origen cambio climático | Frecuencia | Porcentaje (%) |
-|:------------------------|-----------:|---------------:|
-| Causas humanas          |       1911 |           86.1 |
-| Causas naturales        |        309 |           13.9 |
+| Respuesta Origen Cambio Climático | Frecuencia | Porcentaje (%) |
+|:----------------------------------|-----------:|---------------:|
+| Correcta                          |       1053 |           47.4 |
+| Incorrecta                        |       1167 |           52.6 |
 
-<img src="./figuresvariable origen del cambio climático recodificada-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresvariable origen del cambio climático recodificada 2-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Mayor contribución al cambio climático
 
