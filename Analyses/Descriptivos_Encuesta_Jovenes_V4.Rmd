@@ -76,6 +76,7 @@ data1$eco_anx[i] <- "Positivas"
 }
 ```
 
+
 ```{r variable emo recodificada, fig.align='center', echo=F}
 data1$eco_anx <- factor(data1$eco_anx, levels = c("Negativas", "Ambivalentes/Neutrales", "Positivas"))
 table_eco_anx <- as.data.frame(table(data1$eco_anx)) %>%
@@ -97,112 +98,46 @@ plot_eco_anx
 ```
 
 
-
+## Variable "Emociones hacia el cambio climático" Recodificada Opción 2
+El conjunto de 16 emociones fue agrupado en tres niveles: Emociones de alta activación, Emociones de baja activación y emociones ambivalentes o neutras.
 ```{r recodificación emociones cambio climático 2, include=FALSE}
-# Variable "Emociones hacia el cambio climático" Recodificada Opción 2
-# El conjunto de 16 emociones fue agrupado en tres niveles: Con Eco-ansiedad paralizante, con eco-ansiedad práctica, y ausencia de eco-ansiedad.
-neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
-neu_emo <- c("C36_13")
-pos_emo <- c("C36_2", "C36_12", "C36_14", "C36_16")
-data1$eco_anx <- NA
+high_ar <- c("C36_2", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_9", "C36_12", "C36_14")
+low_ar <- c("C36_1", "C36_8", "C36_10", "C36_11", "C36_13", "C36_15", "C36_16")
+data1$eco_anx2 <- NA
 for (i in 1:nrow(data1)) {
-neg_emo_count <- sum(data1[i, neg_emo] == 1)
-pos_emo_count <- sum(data1[i, pos_emo] == 1)
-neu_emo_count <- sum(data1[i, neu_emo] == 1)
-if (neg_emo_count %in% c(1, 2) & pos_emo_count == 0 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Paralyzing"
-} else if (neg_emo_count == 1 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Paralyzing"
-} else if (neg_emo_count == 1 & pos_emo_count == 1) {
-data1$eco_anx[i] <- "Practical"
-} else if (neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Absent"
-} else if (pos_emo_count %in% c(1, 2) & neg_emo_count == 0 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Absent"
-} else if (pos_emo_count == 1 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Absent"
+high_ar_count <- sum(data1[i, high_ar] == 1)
+low_ar_count <- sum(data1[i, low_ar] == 1)
+if (high_ar_count %in% c(1, 2) & low_ar_count == 0) {
+data1$eco_anx2[i] <- "Alta activación"
+} else if (high_ar_count == 1 & low_ar_count == 1) {
+data1$eco_anx2[i] <- "Ambivalente/Neutra"
+} else if (high_ar_count == 0 & low_ar_count %in% c(1, 2)) {
+data1$eco_anx2[i] <- "Baja activación"
 }
 }
 ```
 
 
-```{r variable emo recodificada 2, fig.align='center', include=FALSE, eval=FALSE}
-data1$eco_anx <- factor(data1$eco_anx, levels = c("Paralyzing", "Practical", "Absent"))
-table_eco_anx<- as.data.frame(table(data1$eco_anx)) %>%
+```{r variable emo recodificada 2, fig.align='center', echo=FALSE}
+data1$eco_anx2 <- factor(data1$eco_anx2, levels = c("Baja activación", "Ambivalente/Neutra", "Alta activación"))
+table_eco_anx2<- as.data.frame(table(data1$eco_anx2)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
-kable(table_eco_anx, col.names = c("Eco-anxiety", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+kable(table_eco_anx2, col.names = c("Emociones", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
 
-plot_eco_anx <- data1 %>%
-  count(eco_anx) %>%
+plot_eco_anx2 <- data1 %>%
+  count(eco_anx2) %>%
   mutate(prop = (n / sum(n))*100) %>%
-  ggplot(aes(x = eco_anx, y = prop, fill = eco_anx)) +
+  ggplot(aes(x = eco_anx2, y = prop, fill = eco_anx2)) +
   geom_bar(stat = "identity") +
   ylim(0, 75) +
-  labs(x = "Eco-anxiety", y = "Porcentaje (%)") +
-  ggtitle("Distribución \n Eco-anxiety") +
+  labs(x = "Emociones", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Emociones frente al cambio climático") +
   papaja::theme_apa() +
   theme(legend.position="none") +
   geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
-plot_eco_anx
+plot_eco_anx2
 ```
 
-
-```{r recodificación emociones cambio climático 3, include=FALSE, eval=FALSE}
-# Variable "Emociones hacia el cambio climático" Recodificada Opción 3
-# El conjunto de 16 emociones fue agrupado en cuatro niveles: Con Eco-ansiedad fuertemente paralizante, con eco-ansiedad paralizante, con eco-ansiedad práctica, y ausencia de eco-ansiedad.
-neg_emo_st <- c("C36_11", "C36_15", "C36_9")
-neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_10")
-neu_emo <- c("C36_13")
-pos_emo <- c("C36_2", "C36_12", "C36_14", "C36_16")
-data1$eco_anx <- NA
-for (i in 1:nrow(data1)) {
-neg_emo_st_count <- sum(data1[i, neg_emo_st] == 1)
-neg_emo_count <- sum(data1[i, neg_emo] == 1)
-pos_emo_count <- sum(data1[i, pos_emo] == 1)
-neu_emo_count <- sum(data1[i, neu_emo] == 1)
-if (neg_emo_st_count %in% c(1, 2) & neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Strong Paralyzing"
-} else if (neg_emo_st_count == 1 & neg_emo_count == 1 & pos_emo_count == 0 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Strong Paralyzing"
-} else if (neg_emo_st_count == 1 & neg_emo_count == 0 & pos_emo_count == 1 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Practical"
-} else if (neg_emo_st_count == 1 & neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Strong Paralyzing"
-} else if (neg_emo_st_count == 0 & neg_emo_count %in% c(1, 2) & pos_emo_count == 0 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Paralyzing"
-} else if (neg_emo_st_count == 0 & neg_emo_count == 1 & pos_emo_count == 1 & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Practical"
-} else if (neg_emo_st_count == 0 & neg_emo_count == 1 & pos_emo_count == 0 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Paralyzing"
-} else if (neg_emo_st_count == 0 & neg_emo_count == 0 & pos_emo_count %in% c(1, 2) & neu_emo_count == 0) {
-data1$eco_anx[i] <- "Absent"
-} else if (neg_emo_st_count == 0 & neg_emo_count == 0 & pos_emo_count == 1 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Absent"
-} else if (neg_emo_st_count == 0 & neg_emo_count == 0 & pos_emo_count == 0 & neu_emo_count == 1) {
-data1$eco_anx[i] <- "Absent"
-}
-}
-```
-
-```{r variable emo recodificada 3, fig.align='center', include=FALSE, eval=FALSE}
-data1$emo_eco_anx <- factor(data1$eco_anx, levels = c("Strong Paralyzing", "Paralyzing", "Practical", "Absent"))
-table_eco_anx <- as.data.frame(table(data1$eco_anx)) %>%
-  mutate(per = round(Freq / sum(Freq) * 100, 1))
-kable(table_eco_anx, col.names = c("Eco-anxiety", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
-
-plot_eco_anx<- data1 %>%
-  count(eco_anx) %>%
-  mutate(prop = (n / sum(n))*100) %>%
-  ggplot(aes(x = eco_anx, y = prop, fill = eco_anx)) +
-  geom_bar(stat = "identity") +
-  ylim(0, 55) +
-  labs(x = "Eco-anxiety", y = "Porcentaje (%)") +
-  ggtitle("Distribución \n Eco-anxiety") +
-  papaja::theme_apa() +
-  theme(legend.position="none") +
-  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
-plot_eco_anx
-```
 
 # Zona de residencia
 Al inicio de la encuesta se clasificó a los participantes en dos distintas categorías según su lugar de residencia. Estas fueron categorías son: "Urbana ciudades" y "Municipios rurales dispersos".
@@ -700,7 +635,7 @@ data1 <- data1 %>%
 ```
 
 ## Confianza en figuras e instituciones agrupadas
-Las instituciones donde se los cargos ocupados son de elección popular se agruparon para conformar una nueva variable.
+Las instituciones donde los cargos ocupados son de elección popular se agruparon para conformar una nueva variable.
 ```{r variable medida de confianza, warning=FALSE, fig.align='center', echo=F}
 #plot_trust_vote_inst <- data1 %>%
   #ggplot(aes(x = trust_vote_inst, y = after_stat(count) / sum(after_stat(count)) * 100)) +
@@ -742,7 +677,7 @@ plot_trust_vote_inst
 ```
 
 
-```{r variable medida de confianza, warning=FALSE, fig.align='center', include=FALSE, eval=FALSE}
+```{r variable medida de confianza universidades, warning=FALSE, fig.align='center', include=FALSE, eval=FALSE}
 custom_palette <- brewer.pal(7, "BrBG")
 plot_trust_unis <- data1 %>%
   count(trust_unis) %>%
@@ -1285,7 +1220,7 @@ data1 <- data1 %>%
     ))
 ```
 
-## Variable "Origen del cambio climático" Recodificada Opción 2
+## Variable "Origen del cambio climático" Recodificada
 La variable "Origen del cambio climático" fue recodificada en dos niveles que distinguen si la persona se aproxima a una respuesta correcta o no respecto al porcentaje de contribución al cambio climático de las actividades humanas. Solo quienes eligieron las opciones que constituyen un rango del 80 al 100% de origen del cambio climátivo por actividades humanas se clasificaron como una respuesta correcta.
 ```{r variable origen del cambio climático recodificada 2, fig.align='center', echo=F}
 data1$clim_origin <- as.factor(data1$clim_origin)
