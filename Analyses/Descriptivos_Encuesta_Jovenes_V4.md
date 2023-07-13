@@ -1,7 +1,7 @@
 Encuesta: Distribución y recodificación de variables
 ================
 Juan Sebastian Cely
-2023-07-10
+2023-07-12
 
 # Emociones hacia el cambio climático
 
@@ -75,6 +75,11 @@ categorías son: “Urbana ciudades” y “Municipios rurales dispersos”.
 
 <img src="./figuresvariable zone-1.png" width="80%" style="display: block; margin: auto;" />
 
+## Distribución de zona de residencia según datos del DANE
+
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la
+encuesta. ![](dane_zona_2020.png)
+
 # Sexo
 
 La pregunta número 1 pedía a cada participante indicar su sexo.
@@ -144,6 +149,11 @@ Nacional que va desde 1 hasta 6.
 
 <img src="./figuresvariable estrato-1.png" width="80%" style="display: block; margin: auto;" />
 
+## Distribución de estrato socioeconómico según datos de Kantar
+
+Los datos de Kantar muestran porcentajes cercanos a los obtenidos en la
+encuesta. ![](kantar_stratum_2020.png)
+
 ## Variable “Estrato” Recodificada
 
 La variable “Estrato” fue recodificada en tres distintos grupos: Estrato
@@ -175,6 +185,11 @@ opción de las 6 incluidas.
 
 <img src="./figuresvariable etnia-1.png" width="80%" style="display: block; margin: auto;" />
 
+## Distribución de etnias según datos del DANE
+
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la
+encuesta. ![](dane_ethni_2020.png)
+
 ## Variable “Etnia” Recodificada
 
 La variable “Etnia” fue recodificada en dos distintos niveles que
@@ -196,6 +211,11 @@ por usted?
 | Posgrado            |         63 |            2.8 |
 
 <img src="./figuresvariable nivel educativo-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Distribución de nivel educativo más alto alcanzado según datos del DANE
+
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la
+encuesta. ![](dane_edu_2020.png)
 
 ## Variable “Nivel educativo” Recodificada
 
@@ -230,6 +250,11 @@ derecha.
 | Derecha Fuerte     |        212 |            9.5 |
 
 <img src="./figuresvariable ideología política-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Distribución de ideología política según datos del DANE
+
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la
+encuesta. ![](dane_ideology_2020.png)
 
 ## Variable “Ideología política” Recodificada
 
@@ -273,6 +298,21 @@ El participante podía elegir tantas opciones como quisiera.
 
 Se exploró cada uno de los medios de información de forma individual.
 <img src="./figuresloop medios de información-1.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-2.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-3.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-4.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-5.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-6.png" width="80%" style="display: block; margin: auto;" />
+
+## Variable “Medios de información” Recodificada
+
+Los distintos medios de información fueron agrupados para crear una
+variable que distingue si la persona se informa con medios
+exclusivamente validados, medios exclusivamente no validados, o ambos
+tipos de medios.
+
+| Tipo de fuentes      | Frecuencia | Porcentaje (%) |
+|:---------------------|-----------:|---------------:|
+| Fuentes validadas    |        603 |           27.2 |
+| Fuentes mixtas       |       1114 |           50.2 |
+| Fuentes no validadas |        503 |           22.7 |
+
+<img src="./figuresvariable recodificacion medios-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Confianza hacia figuras e instituciones
 
@@ -569,3 +609,20 @@ contribuye al cambio climático.
 | Incorrecta |       1476 |           66.5 |
 
 <img src="./figuresvariable contribución factores recodificada-1.png" width="80%" style="display: block; margin: auto;" />
+
+# Exploración visual de algunas relaciones esperables dentro de la muestra
+
+Se esperaba encontrar que las personas que habitan en ciudades urbanas
+tiendan a alcanzar niveles más altos de educación comparadas con las
+personas que habitan en municipios rurales dispersos.
+<img src="./figuresrelación nivel educativo zona-1.png" width="80%" style="display: block; margin: auto;" />
+
+Se esperaba encontrar que las personas que habitan en ciudades urbanas
+tiendan a pertenecer a estratos más altos comparadas con las personas
+que habitan en municipios rurales dispersos.
+<img src="./figuresrelación estrato zona-1.png" width="80%" style="display: block; margin: auto;" />
+
+Se esperaba encontrar que las personas de estratos socioeconómicos altos
+tiendan a alcanzar niveles de educación más altos comparadas con las
+personas de estratos socioeconómicos más bajos.
+<img src="./figuresrelación nivel educativo estrato-1.png" width="80%" style="display: block; margin: auto;" />

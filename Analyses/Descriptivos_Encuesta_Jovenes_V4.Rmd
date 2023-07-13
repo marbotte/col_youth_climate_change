@@ -161,6 +161,10 @@ plot_zona <- data1 %>%
 plot_zona
 ```
 
+## Distribución de zona de residencia según datos del DANE
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la encuesta.
+![](dane_zona_2020.png)
+
 # Sexo
 La pregunta número 1 pedía a cada participante indicar su sexo.
 ```{r variable sexo, fig.align='center', echo=F}
@@ -256,6 +260,10 @@ plot_estrato <- data1 %>%
 plot_estrato
 ```
 
+## Distribución de estrato socioeconómico según datos de Kantar
+Los datos de Kantar muestran porcentajes cercanos a los obtenidos en la encuesta.
+![](kantar_stratum_2020.png)
+
 ```{r recodificación estrato, include=FALSE}
 data1$A3 <- as.factor(data1$A3)
 data1$strat <- data1$A3
@@ -313,6 +321,10 @@ plot_et <- data1 %>%
 plot_et
 ```
 
+## Distribución de etnias según datos del DANE
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la encuesta.
+![](dane_ethni_2020.png)
+
 ```{r recodificación etnia, include=FALSE, eval=FALSE}
 data1$ethni <- data1$A5
 data1 <- data1 %>%
@@ -369,6 +381,10 @@ plot_edu <- data1 %>%
   scale_fill_manual(values = custom_palette)
 plot_edu
 ```
+
+## Distribución de nivel educativo más alto alcanzado según datos del DANE
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la encuesta.
+![](dane_edu_2020.png)
 
 ```{r recodificación nivel educativo, include=FALSE, eval=FALSE}
 data1$edu <- data1$A6
@@ -449,6 +465,10 @@ plot_pol_ide <- data1 %>%
   geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
 plot_pol_ide
 ```
+
+## Distribución de ideología política según datos del DANE
+Los datos del DANE muestran porcentajes cercanos a los obtenidos en la encuesta.
+![](dane_ideology_2020.png)
 
 ```{r recodificación ideología política, include=FALSE}
 data1 <- data1 %>%
@@ -567,6 +587,46 @@ for (variable in variables) {
 for (variable in variables) {
   print(results[[variable]]$plot)
 }
+```
+
+
+```{r recodificación medios, include=FALSE}
+val_med <- c("B12_1", "B12_2", "B12_3", "B12_4")
+no_val_med <- c("B12_5", "B12_89")
+data1$med <- NA
+for (i in 1:nrow(data1)) {
+val_med_count <- sum(data1[i, val_med] == 1)
+no_val_med_count <- sum(data1[i, no_val_med] == 1)
+if (val_med_count %in% c(1:4) & no_val_med_count == 0) {
+data1$med[i] <- "Fuentes validadas"
+} else if (val_med_count %in% c(1:4) & no_val_med_count %in% c(1:2)) {
+data1$med[i] <- "Fuentes mixtas"
+} else if (val_med_count == 0 & no_val_med_count %in% c(1:2)) {
+data1$med[i] <- "Fuentes no validadas"
+}
+}
+```
+
+## Variable "Medios de información" Recodificada
+Los distintos medios de información fueron agrupados para crear una variable que distingue si la persona se informa con medios exclusivamente validados, medios exclusivamente no validados, o ambos tipos de medios.
+```{r variable recodificacion medios, fig.align='center', echo=F}
+data1$med <- factor(data1$med, levels = c("Fuentes validadas", "Fuentes mixtas", "Fuentes no validadas"))
+table_med <- as.data.frame(table(data1$med)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_med, col.names = c("Tipo de fuentes", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_med <- data1 %>%
+  count(med) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = med, y = prop, fill = med)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 60) +
+  labs(x = "Tipo de fuentes", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n tipo de fuentes de información") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
+plot_med
 ```
 
 # Confianza hacia figuras e instituciones
@@ -1296,4 +1356,51 @@ plot_cont_clim <- data1 %>%
   theme(legend.position="none") +
   geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_cont_clim
+```
+
+# Exploración visual de algunas relaciones esperables dentro de la muestra
+Se esperaba encontrar que las personas que habitan en ciudades urbanas tiendan a alcanzar niveles más altos de educación comparadas con las personas que habitan en municipios rurales dispersos.
+```{r relación nivel educativo zona, fig.align='center', echo=F}
+# Education
+data1$education <- as.factor(data1$A6)
+levels(data1$education) <- c("Básica Primaria", "Básica Secundaria", "Secundaria Completa", "Técnico o Tecnólogo", "Pregrado", "Posgrado")
+custom_palette <- brewer.pal(4, "BrBG")
+plot_edu_zona <- data1 %>%
+  ggplot(aes(x = education, fill = Zona)) +
+  geom_bar(position = "fill") +
+  labs(x = "Nivel educativo", y = "Proporción", fill = "Zona") +
+  ggtitle("Relación \n Zona y Nivel Educativo") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_edu_zona
+```
+
+
+Se esperaba encontrar que las personas que habitan en ciudades urbanas tiendan a pertenecer a estratos más altos comparadas con las personas que habitan en municipios rurales dispersos.
+```{r relación estrato zona, fig.align='center', echo=F}
+custom_palette <- brewer.pal(4, "BrBG")
+plot_est_zona <- data1 %>%
+  ggplot(aes(x = A3, fill = Zona)) +
+  geom_bar(position = "fill") +
+  labs(x = "Estrato", y = "Proporción", fill = "Zona") +
+  ggtitle("Relación \n Zona y Estrato") +
+  papaja::theme_apa() +
+  scale_fill_manual(values = custom_palette)
+plot_est_zona
+```
+
+
+Se esperaba encontrar que las personas de estratos socioeconómicos altos tiendan a alcanzar niveles de educación más altos comparadas con las personas de estratos socioeconómicos más bajos.
+```{r relación nivel educativo estrato, fig.align='center', echo=F}
+custom_palette <- brewer.pal(6, "BrBG")
+plot_est_edu <- data1 %>%
+  ggplot(aes(x = education, fill = A3)) +
+  geom_bar(position = "fill") +
+  labs(x = "Nivel educativo", y = "Proporción", fill = "Estrato") +
+  ggtitle("Relación \n Estrato y Nivel Educativo") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_est_edu
 ```
