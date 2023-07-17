@@ -1,7 +1,7 @@
 Encuesta: Relaciones entre variables
 ================
 Juan Sebastian Cely
-2023-07-12
+2023-07-17
 
 # Variables y categorias
 
@@ -22,7 +22,7 @@ categoría.
 | edu                   | Tiene estudios de educación superior                       |
 | kids                  | Tiene hijos                                                |
 | ideology              | Ideología política                                         |
-| med                   | Tipo de medios de información utilizado                    |
+| Internet              | Se informa a través de internet                            |
 | trust_vote_inst       | Confía en las instituciones con cargos de elección popular |
 | eco_anx               | Emociones frente al cambio climático                       |
 | env_aso               | Se uniría a una organización ambiental                     |
@@ -58,9 +58,8 @@ categoría.
 | ideology        | Derecha                      |        423 |
 | ideology        | Centro                       |       1249 |
 | ideology        | Izquierda                    |        548 |
-| med             | Fuentes validadas            |        603 |
-| med             | Fuentes mixtas               |       1114 |
-| med             | Fuentes no validadas         |        503 |
+| Internet        | No                           |        475 |
+| Internet        | Sí                           |       1745 |
 | trust_vote_inst | No                           |       1711 |
 | trust_vote_inst | Sí                           |        509 |
 | eco_anx         | Negativas                    |       1581 |
@@ -133,154 +132,154 @@ dimensión distinta a aquellas ligadas con opiniones y percepciones
 frente al cambio climático, por lo que posiblemente no estén asociadas a
 estas opiniones y percepciones.
 
-<img src="./figuresanálisis de componentes múltiples-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-2.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-3.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-8.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-9.png" width="80%" />
+<img src="./figuresanálisis de componentes múltiples-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-2.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-3.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-8.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-9.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-10.png" width="80%" />
 
     ## $`Dim 1`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                          R2       p.value
-    ## imp_po          0.273987002 1.980906e-156
-    ## imp_re          0.267864824 2.218919e-152
-    ## clim_origin     0.208268129 1.235954e-114
-    ## env_aso         0.145875363  5.044833e-78
-    ## age_r           0.131354602  2.359930e-67
-    ## imp_com         0.123341198  1.910334e-65
-    ## kids            0.114141269  2.117779e-60
-    ## thoughts        0.116378248  2.730879e-60
-    ## imp_cl          0.110215183  2.905890e-58
-    ## trust_vote_inst 0.099152862  2.735718e-52
-    ## eco_anx         0.098175142  1.790445e-50
-    ## imp_ac          0.093165429  4.375494e-49
-    ## med             0.081639292  1.000545e-41
-    ## cont_clim       0.061133462  2.821617e-32
-    ## ideology        0.038093164  2.008829e-19
-    ## imp_sci         0.027738571  2.832520e-15
-    ## Zona            0.023485690  3.884226e-13
-    ## strat           0.017116589  4.880592e-09
-    ## sex             0.002061332  3.242810e-02
+    ## imp_po          0.238940291 1.077748e-133
+    ## imp_re          0.236509201 3.722030e-132
+    ## clim_origin     0.225025633 5.912636e-125
+    ## env_aso         0.160016720  4.384782e-86
+    ## imp_com         0.146046808  4.035593e-78
+    ## Internet        0.137685413  2.049025e-73
+    ## imp_cl          0.128821770  1.783533e-68
+    ## thoughts        0.121513913  4.267007e-63
+    ## eco_anx         0.110292302  5.504091e-57
+    ## kids            0.107085565  1.447258e-56
+    ## age_r           0.110169660  8.508718e-56
+    ## trust_vote_inst 0.102904009  2.626411e-54
+    ## imp_ac          0.063515198  1.655569e-33
+    ## cont_clim       0.060881270  3.808365e-32
+    ## ideology        0.037622891  3.453407e-19
+    ## Zona            0.034763742  8.161463e-19
+    ## strat           0.017610517  2.795674e-09
+    ## imp_sci         0.013126349  6.198244e-08
+    ## edu             0.008222246  1.878962e-05
+    ## ethni           0.003412659  5.900261e-03
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
-    ##                                              Estimate       p.value
-    ## imp_po=imp_po_Positivo                    0.180685021 1.980906e-156
-    ## imp_re=imp_re_Positivo                    0.165035202 2.218919e-152
-    ## clim_origin=clim_origin_Incorrecta        0.142296951 1.235954e-114
-    ## env_aso=env_aso_No                        0.120252605  5.044833e-78
-    ## imp_com=imp_com_Negativo                  0.134804534  1.910334e-65
-    ## kids=kids_Sí                              0.106536342  2.117779e-60
-    ## imp_cl=imp_cl_Negativo                    0.163799106  2.905890e-58
-    ## trust_vote_inst=trust_vote_inst_Sí        0.116627920  2.735718e-52
-    ## imp_ac=imp_ac_Positivo                    0.095225813  4.375494e-49
-    ## med=Fuentes validadas                     0.134243279  6.156254e-37
-    ## thoughts=thoughts_Ambivalentes/Neutrales  0.037389878  2.309754e-36
-    ## age_r=De 30 a 32 años                     0.143049819  3.660988e-33
-    ## cont_clim=cont_clim_Incorrecta            0.081553696  2.821617e-32
-    ## eco_anx=eco_anx_Positivas                 0.123619393  8.650750e-31
-    ## imp_sci=imp_sci_Positivo                  0.054772592  2.832520e-15
-    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.021494804  8.921185e-14
-    ## Zona=Municipios rurales dispersos         0.081531942  3.884226e-13
-    ## thoughts=thoughts_Positivos               0.122606019  6.040401e-13
-    ## age_r=De 25 a 29 años                     0.076362254  2.637215e-08
-    ## ideology=Derecha                          0.072184420  5.188610e-07
-    ## strat=Alto                                0.070615978  9.522780e-06
-    ## ideology=Centro                           0.025439753  2.258467e-04
-    ## sex=Mujer                                 0.014138039  3.242810e-02
-    ## sex=Hombre                               -0.014138039  3.242810e-02
-    ## strat=Bajo                               -0.005482582  6.157457e-03
-    ## med=Fuentes mixtas                       -0.024824140  2.583086e-04
-    ## strat=Medio                              -0.065133396  1.037871e-07
-    ## age_r=De 21 a 24 años                    -0.059859239  2.090653e-11
-    ## Zona=Urbana ciudades                     -0.081531942  3.884226e-13
-    ## imp_sci=imp_sci_Negativo                 -0.054772592  2.832520e-15
-    ## ideology=Izquierda                       -0.097624172  7.081846e-19
-    ## med=Fuentes no validadas                 -0.109419139  2.897639e-19
-    ## cont_clim=cont_clim_Correcta             -0.081553696  2.821617e-32
-    ## age_r=De 18 a 20 años                    -0.159552835  1.220714e-39
-    ## eco_anx=eco_anx_Negativas                -0.145114197  8.359037e-48
-    ## imp_ac=imp_ac_Negativo                   -0.095225813  4.375494e-49
-    ## trust_vote_inst=trust_vote_inst_No       -0.116627920  2.735718e-52
-    ## imp_cl=imp_cl_Positivo                   -0.163799106  2.905890e-58
-    ## thoughts=thoughts_Negativos              -0.159995898  2.546803e-59
-    ## kids=kids_No                             -0.106536342  2.117779e-60
-    ## imp_com=imp_com_Positivo                 -0.134804534  1.910334e-65
-    ## env_aso=env_aso_Sí                       -0.120252605  5.044833e-78
-    ## clim_origin=clim_origin_Correcta         -0.142296951 1.235954e-114
-    ## imp_re=imp_re_Negativo                   -0.165035202 2.218919e-152
-    ## imp_po=imp_po_Negativo                   -0.180685021 1.980906e-156
+    ##                                             Estimate       p.value
+    ## imp_po=imp_po_Positivo                    0.16994491 1.077748e-133
+    ## imp_re=imp_re_Positivo                    0.15618850 3.722030e-132
+    ## clim_origin=clim_origin_Incorrecta        0.14897263 5.912636e-125
+    ## env_aso=env_aso_No                        0.12685059  4.384782e-86
+    ## imp_com=imp_com_Negativo                  0.14774158  4.035593e-78
+    ## Internet=Internet_No                      0.14188600  2.049025e-73
+    ## imp_cl=imp_cl_Negativo                    0.17835765  1.783533e-68
+    ## kids=kids_Sí                              0.10393174  1.447258e-56
+    ## trust_vote_inst=trust_vote_inst_Sí        0.11966643  2.626411e-54
+    ## eco_anx=eco_anx_Positivas                 0.13706873  4.387834e-36
+    ## thoughts=thoughts_Ambivalentes/Neutrales  0.03242075  6.673416e-36
+    ## imp_ac=imp_ac_Positivo                    0.07919038  1.655569e-33
+    ## cont_clim=cont_clim_Incorrecta            0.08196950  3.808365e-32
+    ## age_r=De 30 a 32 años                     0.12908133  1.228784e-26
+    ## Zona=Municipios rurales dispersos         0.09990694  8.161463e-19
+    ## thoughts=thoughts_Positivos               0.13488098  4.318891e-15
+    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.01732887  5.633625e-14
+    ## age_r=De 25 a 29 años                     0.07649488  1.259642e-08
+    ## imp_sci=imp_sci_Positivo                  0.03794893  6.198244e-08
+    ## strat=Bajo                                0.01957679  2.381462e-06
+    ## ideology=Derecha                          0.06754579  6.320509e-06
+    ## edu=edu_No                                0.03667874  1.878962e-05
+    ## ideology=Centro                           0.03010707  3.130259e-05
+    ## ethni=ethni_Sí                            0.03314503  5.900261e-03
+    ## strat=Alto                                0.04113225  1.326114e-02
+    ## ethni=ethni_No                           -0.03314503  5.900261e-03
+    ## edu=edu_Sí                               -0.03667874  1.878962e-05
+    ## imp_sci=imp_sci_Negativo                 -0.03794893  6.198244e-08
+    ## strat=Medio                              -0.06070904  5.181485e-10
+    ## age_r=De 21 a 24 años                    -0.06389983  6.892780e-12
+    ## Zona=Urbana ciudades                     -0.09990694  8.161463e-19
+    ## ideology=Izquierda                       -0.09765285  3.104437e-19
+    ## age_r=De 18 a 20 años                    -0.14167638  3.711151e-31
+    ## cont_clim=cont_clim_Correcta             -0.08196950  3.808365e-32
+    ## imp_ac=imp_ac_Negativo                   -0.07919038  1.655569e-33
+    ## eco_anx=eco_anx_Negativas                -0.15439759  7.093861e-53
+    ## trust_vote_inst=trust_vote_inst_No       -0.11966643  2.626411e-54
+    ## kids=kids_No                             -0.10393174  1.447258e-56
+    ## thoughts=thoughts_Negativos              -0.16730173  3.830387e-61
+    ## imp_cl=imp_cl_Positivo                   -0.17835765  1.783533e-68
+    ## Internet=Internet_Sí                     -0.14188600  2.049025e-73
+    ## imp_com=imp_com_Positivo                 -0.14774158  4.035593e-78
+    ## env_aso=env_aso_Sí                       -0.12685059  4.384782e-86
+    ## clim_origin=clim_origin_Correcta         -0.14897263 5.912636e-125
+    ## imp_re=imp_re_Negativo                   -0.15618850 3.722030e-132
+    ## imp_po=imp_po_Negativo                   -0.16994491 1.077748e-133
     ## 
     ## $`Dim 2`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                          R2       p.value
-    ## imp_ac          0.264537998 3.407454e-150
-    ## imp_cl          0.252800637 1.472365e-142
-    ## imp_sci         0.246557299 1.517263e-138
-    ## imp_com         0.226719408 5.204229e-126
-    ## imp_re          0.199225237 3.727899e-109
-    ## imp_po          0.153267538  3.203744e-82
-    ## clim_origin     0.083985082  3.270583e-44
-    ## strat           0.077891175  9.142078e-40
-    ## Zona            0.056755060  5.096458e-30
-    ## ideology        0.056737777  7.586853e-29
-    ## ethni           0.047588518  2.528338e-25
-    ## env_aso         0.046423766  9.925905e-25
-    ## edu             0.043755210  2.266377e-23
-    ## eco_anx         0.019245135  4.413493e-10
-    ## kids            0.014724627  9.729061e-09
-    ## age_r           0.013968694  7.790491e-07
-    ## med             0.011476932  2.772534e-06
-    ## cont_clim       0.006102049  2.294931e-04
-    ## thoughts        0.007390810  2.683717e-04
-    ## trust_vote_inst 0.003422618  5.828181e-03
+    ## imp_ac          0.302835619 5.579355e-176
+    ## imp_sci         0.262286805 1.014537e-148
+    ## imp_re          0.243558533 1.249805e-136
+    ## imp_cl          0.211202881 1.996953e-116
+    ## imp_po          0.200588245 5.616931e-110
+    ## imp_com         0.181258068  1.900826e-98
+    ## strat           0.075556423  1.508113e-38
+    ## ideology        0.064659758  6.604247e-33
+    ## clim_origin     0.057722089  1.620410e-30
+    ## ethni           0.048702211  6.829356e-26
+    ## Zona            0.044722894  7.295140e-24
+    ## edu             0.043201868  4.331745e-23
+    ## env_aso         0.034835210  7.510535e-19
+    ## Internet        0.013662244  3.330252e-08
+    ## kids            0.012959548  7.521058e-08
+    ## age_r           0.013824776  9.113368e-07
+    ## trust_vote_inst 0.009538927  4.022475e-06
+    ## eco_anx         0.011000378  4.730480e-06
+    ## cont_clim       0.002158872  2.858434e-02
+    ## thoughts        0.002773621  4.601303e-02
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
     ##                                       Estimate       p.value
-    ## imp_ac=imp_ac_Negativo              0.15223644 3.407454e-150
-    ## imp_cl=imp_cl_Negativo              0.23535703 1.472365e-142
-    ## imp_sci=imp_sci_Negativo            0.15492713 1.517263e-138
-    ## imp_com=imp_com_Negativo            0.17339719 5.204229e-126
-    ## imp_re=imp_re_Negativo              0.13503247 3.727899e-109
-    ## imp_po=imp_po_Negativo              0.12821226  3.203744e-82
-    ## clim_origin=clim_origin_Incorrecta  0.08572995  3.270583e-44
-    ## strat=Bajo                          0.12465490  1.501127e-37
-    ## Zona=Municipios rurales dispersos   0.12024740  5.096458e-30
-    ## ethni=ethni_Sí                      0.11659075  2.528338e-25
-    ## env_aso=env_aso_No                  0.06436073  9.925905e-25
-    ## edu=edu_No                          0.07970308  2.266377e-23
-    ## eco_anx=eco_anx_Positivas           0.07958887  1.289168e-10
-    ## ideology=Izquierda                  0.08621492  3.205058e-10
-    ## kids=kids_Sí                        0.03630328  9.729061e-09
-    ## age_r=De 25 a 29 años               0.04247618  1.045434e-05
-    ## cont_clim=cont_clim_Incorrecta      0.02444496  2.294931e-04
-    ## med=Fuentes validadas               0.02706340  2.835673e-04
-    ## thoughts=thoughts_Positivos         0.05684897  6.757362e-04
-    ## ideology=Centro                     0.03427656  2.557648e-03
-    ## trust_vote_inst=trust_vote_inst_No  0.02055779  5.828181e-03
-    ## med=Fuentes no validadas            0.01432869  3.443882e-02
-    ## trust_vote_inst=trust_vote_inst_Sí -0.02055779  5.828181e-03
-    ## thoughts=thoughts_Negativos        -0.04278375  2.406191e-03
-    ## cont_clim=cont_clim_Correcta       -0.02444496  2.294931e-04
-    ## eco_anx=eco_anx_Negativas          -0.05085505  2.410484e-06
-    ## age_r=De 30 a 32 años              -0.04877843  1.021604e-06
-    ## med=Fuentes mixtas                 -0.04139209  5.493070e-07
-    ## kids=kids_No                       -0.03630328  9.729061e-09
-    ## strat=Alto                         -0.10694824  4.890471e-14
-    ## strat=Medio                        -0.01770665  1.504571e-17
-    ## edu=edu_Sí                         -0.07970308  2.266377e-23
-    ## env_aso=env_aso_Sí                 -0.06436073  9.925905e-25
-    ## ethni=ethni_No                     -0.11659075  2.528338e-25
-    ## ideology=Derecha                   -0.12049148  2.736194e-27
-    ## Zona=Urbana ciudades               -0.12024740  5.096458e-30
-    ## clim_origin=clim_origin_Correcta   -0.08572995  3.270583e-44
-    ## imp_po=imp_po_Positivo             -0.12821226  3.203744e-82
-    ## imp_re=imp_re_Positivo             -0.13503247 3.727899e-109
-    ## imp_com=imp_com_Positivo           -0.17339719 5.204229e-126
-    ## imp_sci=imp_sci_Positivo           -0.15492713 1.517263e-138
-    ## imp_cl=imp_cl_Positivo             -0.23535703 1.472365e-142
-    ## imp_ac=imp_ac_Positivo             -0.15223644 3.407454e-150
+    ## imp_ac=imp_ac_Negativo              0.16307537 5.579355e-176
+    ## imp_sci=imp_sci_Negativo            0.15998051 1.014537e-148
+    ## imp_re=imp_re_Negativo              0.14947826 1.249805e-136
+    ## imp_cl=imp_cl_Negativo              0.21537651 1.996953e-116
+    ## imp_po=imp_po_Negativo              0.14684783 5.616931e-110
+    ## imp_com=imp_com_Negativo            0.15522322  1.900826e-98
+    ## strat=Bajo                          0.12380442  9.378524e-36
+    ## clim_origin=clim_origin_Incorrecta  0.07115621  1.620410e-30
+    ## ethni=ethni_Sí                      0.11808580  6.829356e-26
+    ## Zona=Municipios rurales dispersos   0.10686825  7.295140e-24
+    ## edu=edu_No                          0.07929062  4.331745e-23
+    ## env_aso=env_aso_No                  0.05581749  7.510535e-19
+    ## ideology=Izquierda                  0.09727933  1.434943e-13
+    ## Internet=Internet_No                0.04215100  3.330252e-08
+    ## kids=kids_Sí                        0.03409800  7.521058e-08
+    ## eco_anx=eco_anx_Positivas           0.06364816  7.786216e-07
+    ## trust_vote_inst=trust_vote_inst_No  0.03436033  4.022475e-06
+    ## age_r=De 25 a 29 años               0.03916185  3.826569e-05
+    ## ideology=Centro                     0.03006560  1.545807e-02
+    ## thoughts=thoughts_Positivos         0.03940135  1.945192e-02
+    ## cont_clim=cont_clim_Incorrecta      0.01455711  2.858434e-02
+    ## cont_clim=cont_clim_Correcta       -0.01455711  2.858434e-02
+    ## eco_anx=eco_anx_Negativas          -0.03470274  2.131417e-03
+    ## trust_vote_inst=trust_vote_inst_Sí -0.03436033  4.022475e-06
+    ## age_r=De 30 a 32 años              -0.05046418  5.846209e-07
+    ## kids=kids_No                       -0.03409800  7.521058e-08
+    ## Internet=Internet_Sí               -0.04215100  3.330252e-08
+    ## strat=Alto                         -0.11019974  9.935255e-15
+    ## strat=Medio                        -0.01360468  5.992615e-16
+    ## env_aso=env_aso_Sí                 -0.05581749  7.510535e-19
+    ## edu=edu_Sí                         -0.07929062  4.331745e-23
+    ## Zona=Urbana ciudades               -0.10686825  7.295140e-24
+    ## ethni=ethni_No                     -0.11808580  6.829356e-26
+    ## ideology=Derecha                   -0.12734493  1.578730e-29
+    ## clim_origin=clim_origin_Correcta   -0.07115621  1.620410e-30
+    ## imp_com=imp_com_Positivo           -0.15522322  1.900826e-98
+    ## imp_po=imp_po_Positivo             -0.14684783 5.616931e-110
+    ## imp_cl=imp_cl_Positivo             -0.21537651 1.996953e-116
+    ## imp_re=imp_re_Positivo             -0.14947826 1.249805e-136
+    ## imp_sci=imp_sci_Positivo           -0.15998051 1.014537e-148
+    ## imp_ac=imp_ac_Positivo             -0.16307537 5.579355e-176
 
 ## Análisis con las variables sociodemográficas como variables suplementarias
 
@@ -293,141 +292,138 @@ relacionadas con algunas de las dimensiones obtenidas, pero no con las
 variables de mayor interés relacionadas con el cambio climático.
 <img src="./figuresanálisis de componentes múltiples 2-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-2.png" width="80%" />
 
-    ## Warning: ggrepel: 14 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 15 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
 <img src="./figuresanálisis de componentes múltiples 2-3.png" width="80%" />
 
-    ## Warning: ggrepel: 7 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 8 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-<img src="./figuresanálisis de componentes múltiples 2-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-8.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-9.png" width="80%" />
+<img src="./figuresanálisis de componentes múltiples 2-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-8.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-9.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-10.png" width="80%" />
 
     ## $`Dim 1`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                          R2       p.value
-    ## imp_po          0.385457550 8.702704e-237
-    ## imp_re          0.340113422 1.795427e-202
-    ## clim_origin     0.194370797 3.074150e-106
-    ## imp_ac          0.168640506  4.574216e-91
-    ## trust_vote_inst 0.122851883  3.554016e-65
-    ## env_aso         0.104495002  3.640236e-55
-    ## imp_com         0.100493969  5.207519e-53
-    ## thoughts        0.101982750  1.644624e-52
-    ## eco_anx         0.101030901  5.321948e-52
-    ## imp_cl          0.079332409  9.268526e-42
-    ## imp_sci         0.075162790  1.428717e-39
-    ## cont_clim       0.060555414  5.610159e-32
-    ## med             0.056652212  8.389374e-29
-    ## ideology        0.056623143  8.680885e-29
-    ## age_r           0.012437360  4.117735e-06
-    ## Zona            0.005745980  3.506335e-04
-    ## kids            0.005163671  7.034506e-04
-    ## strat           0.003410155  2.267217e-02
+    ## imp_po          0.323927792 8.622002e-191
+    ## imp_re          0.286820275 4.980790e-165
+    ## clim_origin     0.249704910 1.452161e-140
+    ## imp_com         0.152250228  1.217328e-81
+    ## env_aso         0.141652744  1.214543e-75
+    ## imp_cl          0.132834199  1.050178e-70
+    ## imp_ac          0.120941765  3.997438e-64
+    ## Internet        0.116587098  9.765629e-62
+    ## thoughts        0.112033569  6.274418e-58
+    ## eco_anx         0.106034565  1.094022e-54
+    ## trust_vote_inst 0.099191722  2.607416e-52
+    ## cont_clim       0.061819165  1.248017e-32
+    ## imp_sci         0.043412502  3.385222e-23
+    ## ideology        0.012528581  8.520130e-07
+    ## age_r           0.013231820  1.737727e-06
+    ## Zona            0.009259986  5.572529e-06
+    ## kids            0.006102774  2.292955e-04
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
-    ##                                             Estimate       p.value
-    ## imp_po=imp_po_Positivo                    0.25670755 8.702704e-237
-    ## imp_re=imp_re_Positivo                    0.22275313 1.795427e-202
-    ## clim_origin=clim_origin_Incorrecta        0.16466181 3.074150e-106
-    ## imp_ac=imp_ac_Positivo                    0.15346220  4.574216e-91
-    ## trust_vote_inst=trust_vote_inst_Sí        0.15550129  3.554016e-65
-    ## env_aso=env_aso_No                        0.12191144  3.640236e-55
-    ## imp_com=imp_com_Negativo                  0.14575169  5.207519e-53
-    ## imp_cl=imp_cl_Negativo                    0.16645978  9.268526e-42
-    ## imp_sci=imp_sci_Positivo                  0.10799804  1.428717e-39
-    ## eco_anx=eco_anx_Positivas                 0.15664840  2.940787e-33
-    ## cont_clim=cont_clim_Incorrecta            0.09722408  5.610159e-32
-    ## thoughts=thoughts_Ambivalentes/Neutrales  0.03579051  2.335298e-30
-    ## med=Fuentes validadas                     0.13542958  1.387020e-29
-    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.01902340  8.769247e-13
-    ## thoughts=thoughts_Positivos               0.14629229  8.805751e-13
-    ## ideology=Derecha                          0.10457700  1.394601e-09
-    ## ideology=Centro                           0.03800828  4.701461e-06
-    ## Zona=Municipios rurales dispersos         0.04830603  3.506335e-04
-    ## age_r=De 30 a 32 años                     0.05081591  5.099295e-04
-    ## kids=kids_Sí                              0.02714244  7.034506e-04
-    ## strat=Alto                                0.05140934  5.919870e-03
-    ## kids=kids_No                             -0.02714244  7.034506e-04
-    ## Zona=Urbana ciudades                     -0.04830603  3.506335e-04
-    ## age_r=De 18 a 20 años                    -0.06090073  3.833834e-05
-    ## med=Fuentes no validadas                 -0.08057994  9.352050e-07
-    ## med=Fuentes mixtas                       -0.05484964  5.469396e-09
-    ## ideology=Izquierda                       -0.14258528  1.264769e-27
-    ## cont_clim=cont_clim_Correcta             -0.09722408  5.610159e-32
-    ## imp_sci=imp_sci_Negativo                 -0.10799804  1.428717e-39
-    ## imp_cl=imp_cl_Positivo                   -0.16645978  9.268526e-42
-    ## eco_anx=eco_anx_Negativas                -0.17567180  2.823907e-48
-    ## thoughts=thoughts_Negativos              -0.18208279  3.722658e-51
-    ## imp_com=imp_com_Positivo                 -0.14575169  5.207519e-53
-    ## env_aso=env_aso_Sí                       -0.12191144  3.640236e-55
-    ## trust_vote_inst=trust_vote_inst_No       -0.15550129  3.554016e-65
-    ## imp_ac=imp_ac_Negativo                   -0.15346220  4.574216e-91
-    ## clim_origin=clim_origin_Correcta         -0.16466181 3.074150e-106
-    ## imp_re=imp_re_Negativo                   -0.22275313 1.795427e-202
-    ## imp_po=imp_po_Negativo                   -0.25670755 8.702704e-237
+    ##                                              Estimate       p.value
+    ## imp_po=imp_po_Positivo                    0.244177271 8.622002e-191
+    ## imp_re=imp_re_Positivo                    0.212249966 4.980790e-165
+    ## clim_origin=clim_origin_Incorrecta        0.193651866 1.452161e-140
+    ## imp_com=imp_com_Negativo                  0.186145847  1.217328e-81
+    ## env_aso=env_aso_No                        0.147278710  1.214543e-75
+    ## imp_cl=imp_cl_Negativo                    0.223495984  1.050178e-70
+    ## imp_ac=imp_ac_Positivo                    0.134846415  3.997438e-64
+    ## Internet=Internet_No                      0.161115931  9.765629e-62
+    ## trust_vote_inst=trust_vote_inst_Sí        0.144981162  2.607416e-52
+    ## eco_anx=eco_anx_Positivas                 0.179130335  5.097884e-38
+    ## thoughts=thoughts_Ambivalentes/Neutrales  0.036644917  1.107184e-32
+    ## cont_clim=cont_clim_Incorrecta            0.101927103  1.248017e-32
+    ## imp_sci=imp_sci_Positivo                  0.085163328  3.385222e-23
+    ## thoughts=thoughts_Positivos               0.162325565  2.130643e-14
+    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.005757895  8.466618e-11
+    ## Zona=Municipios rurales dispersos         0.063629022  5.572529e-06
+    ## kids=kids_Sí                              0.030617098  2.292955e-04
+    ## age_r=De 30 a 32 años                     0.047134574  2.577541e-03
+    ## ideology=Centro                           0.024636836  7.471985e-03
+    ## age_r=De 25 a 29 años                     0.041253136  9.000641e-03
+    ## ideology=Derecha                          0.044610174  2.013013e-02
+    ## strat=Alto                                0.044954154  2.112569e-02
+    ## age_r=De 21 a 24 años                    -0.023431596  3.370732e-02
+    ## kids=kids_No                             -0.030617098  2.292955e-04
+    ## age_r=De 18 a 20 años                    -0.064956114  2.203004e-05
+    ## Zona=Urbana ciudades                     -0.063629022  5.572529e-06
+    ## ideology=Izquierda                       -0.069247010  1.925495e-07
+    ## imp_sci=imp_sci_Negativo                 -0.085163328  3.385222e-23
+    ## cont_clim=cont_clim_Correcta             -0.101927103  1.248017e-32
+    ## eco_anx=eco_anx_Negativas                -0.184888230  1.429437e-48
+    ## trust_vote_inst=trust_vote_inst_No       -0.144981162  2.607416e-52
+    ## thoughts=thoughts_Negativos              -0.198970482  4.985964e-56
+    ## Internet=Internet_Sí                     -0.161115931  9.765629e-62
+    ## imp_ac=imp_ac_Negativo                   -0.134846415  3.997438e-64
+    ## imp_cl=imp_cl_Positivo                   -0.223495984  1.050178e-70
+    ## env_aso=env_aso_Sí                       -0.147278710  1.214543e-75
+    ## imp_com=imp_com_Positivo                 -0.186145847  1.217328e-81
+    ## clim_origin=clim_origin_Correcta         -0.193651866 1.452161e-140
+    ## imp_re=imp_re_Negativo                   -0.212249966 4.980790e-165
+    ## imp_po=imp_po_Negativo                   -0.244177271 8.622002e-191
     ## 
     ## $`Dim 2`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                      R2       p.value
-    ## imp_cl      0.415236978 1.000456e-260
-    ## imp_com     0.367739892 4.357379e-223
-    ## imp_ac      0.210240202 7.741064e-116
-    ## imp_sci     0.178928751  4.467187e-97
-    ## clim_origin 0.174954624  9.559798e-95
-    ## imp_re      0.158255012  4.502101e-85
-    ## imp_po      0.091663602  2.763783e-48
-    ## env_aso     0.061531600  1.757207e-32
-    ## ideology    0.043249221  5.193941e-22
-    ## eco_anx     0.030103486  1.927987e-15
-    ## cont_clim   0.013221800  5.548842e-08
-    ## ethni       0.011610159  3.602858e-07
-    ## thoughts    0.009278844  3.252132e-05
-    ## Zona        0.005804105  3.271631e-04
-    ## med         0.004760464  5.043903e-03
-    ## kids        0.003325460  6.571538e-03
+    ## imp_cl      0.342363120 4.054562e-204
+    ## imp_com     0.309125588 2.382416e-180
+    ## imp_ac      0.293055093 2.907786e-169
+    ## imp_re      0.228452042 4.308634e-127
+    ## imp_sci     0.227498792 1.697991e-126
+    ## imp_po      0.157543243  1.152070e-84
+    ## clim_origin 0.115471401  3.977967e-61
+    ## env_aso     0.031553452  3.400001e-17
+    ## eco_anx     0.023169222  5.184810e-12
+    ## ethni       0.010865983  8.561509e-07
+    ## ideology    0.008526314  7.545741e-05
+    ## Internet    0.006922350  8.681854e-05
+    ## cont_clim   0.005043594  8.124945e-04
+    ## Zona        0.003564199  4.895265e-03
+    ## kids        0.003472818  5.478276e-03
+    ## thoughts    0.004058158  1.102466e-02
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
     ##                                       Estimate       p.value
-    ## imp_cl=imp_cl_Negativo              0.36192654 1.000456e-260
-    ## imp_com=imp_com_Negativo            0.26497347 4.357379e-223
-    ## imp_ac=imp_ac_Negativo              0.16284213 7.741064e-116
-    ## imp_sci=imp_sci_Negativo            0.15835906  4.467187e-97
-    ## clim_origin=clim_origin_Incorrecta  0.14846651  9.559798e-95
-    ## imp_re=imp_re_Negativo              0.14440395  4.502101e-85
-    ## imp_po=imp_po_Negativo              0.11896994  2.763783e-48
-    ## env_aso=env_aso_No                  0.08890665  1.757207e-32
-    ## eco_anx=eco_anx_Positivas           0.12495571  2.541940e-16
-    ## cont_clim=cont_clim_Incorrecta      0.04317487  5.548842e-08
-    ## ideology=Centro                     0.06100781  1.604619e-07
-    ## ethni=ethni_Sí                      0.06909815  3.602858e-07
-    ## thoughts=thoughts_Positivos         0.07365445  2.356691e-04
-    ## Zona=Municipios rurales dispersos   0.04613976  3.271631e-04
-    ## ideology=Izquierda                  0.06457131  3.605896e-03
-    ## kids=kids_Sí                        0.02070065  6.571538e-03
-    ## med=Fuentes validadas               0.02618846  6.800806e-03
-    ## kids=kids_No                       -0.02070065  6.571538e-03
-    ## med=Fuentes mixtas                 -0.03025147  2.044102e-03
-    ## thoughts=thoughts_Negativos        -0.05763388  3.822449e-04
-    ## Zona=Urbana ciudades               -0.04613976  3.271631e-04
-    ## ethni=ethni_No                     -0.06909815  3.602858e-07
-    ## eco_anx=eco_anx_Negativas          -0.07048102  1.372415e-07
-    ## cont_clim=cont_clim_Correcta       -0.04317487  5.548842e-08
-    ## ideology=Derecha                   -0.12557912  4.182214e-23
-    ## env_aso=env_aso_Sí                 -0.08890665  1.757207e-32
-    ## imp_po=imp_po_Positivo             -0.11896994  2.763783e-48
-    ## imp_re=imp_re_Positivo             -0.14440395  4.502101e-85
-    ## clim_origin=clim_origin_Correcta   -0.14846651  9.559798e-95
-    ## imp_sci=imp_sci_Positivo           -0.15835906  4.467187e-97
-    ## imp_ac=imp_ac_Positivo             -0.16284213 7.741064e-116
-    ## imp_com=imp_com_Positivo           -0.26497347 4.357379e-223
-    ## imp_cl=imp_cl_Positivo             -0.36192654 1.000456e-260
+    ## imp_cl=imp_cl_Negativo              0.33959171 4.054562e-204
+    ## imp_com=imp_com_Negativo            0.25103870 2.382416e-180
+    ## imp_ac=imp_ac_Negativo              0.19866653 2.907786e-169
+    ## imp_re=imp_re_Negativo              0.17928298 4.308634e-127
+    ## imp_sci=imp_sci_Negativo            0.18451581 1.697991e-126
+    ## imp_po=imp_po_Negativo              0.16116838  1.152070e-84
+    ## clim_origin=clim_origin_Incorrecta  0.12463620  3.977967e-61
+    ## env_aso=env_aso_No                  0.06578846  3.400001e-17
+    ## eco_anx=eco_anx_Positivas           0.11508819  5.999295e-13
+    ## ethni=ethni_Sí                      0.06907534  8.561509e-07
+    ## Internet=Internet_No                0.03715685  8.681854e-05
+    ## cont_clim=cont_clim_Incorrecta      0.02755478  8.124945e-04
+    ## thoughts=thoughts_Positivos         0.06145966  3.332176e-03
+    ## Zona=Municipios rurales dispersos   0.03736198  4.895265e-03
+    ## kids=kids_Sí                        0.02185950  5.478276e-03
+    ## kids=kids_No                       -0.02185950  5.478276e-03
+    ## Zona=Urbana ciudades               -0.03736198  4.895265e-03
+    ## cont_clim=cont_clim_Correcta       -0.02755478  8.124945e-04
+    ## Internet=Internet_Sí               -0.03715685  8.681854e-05
+    ## ideology=Derecha                   -0.05836935  1.677809e-05
+    ## eco_anx=eco_anx_Negativas          -0.06132819  1.322554e-05
+    ## ethni=ethni_No                     -0.06907534  8.561509e-07
+    ## env_aso=env_aso_Sí                 -0.06578846  3.400001e-17
+    ## clim_origin=clim_origin_Correcta   -0.12463620  3.977967e-61
+    ## imp_po=imp_po_Positivo             -0.16116838  1.152070e-84
+    ## imp_sci=imp_sci_Positivo           -0.18451581 1.697991e-126
+    ## imp_re=imp_re_Positivo             -0.17928298 4.308634e-127
+    ## imp_ac=imp_ac_Positivo             -0.19866653 2.907786e-169
+    ## imp_com=imp_com_Positivo           -0.25103870 2.382416e-180
+    ## imp_cl=imp_cl_Positivo             -0.33959171 4.054562e-204
 
 ## Conclusión del Análisis de correspondencia múltiple
 
@@ -503,6 +499,13 @@ asociadas.
 
 <img src="./figuresrelación contribucion al cambio climatico y eco ansiedad-1.png" width="80%" style="display: block; margin: auto;" />
 
+|     | Negativas | Ambivalentes/Neutrales | Positivas |
+|-----|----------:|-----------------------:|----------:|
+| No  |      14.1 |                    4.2 |       3.2 |
+| Sí  |      57.2 |                   13.2 |       8.3 |
+
+<img src="./figuresrelación internet y eco ansiedad-1.png" width="80%" style="display: block; margin: auto;" />
+
 |            | Básica Primaria | Básica Secundaria | Secundaria Completa | Técnico o Tecnólogo | Pregrado | Posgrado |
 |------------|----------------:|------------------:|--------------------:|--------------------:|---------:|---------:|
 | Correcta   |             0.9 |               3.2 |                22.0 |                13.2 |      7.1 |      1.0 |
@@ -545,6 +548,13 @@ asociadas.
 
 <img src="./figuresrelación origen cambio climatico y pensamientos sobre cambio climatico-1.png" width="80%" style="display: block; margin: auto;" />
 
+|            |   No |   Sí |
+|------------|-----:|-----:|
+| Correcta   |  7.2 | 40.3 |
+| Incorrecta | 14.2 | 38.3 |
+
+<img src="./figuresrelación origen cambio climatico y redes sociales-1.png" width="80%" style="display: block; margin: auto;" />
+
 # Tests de chi-cuadrado
 
 Se realizaron múltiples test de chi-cuadrado para establecer si existen
@@ -563,29 +573,26 @@ corrección propuesta por Benjamini y Hochberg.
     ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
     ## incorrect
 
-    ## Variable age_r is significantly associated with clim_origin with adjusted p-value: 0.0015086 
-    ## Variable estrato is significantly associated with clim_origin with adjusted p-value: 0.01987455 
-    ## Variable etnia is significantly associated with clim_origin with adjusted p-value: 0.01298036 
-    ## Variable ideology is significantly associated with clim_origin with adjusted p-value: 0.004406685 
-    ## Variable Televisión is significantly associated with clim_origin with adjusted p-value: 0.03790647 
-    ## Variable Medios_Digitales is significantly associated with clim_origin with adjusted p-value: 1.910725e-08 
-    ## Variable Redes_Sociales is significantly associated with clim_origin with adjusted p-value: 2.766643e-08 
-    ## Variable med is significantly associated with clim_origin with adjusted p-value: 1.433817e-07 
-    ## Variable trust_vote_inst is significantly associated with clim_origin with adjusted p-value: 6.603173e-06 
-    ## Variable eco_anx is significantly associated with clim_origin with adjusted p-value: 1.156748e-05 
-    ## Variable env_aso is significantly associated with clim_origin with adjusted p-value: 2.479615e-12 
-    ## Variable imp_scien is significantly associated with clim_origin with adjusted p-value: 7.016403e-33 
-    ## Variable imp_act is significantly associated with clim_origin with adjusted p-value: 1.433817e-07 
-    ## Variable imp_rel is significantly associated with clim_origin with adjusted p-value: 4.589515e-20 
-    ## Variable imp_pol is significantly associated with clim_origin with adjusted p-value: 2.279533e-25 
-    ## Variable thoughts is significantly associated with clim_origin with adjusted p-value: 1.134844e-05 
-    ## Variable imp_como is significantly associated with clim_origin with adjusted p-value: 2.124671e-32 
-    ## Variable imp_cli is significantly associated with clim_origin with adjusted p-value: 1.943988e-57 
-    ## Variable no_car is significantly associated with clim_origin with adjusted p-value: 8.104816e-33 
-    ## Variable one_fw_ch is significantly associated with clim_origin with adjusted p-value: 8.864672e-23 
-    ## Variable veg is significantly associated with clim_origin with adjusted p-value: 2.009854e-29 
-    ## Variable only_bk_wk is significantly associated with clim_origin with adjusted p-value: 2.77674e-42 
-    ## Variable cont_clim is significantly associated with clim_origin with adjusted p-value: 0.0001390823
+    ## Variable age_r is significantly associated with clim_origin with adjusted p-value: 0.001453519 
+    ## Variable estrato is significantly associated with clim_origin with adjusted p-value: 0.01884656 
+    ## Variable etnia is significantly associated with clim_origin with adjusted p-value: 0.01236785 
+    ## Variable ideology is significantly associated with clim_origin with adjusted p-value: 0.004220962 
+    ## Variable Internet is significantly associated with clim_origin with adjusted p-value: 2.068288e-11 
+    ## Variable trust_vote_inst is significantly associated with clim_origin with adjusted p-value: 6.568142e-06 
+    ## Variable eco_anx is significantly associated with clim_origin with adjusted p-value: 1.130156e-05 
+    ## Variable env_aso is significantly associated with clim_origin with adjusted p-value: 2.137599e-12 
+    ## Variable imp_scien is significantly associated with clim_origin with adjusted p-value: 6.048624e-33 
+    ## Variable imp_act is significantly associated with clim_origin with adjusted p-value: 1.442057e-07 
+    ## Variable imp_rel is significantly associated with clim_origin with adjusted p-value: 3.956478e-20 
+    ## Variable imp_pol is significantly associated with clim_origin with adjusted p-value: 1.965114e-25 
+    ## Variable thoughts is significantly associated with clim_origin with adjusted p-value: 1.118072e-05 
+    ## Variable imp_como is significantly associated with clim_origin with adjusted p-value: 1.831613e-32 
+    ## Variable imp_cli is significantly associated with clim_origin with adjusted p-value: 1.675852e-57 
+    ## Variable no_car is significantly associated with clim_origin with adjusted p-value: 6.98691e-33 
+    ## Variable one_fw_ch is significantly associated with clim_origin with adjusted p-value: 7.641959e-23 
+    ## Variable veg is significantly associated with clim_origin with adjusted p-value: 1.732633e-29 
+    ## Variable only_bk_wk is significantly associated with clim_origin with adjusted p-value: 2.393742e-42 
+    ## Variable cont_clim is significantly associated with clim_origin with adjusted p-value: 0.0001348859
 
 ## Tests para la variable emociones frente al cambio climático
 
@@ -601,15 +608,19 @@ corrección propuesta por Benjamini y Hochberg.
     ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
     ## incorrect
 
-    ## Variable ideology is significantly associated with eco_anx with adjusted p-value: 0.001487809 
-    ## Variable trust_vote_inst is significantly associated with eco_anx with adjusted p-value: 8.171824e-05 
-    ## Variable env_aso is significantly associated with eco_anx with adjusted p-value: 0.0005499619 
-    ## Variable imp_rel is significantly associated with eco_anx with adjusted p-value: 0.04104589 
-    ## Variable thoughts is significantly associated with eco_anx with adjusted p-value: 9.118397e-49 
-    ## Variable imp_como is significantly associated with eco_anx with adjusted p-value: 0.009758262 
-    ## Variable one_fw_ch is significantly associated with eco_anx with adjusted p-value: 0.03495092 
-    ## Variable veg is significantly associated with eco_anx with adjusted p-value: 0.008396798 
-    ## Variable clim_origin is significantly associated with eco_anx with adjusted p-value: 8.171824e-05
+    ## Variable edu is significantly associated with eco_anx with adjusted p-value: 0.02805863 
+    ## Variable ideology is significantly associated with eco_anx with adjusted p-value: 0.001282594 
+    ## Variable Internet is significantly associated with eco_anx with adjusted p-value: 0.02027504 
+    ## Variable trust_vote_inst is significantly associated with eco_anx with adjusted p-value: 7.044676e-05 
+    ## Variable env_aso is significantly associated with eco_anx with adjusted p-value: 0.0004741051 
+    ## Variable imp_rel is significantly associated with eco_anx with adjusted p-value: 0.02895086 
+    ## Variable thoughts is significantly associated with eco_anx with adjusted p-value: 7.860687e-49 
+    ## Variable imp_como is significantly associated with eco_anx with adjusted p-value: 0.008412295 
+    ## Variable no_car is significantly associated with eco_anx with adjusted p-value: 0.04922477 
+    ## Variable one_fw_ch is significantly associated with eco_anx with adjusted p-value: 0.02678232 
+    ## Variable veg is significantly associated with eco_anx with adjusted p-value: 0.007238619 
+    ## Variable clim_origin is significantly associated with eco_anx with adjusted p-value: 7.044676e-05 
+    ## Variable cont_clim is significantly associated with eco_anx with adjusted p-value: 0.04922477
 
 # Calculo de multiples Cramér’s V
 
@@ -637,29 +648,17 @@ del tamaño del efecto utilizada fue Cramér’s V.
     ## $education
     ## [1] 0.05140177
     ## 
+    ## $edu
+    ## [1] 0.02155064
+    ## 
     ## $kids
     ## [1] 0.02139138
     ## 
     ## $ideology
     ## [1] 0.06574526
     ## 
-    ## $Televisión
-    ## [1] 0.04191224
-    ## 
-    ## $Radio
-    ## [1] 0
-    ## 
-    ## $Prensa_Impresa
-    ## [1] 0
-    ## 
-    ## $Medios_Digitales
-    ## [1] 0.1220826
-    ## 
-    ## $Redes_Sociales
-    ## [1] 0.1203153
-    ## 
-    ## $med
-    ## [1] 0.1181543
+    ## $Internet
+    ## [1] 0.1443268
     ## 
     ## $trust_vote_inst
     ## [1] 0.09737299
@@ -726,29 +725,17 @@ del tamaño del efecto utilizada fue Cramér’s V.
     ## $education
     ## [1] 0.03821462
     ## 
+    ## $edu
+    ## [1] 0.05607967
+    ## 
     ## $kids
     ## [1] 0.03570624
     ## 
     ## $ideology
     ## [1] 0.06273595
     ## 
-    ## $Televisión
-    ## [1] 0
-    ## 
-    ## $Radio
-    ## [1] 0.04863106
-    ## 
-    ## $Prensa_Impresa
-    ## [1] 0.02402613
-    ## 
-    ## $Medios_Digitales
-    ## [1] 0.0309989
-    ## 
-    ## $Redes_Sociales
-    ## [1] 0.02774519
-    ## 
-    ## $med
-    ## [1] 0.02504835
+    ## $Internet
+    ## [1] 0.06032322
     ## 
     ## $trust_vote_inst
     ## [1] 0.09811412

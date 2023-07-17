@@ -132,7 +132,25 @@ data1 <- data1 %>%
   ))
 data1$ideology <- factor(data1$ideology, levels = c("Derecha", "Centro", "Izquierda"))
 
-# Medios según tipo de fuente
+# Medios según tipo
+trad_med <- c("B12_1", "B12_2", "B12_3", "B12_89")
+int_med <- c("B12_4", "B12_5")
+data1$media <- NA
+for (i in 1:nrow(data1)) {
+trad_med_count <- sum(data1[i, trad_med] == 1)
+int_med_count <- sum(data1[i, int_med] == 1)
+if (trad_med_count %in% c(1:4) & int_med_count == 0) {
+data1$media[i] <- "Solo tradicionales"
+} else if (trad_med_count %in% c(1:4) & int_med_count %in% c(1:2)) {
+data1$media[i] <- "Mixtos"
+} else if (trad_med_count == 0 & int_med_count %in% c(1:2)) {
+data1$media[i] <- "Solo internet"
+}
+}
+data1$media <- factor(data1$media, levels = c("Solo tradicionales", "Mixtos", "Solo internet"))
+
+
+# Medios según si es validada o no
 val_med <- c("B12_1", "B12_2", "B12_3", "B12_4")
 no_val_med <- c("B12_5", "B12_89")
 data1$med <- NA
@@ -405,14 +423,14 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 Tras el proceso de codificación, las variables de interés fueron agrupadas en un nuevo data frame. A continuación se presentan dos tablas. En la primera se encuentran las variables y una breve descripción de cada una, y en la segunda se encuentran las variables, cada una de sus categorías y la frecuencia correspondiente a cada categoría.
 ```{r data frame variables categoricas, echo=FALSE}
 data2 <- data1 %>%
-  select(Zona, sex, age_r, estrato, etnia, education, kids, ideology, Televisión, Radio, Prensa_Impresa, Medios_Digitales, Redes_Sociales, med, trust_vote_inst, eco_anx, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, no_car, one_fw_ch, veg, only_bk_wk, clim_origin, cont_clim)
+  select(Zona, sex, age_r, estrato, etnia, education, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, no_car, one_fw_ch, veg, only_bk_wk, clim_origin, cont_clim)
 
 data3 <- data1 %>%
-  select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, med, trust_vote_inst, eco_anx, env_aso, imp_sci, imp_ac, imp_re, imp_po, thoughts, imp_com, imp_cl, clim_origin, cont_clim)
+  select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, env_aso, imp_sci, imp_ac, imp_re, imp_po, thoughts, imp_com, imp_cl, clim_origin, cont_clim)
 # Not included: Negative emotions towards government actions against climate change, Alternative media
 
-codigo <- c("Zona", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "med", "trust_vote_inst", "eco_anx", "env_aso", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "imp_com", "imp_cli", "clim_origin", "cont_clim")
-descripcion <- c("Zona de residencia", "Sexo", "Rango de edad", "Estrato socioeconómico", "Pertenece a alguna etnia", "Tiene estudios de educación superior", "Tiene hijos", "Ideología política", "Tipo de medios de información utilizado", "Confía en las instituciones con cargos de elección popular", "Emociones frente al cambio climático", "Se uniría a una organización ambiental", "Impacto de los científicos frente al cambio climático", "Impacto de activistas frente al cambio climático", "Impacto de grupos religiosos frente al cambio climático", "Impacto de políticos frente al cambio climático", "Pensamientos frente al cambio climático", "Impacto de acciones individuales en su comodidad", "Impacto de acciones individuales en el cambio climático", "Causa u origen del cambio climático", "Factor que más contribuye al cambio climático")
+codigo <- c("Zona", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "Internet", "trust_vote_inst", "eco_anx", "env_aso", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "imp_com", "imp_cli", "clim_origin", "cont_clim")
+descripcion <- c("Zona de residencia", "Sexo", "Rango de edad", "Estrato socioeconómico", "Pertenece a alguna etnia", "Tiene estudios de educación superior", "Tiene hijos", "Ideología política", "Se informa a través de internet", "Confía en las instituciones con cargos de elección popular", "Emociones frente al cambio climático", "Se uniría a una organización ambiental", "Impacto de los científicos frente al cambio climático", "Impacto de activistas frente al cambio climático", "Impacto de grupos religiosos frente al cambio climático", "Impacto de políticos frente al cambio climático", "Pensamientos frente al cambio climático", "Impacto de acciones individuales en su comodidad", "Impacto de acciones individuales en el cambio climático", "Causa u origen del cambio climático", "Factor que más contribuye al cambio climático")
 table_vars <- data.frame(codigo, descripcion)
 kable(table_vars, col.names = c("Código de la variable", "Descripción de la variable"), booktabs = TRUE)
 
@@ -448,6 +466,7 @@ fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "eco_anx", a
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "clim_origin", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "imp_com", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "env_aso", alpha = 0.2)
+fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "Internet", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "kids", alpha = 0.2)
 dimdesc(res.mca, axes = 1:2)
 ```
@@ -456,7 +475,7 @@ dimdesc(res.mca, axes = 1:2)
 ## Análisis con las variables sociodemográficas como variables suplementarias
 Para ver de forma más clara si las variables demográficas podrían estar relacionadas con las dimensiones de variabilidad observadas, estas no fueron incluidas como variables activas en la construcción de las dimensiones, sino como variables suplementarias. Al interpretar el análisis se encuentra que algunas variables demográficas pueden estar relacionadas con algunas de las dimensiones obtenidas, pero no con las variables de mayor interés relacionadas con el cambio climático.
 ```{r análisis de componentes múltiples 2, echo=FALSE}
-res.mca <- MCA(data3, quali.sup = c(1:7), graph = FALSE)
+res.mca <- MCA(data3, quali.sup = c(1:8), graph = FALSE)
 fviz_eig(res.mca, addlabels = TRUE, title = "Inertia of MCA Dimensions")
 fviz_mca_ind(res.mca, geom = "point", pointsize = 2, repel = TRUE)
 #fviz_mca_biplot(res.mca, geom.ind = "point", repel = TRUE, alpha.ind = 0.1)
@@ -467,6 +486,7 @@ fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "eco_anx", a
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "clim_origin", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "imp_com", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "env_aso", alpha = 0.2)
+fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "Internet", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "kids", alpha = 0.2)
 dimdesc(res.mca, axes = 1:2)
 ```
@@ -586,6 +606,22 @@ plot_cont_eco_anx
 ```
 
 
+```{r relación internet y eco ansiedad, fig.align='center', echo=F}
+tab_cont_eco_anx <- table(data2$Internet, data2$eco_anx)
+kable(round(prop.table(tab_cont_eco_anx) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_cont_eco_anx <- data2 %>%
+  ggplot(aes(x = eco_anx, fill = Internet)) +
+  geom_bar(position = "fill") +
+  labs(x = "Emociones frente al \ncambio climático", y = "Proporción", fill = "Quema combustibles fósiles \nmayor contribución al \ncambio climático") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_cont_eco_anx
+```
+
+
 ```{r relación origen cambio climatico y educacion, fig.align='center', echo=F}
 tab_ori_edu <- table(data2$clim_origin, data2$education)
 kable(round(prop.table(tab_ori_edu) * 100, 1), booktabs = TRUE)
@@ -674,6 +710,21 @@ plot_ori_th <- data2 %>%
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette)
 plot_ori_th
+```
+
+
+```{r relación origen cambio climatico y redes sociales, fig.align='center', echo=F}
+tab_ori_imp_cli <- table(data2$clim_origin, data2$Internet)
+kable(round(prop.table(tab_ori_imp_cli) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_ori_imp_cli <- data2 %>%
+  ggplot(aes(x = Internet, fill = clim_origin)) +
+  geom_bar(position = "fill") +
+  labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Impacto acciones \nIndividuales en \nCambio climático") +
+  papaja::theme_apa() +
+  scale_fill_manual(values = custom_palette)
+plot_ori_imp_cli
 ```
 
 

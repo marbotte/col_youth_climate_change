@@ -1,7 +1,7 @@
 Encuesta: Distribución y recodificación de variables
 ================
 Juan Sebastian Cely
-2023-07-12
+2023-07-17
 
 # Emociones hacia el cambio climático
 
@@ -313,6 +313,19 @@ tipos de medios.
 | Fuentes no validadas |        503 |           22.7 |
 
 <img src="./figuresvariable recodificacion medios-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Variable “Medios de información” Recodificada, opción 2.
+
+Los distintos medios de información fueron agrupados para crear una
+variable que distingue si la persona se informa a través de internet o
+no.
+
+| Internet como fuente | Frecuencia | Porcentaje (%) |
+|:---------------------|-----------:|---------------:|
+| No                   |        475 |           21.4 |
+| Sí                   |       1745 |           78.6 |
+
+<img src="./figuresvariable recodificacion medios 2-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Confianza hacia figuras e instituciones
 
