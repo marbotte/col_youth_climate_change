@@ -139,6 +139,70 @@ plot_eco_anx2
 ```
 
 
+```{r recodificación emociones cambio climático 3, include=FALSE, eval=FALSE}
+unp_deac <- c("C36_1", "C36_10", "C36_11", "C36_15")
+unp_act <- c("C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9")
+ple_deac <- c("C36_13", "C36_16")
+ple_act <- c("C36_2", "C36_12", "C36_14")
+data1$cir_mod <- NA
+for (i in 1:nrow(data1)) {
+unp_deac_count <- sum(data1[i, unp_deac] == 1)
+unp_act_count <- sum(data1[i, unp_act] == 1)
+ple_deac_count <- sum(data1[i, ple_deac] == 1)
+ple_act_count <- sum(data1[i, ple_act] == 1)
+if (unp_deac_count %in% c(1, 2) & unp_act_count == 0 & ple_deac_count == 0 & ple_act_count == 0) {
+data1$cir_mod[i] <- "Neg no act"
+} else if (unp_deac_count == 1 & unp_act_count == 1 & ple_deac_count == 0 & ple_act_count == 0) {
+data1$cir_mod[i] <- "Neg act y no act"
+} else if (unp_deac_count == 1 & unp_act_count == 0 & ple_deac_count == 1 & ple_act_count == 0) {
+data1$cir_mod[i] <- "Neg no act y pos no act"
+} else if (unp_deac_count == 1 & unp_act_count == 0 & ple_deac_count == 0 & ple_act_count == 1) {
+data1$cir_mod[i] <- "Neg no act y pos act"
+} else if (unp_deac_count == 0 & unp_act_count %in% c(1, 2) & ple_deac_count == 0 & ple_act_count == 0) {
+data1$cir_mod[i] <- "Neg act"
+} else if (unp_deac_count == 0 & unp_act_count == 1 & ple_deac_count == 1 & ple_act_count == 0) {
+data1$cir_mod[i] <- "Neg act y pos no act"
+} else if (unp_deac_count == 0 & unp_act_count == 1 & ple_deac_count == 0 & ple_act_count == 1) {
+data1$cir_mod[i] <- "Neg act y pos act"
+} else if (unp_deac_count == 0 & unp_act_count == 0 & ple_deac_count %in% c(1, 2) & ple_act_count == 0) {
+data1$cir_mod[i] <- "Pos no act"
+} else if (unp_deac_count == 0 & unp_act_count == 0 & ple_deac_count == 1 & ple_act_count == 1) {
+data1$cir_mod[i] <- "Pos act y no act"
+} else if (unp_deac_count == 0 & unp_act_count == 0 & ple_deac_count == 0 & ple_act_count %in% c(1, 2)) {
+data1$cir_mod[i] <- "Pos act"
+}
+}
+data1$cir_mod <- as.factor(data1$cir_mod)
+```
+
+
+```{r recodificación emociones cambio climático 4, include=FALSE, eval=FALSE}
+unp_deac <- c("C36_1", "C36_10", "C36_11", "C36_15")
+unp_act <- c("C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9")
+pos <- c("C36_13", "C36_16", "C36_2", "C36_12", "C36_14")
+data1$cir_mod <- NA
+for (i in 1:nrow(data1)) {
+unp_deac_count <- sum(data1[i, unp_deac] == 1)
+unp_act_count <- sum(data1[i, unp_act] == 1)
+pos_count <- sum(data1[i, pos] == 1)
+if (unp_deac_count %in% c(1, 2) & unp_act_count == 0 & pos_count == 0) {
+data1$cir_mod[i] <- "Neg no act"
+} else if (unp_deac_count == 1 & unp_act_count == 1 & pos_count == 0) {
+data1$cir_mod[i] <- "Neg act y no act"
+} else if (unp_deac_count == 1 & unp_act_count == 0 & pos_count == 1) {
+data1$cir_mod[i] <- "Neg no act y pos"
+} else if (unp_deac_count == 0 & unp_act_count %in% c(1, 2) & pos_count == 0) {
+data1$cir_mod[i] <- "Neg act"
+} else if (unp_deac_count == 0 & unp_act_count == 1 & pos_count == 1) {
+data1$cir_mod[i] <- "Neg act y pos"
+} else if (unp_deac_count == 0 & unp_act_count == 0 & pos_count %in% c(1, 2)) {
+data1$cir_mod[i] <- "Pos"
+}
+}
+data1$cir_mod <- as.factor(data1$cir_mod)
+```
+
+
 # Zona de residencia
 Al inicio de la encuesta se clasificó a los participantes en dos distintas categorías según su lugar de residencia. Estas fueron categorías son: "Urbana ciudades" y "Municipios rurales dispersos".
 ```{r variable zone, fig.align='center', echo=F}
@@ -839,6 +903,18 @@ plot_aso
 ```
 
 
+```{r variable asociarse a organizaciones ambientales 2, fig.align='center', echo=F}
+data1$aso <- data1$C18_7
+for (i in 1:nrow(data1)) {
+  if (data1$aso[i] == 1) {
+    data1$aso[i] <- 1
+  } else if (data1$aso[i] == 2) {
+    data1$aso[i] <- -1
+  }
+}
+```
+
+
 ```{r variable emociones respuesta gobierno al cambio climático, include=FALSE, eval=FALSE}
 # Emociones hacia respuesta del gobierno frente al cambio climático
 # La pregunta número 34 fue: "En una escala de 1 a 6, donde 1 es MUY POCO y 6 es MUY FUERTE, Cuando usted piensa en cómo el gobierno está respondiendo al cambio climático se siente:". El participante debía dar una respuesta para cada una de las 10 emociones incluidas.
@@ -1184,8 +1260,23 @@ data1$imp_como <- NA
 for (i in 1:nrow(data1)) {
   data1$imp_como[i] <- round(sum(data1[i, c38]) / 10) 
 }
-data1$imp_como <- as.factor(data1$imp_como)
-levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
+for (i in 1:nrow(data1)) {
+  if (data1$imp_como[i] == 1) {
+    data1$imp_como[i] <- -3
+  } else if (data1$imp_como[i] == 2) {
+    data1$imp_como[i] <- -2
+  } else if (data1$imp_como[i] == 3) {
+    data1$imp_como[i] <- -1
+  } else if (data1$imp_como[i] == 4) {
+    data1$imp_como[i] <- 1
+  } else if (data1$imp_como[i] == 5) {
+    data1$imp_como[i] <- 2
+  } else if (data1$imp_como[i] == 6) {
+    data1$imp_como[i] <- 3
+  }
+}
+#data1$imp_como <- as.factor(data1$imp_como)
+#levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
 ```
 
 ## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
@@ -1246,8 +1337,23 @@ data1$imp_cli <- NA
 for (i in 1:nrow(data1)) {
   data1$imp_cli[i] <- round(sum(data1[i, c39]) / 10)
 }
-data1$imp_cli <- as.factor(data1$imp_cli)
-levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
+for (i in 1:nrow(data1)) {
+  if (data1$imp_cli[i] == 1) {
+    data1$imp_cli[i] <- -3
+  } else if (data1$imp_cli[i] == 2) {
+    data1$imp_cli[i] <- -2
+  } else if (data1$imp_cli[i] == 3) {
+    data1$imp_cli[i] <- -1
+  } else if (data1$imp_cli[i] == 4) {
+    data1$imp_cli[i] <- 1
+  } else if (data1$imp_cli[i] == 5) {
+    data1$imp_cli[i] <- 2
+  } else if (data1$imp_cli[i] == 6) {
+    data1$imp_cli[i] <- 3
+  }
+}
+#data1$imp_cli <- as.factor(data1$imp_cli)
+#levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
 ```
 
 ## Creación de una medida del impacto de ciertas acciones en el cambio climático
@@ -1267,6 +1373,56 @@ plot_imp_cli <- data1 %>%
   geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
   scale_fill_manual(values = custom_palette)
 plot_imp_cli
+```
+
+
+
+```{r medida disposicion acciones en cambio climático, include=FALSE}
+data1$dis_act <- data1$imp_cli + data1$imp_como + data1$aso
+data1 <- data1 %>%
+  mutate(dis_act = case_when(
+    dis_act %in% c(-7, -6, -5, -4) ~ "Poco dispuesta",
+    dis_act %in% c(-3, -2, -1) ~ "Poco dispuesta",
+    dis_act == 0 ~ "Poco dispuesta",
+    dis_act %in% c(1, 2, 3) ~ "Dispuesta",
+    dis_act %in% c(4, 5, 6, 7) ~ "Muy dispuesta",
+))
+data1$dis_act <- factor(data1$dis_act, levels = c("Poco dispuesta", "Dispuesta", "Muy dispuesta"))
+```
+
+
+```{r medida disposicion acciones en cambio climático otro, include=FALSE}
+# Impact of individual actions on comfort
+c38 <- grep("^C38_", names(data1), value=T)
+data1$imp_como <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_como[i] <- round(sum(data1[i, c38]) / 10) 
+}
+data1$imp_como <- as.factor(data1$imp_como)
+levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
+
+data1 <- data1 %>%
+  mutate(imp_com = case_when(
+    imp_como %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_como %in% c("1", "2", "3") ~ "Positivo"
+  ))
+data1$imp_com <- as.factor(data1$imp_com)
+
+# Impact of individual actions on climate change
+c39 <- grep("^C39_", names(data1), value=T)
+data1$imp_cli <- NA
+for (i in 1:nrow(data1)) {
+  data1$imp_cli[i] <- round(sum(data1[i, c39]) / 10)
+}
+data1$imp_cli <- as.factor(data1$imp_cli)
+levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
+
+data1 <- data1 %>%
+  mutate(imp_cl = case_when(
+    imp_cli %in% c("-3", "-2", "-1") ~ "Negativo",
+    imp_cli %in% c("1", "2", "3") ~ "Positivo"
+  ))
+data1$imp_cl <- as.factor(data1$imp_cl)
 ```
 
 # Origen del cambio climático

@@ -63,6 +63,30 @@ data1$eco_anx2[i] <- "Baja activación"
 }
 data1$eco_anx2 <- factor(data1$eco_anx2, levels = c("Baja activación", "Ambivalente/Neutra", "Alta activación"))
 
+unp_deac <- c("C36_1", "C36_10", "C36_11", "C36_15")
+unp_act <- c("C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9")
+pos <- c("C36_13", "C36_16", "C36_2", "C36_12", "C36_14")
+data1$cir_mod <- NA
+for (i in 1:nrow(data1)) {
+unp_deac_count <- sum(data1[i, unp_deac] == 1)
+unp_act_count <- sum(data1[i, unp_act] == 1)
+pos_count <- sum(data1[i, pos] == 1)
+if (unp_deac_count %in% c(1, 2) & unp_act_count == 0 & pos_count == 0) {
+data1$cir_mod[i] <- "Neg no act"
+} else if (unp_deac_count == 1 & unp_act_count == 1 & pos_count == 0) {
+data1$cir_mod[i] <- "Neg act y no act"
+} else if (unp_deac_count == 1 & unp_act_count == 0 & pos_count == 1) {
+data1$cir_mod[i] <- "Neg no act y pos"
+} else if (unp_deac_count == 0 & unp_act_count %in% c(1, 2) & pos_count == 0) {
+data1$cir_mod[i] <- "Neg act"
+} else if (unp_deac_count == 0 & unp_act_count == 1 & pos_count == 1) {
+data1$cir_mod[i] <- "Neg act y pos"
+} else if (unp_deac_count == 0 & unp_act_count == 0 & pos_count %in% c(1, 2)) {
+data1$cir_mod[i] <- "Pos"
+}
+}
+data1$cir_mod <- as.factor(data1$cir_mod)
+
 # Residential area
 data1$Zona <- as.factor(data1$Zona)
 
@@ -223,6 +247,15 @@ data1$trust_vote_inst <- factor(data1$trust_vote_inst, levels = c("No", "Sí"))
 #data1$trust_unis <- rowSums(trust_unis)
 #data1$trust_unis <- as.factor(data1$trust_unis)
 
+data1$aso <- data1$C18_7
+for (i in 1:nrow(data1)) {
+  if (data1$aso[i] == 1) {
+    data1$aso[i] <- 1
+  } else if (data1$aso[i] == 2) {
+    data1$aso[i] <- -1
+  }
+}
+
 # Join an environmental organization
 data1$C18_7 <- as.factor(data1$C18_7)
 levels(data1$C18_7) <- c("Sí", "No")
@@ -246,8 +279,9 @@ data1$imp_scien <- as.factor(data1$imp_scien)
 
 data1 <- data1 %>%
   mutate(imp_sci = case_when(
-    imp_scien %in% c("-3", "-2", "-1", "0") ~ "Negativo",
-    imp_scien %in% c("1", "2", "3") ~ "Positivo"
+    imp_scien %in% c("-3", "-2") ~ "Negativo",
+    imp_scien %in% c("-1", "0", "1") ~ "Neutro",
+    imp_scien %in% c("2", "3") ~ "Positivo"
   ))
 data1$imp_sci <- as.factor(data1$imp_sci)
 
@@ -261,8 +295,9 @@ data1$imp_act <- as.factor(data1$imp_act)
 
 data1 <- data1 %>%
   mutate(imp_ac = case_when(
-    imp_act %in% c("-3", "-2", "-1", "0") ~ "Negativo",
-    imp_act %in% c("1", "2", "3") ~ "Positivo"
+    imp_act %in% c("-3", "-2") ~ "Negativo",
+    imp_act %in% c("-1", "0", "1") ~ "Neutro",
+    imp_act %in% c("2", "3") ~ "Positivo"
   ))
 data1$imp_ac <- as.factor(data1$imp_ac)
 
@@ -276,8 +311,9 @@ data1$imp_rel <- as.factor(data1$imp_rel)
 
 data1 <- data1 %>%
   mutate(imp_re = case_when(
-    imp_rel %in% c("-3", "-2", "-1", "0") ~ "Negativo",
-    imp_rel %in% c("1", "2", "3") ~ "Positivo"
+    imp_rel %in% c("-3", "-2") ~ "Negativo",
+    imp_rel %in% c("-1", "0", "1") ~ "Neutro",
+    imp_rel %in% c("2", "3") ~ "Positivo"
   ))
 data1$imp_re <- as.factor(data1$imp_re)
 
@@ -291,8 +327,9 @@ data1$imp_pol <- as.factor(data1$imp_pol)
 
 data1 <- data1 %>%
   mutate(imp_po = case_when(
-    imp_pol %in% c("-3", "-2", "-1", "0") ~ "Negativo",
-    imp_pol %in% c("1", "2", "3") ~ "Positivo"
+    imp_pol %in% c("-3", "-2") ~ "Negativo",
+    imp_pol %in% c("-1", "0", "1") ~ "Neutro",
+    imp_pol %in% c("2", "3") ~ "Positivo"
   ))
 data1$imp_po <- as.factor(data1$imp_po)
 
@@ -335,37 +372,58 @@ data1$thoughts[i] <- "Ambivalentes/Neutrales"
 }
 data1$thoughts <- factor(data1$thoughts, levels = c("Negativos", "Ambivalentes/Neutrales", "Positivos"))
 
-# Impact of individual actions on comfort
 c38 <- grep("^C38_", names(data1), value=T)
 data1$imp_como <- NA
 for (i in 1:nrow(data1)) {
   data1$imp_como[i] <- round(sum(data1[i, c38]) / 10) 
 }
-data1$imp_como <- as.factor(data1$imp_como)
-levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
+for (i in 1:nrow(data1)) {
+  if (data1$imp_como[i] == 1) {
+    data1$imp_como[i] <- -3
+  } else if (data1$imp_como[i] == 2) {
+    data1$imp_como[i] <- -2
+  } else if (data1$imp_como[i] == 3) {
+    data1$imp_como[i] <- -1
+  } else if (data1$imp_como[i] == 4) {
+    data1$imp_como[i] <- 1
+  } else if (data1$imp_como[i] == 5) {
+    data1$imp_como[i] <- 2
+  } else if (data1$imp_como[i] == 6) {
+    data1$imp_como[i] <- 3
+  }
+}
 
-data1 <- data1 %>%
-  mutate(imp_com = case_when(
-    imp_como %in% c("-3", "-2", "-1") ~ "Negativo",
-    imp_como %in% c("1", "2", "3") ~ "Positivo"
-  ))
-data1$imp_com <- as.factor(data1$imp_com)
-
-# Impact of individual actions on climate change
 c39 <- grep("^C39_", names(data1), value=T)
 data1$imp_cli <- NA
 for (i in 1:nrow(data1)) {
   data1$imp_cli[i] <- round(sum(data1[i, c39]) / 10)
 }
-data1$imp_cli <- as.factor(data1$imp_cli)
-levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
+for (i in 1:nrow(data1)) {
+  if (data1$imp_cli[i] == 1) {
+    data1$imp_cli[i] <- -3
+  } else if (data1$imp_cli[i] == 2) {
+    data1$imp_cli[i] <- -2
+  } else if (data1$imp_cli[i] == 3) {
+    data1$imp_cli[i] <- -1
+  } else if (data1$imp_cli[i] == 4) {
+    data1$imp_cli[i] <- 1
+  } else if (data1$imp_cli[i] == 5) {
+    data1$imp_cli[i] <- 2
+  } else if (data1$imp_cli[i] == 6) {
+    data1$imp_cli[i] <- 3
+  }
+}
 
+data1$dis_act <- data1$imp_cli + data1$imp_como + data1$aso
 data1 <- data1 %>%
-  mutate(imp_cl = case_when(
-    imp_cli %in% c("-3", "-2", "-1") ~ "Negativo",
-    imp_cli %in% c("1", "2", "3") ~ "Positivo"
-  ))
-data1$imp_cl <- as.factor(data1$imp_cl)
+  mutate(dis_act = case_when(
+    dis_act %in% c(-7, -6, -5, -4) ~ "Poco dispuesta",
+    dis_act %in% c(-3, -2, -1) ~ "Poco dispuesta",
+    dis_act == 0 ~ "Poco dispuesta",
+    dis_act %in% c(1, 2, 3) ~ "Dispuesta",
+    dis_act %in% c(4, 5, 6, 7) ~ "Muy dispuesta",
+))
+data1$dis_act <- factor(data1$dis_act, levels = c("Poco dispuesta", "Dispuesta", "Muy dispuesta"))
 
 # Impact of individual actions separated
 data1 <- data1 %>%
@@ -423,10 +481,10 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 Tras el proceso de codificación, las variables de interés fueron agrupadas en un nuevo data frame. A continuación se presentan dos tablas. En la primera se encuentran las variables y una breve descripción de cada una, y en la segunda se encuentran las variables, cada una de sus categorías y la frecuencia correspondiente a cada categoría.
 ```{r data frame variables categoricas, echo=FALSE}
 data2 <- data1 %>%
-  select(Zona, sex, age_r, estrato, etnia, education, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, env_aso, imp_scien, imp_act, imp_rel, imp_pol, thoughts, imp_como, imp_cli, no_car, one_fw_ch, veg, only_bk_wk, clim_origin, cont_clim)
+  select(Zona, sex, age_r, estrato, etnia, education, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, no_car, one_fw_ch, veg, only_bk_wk, clim_origin, cont_clim)
 
 data3 <- data1 %>%
-  select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, env_aso, imp_sci, imp_ac, imp_re, imp_po, thoughts, imp_com, imp_cl, clim_origin, cont_clim)
+  select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim)
 # Not included: Negative emotions towards government actions against climate change, Alternative media
 
 codigo <- c("Zona", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "Internet", "trust_vote_inst", "eco_anx", "env_aso", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "imp_com", "imp_cli", "clim_origin", "cont_clim")
@@ -464,8 +522,7 @@ fviz_mca_var(res.mca, choice = "var", repel = TRUE)
 #summary(res.mca, ncp = 2, nbelements = Inf)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "eco_anx", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "clim_origin", alpha = 0.2)
-fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "imp_com", alpha = 0.2)
-fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "env_aso", alpha = 0.2)
+fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "dis_act", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "Internet", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "kids", alpha = 0.2)
 dimdesc(res.mca, axes = 1:2)
@@ -475,7 +532,7 @@ dimdesc(res.mca, axes = 1:2)
 ## Análisis con las variables sociodemográficas como variables suplementarias
 Para ver de forma más clara si las variables demográficas podrían estar relacionadas con las dimensiones de variabilidad observadas, estas no fueron incluidas como variables activas en la construcción de las dimensiones, sino como variables suplementarias. Al interpretar el análisis se encuentra que algunas variables demográficas pueden estar relacionadas con algunas de las dimensiones obtenidas, pero no con las variables de mayor interés relacionadas con el cambio climático.
 ```{r análisis de componentes múltiples 2, echo=FALSE}
-res.mca <- MCA(data3, quali.sup = c(1:8), graph = FALSE)
+res.mca <- MCA(data3, quali.sup = c(1:7), graph = FALSE)
 fviz_eig(res.mca, addlabels = TRUE, title = "Inertia of MCA Dimensions")
 fviz_mca_ind(res.mca, geom = "point", pointsize = 2, repel = TRUE)
 #fviz_mca_biplot(res.mca, geom.ind = "point", repel = TRUE, alpha.ind = 0.1)
@@ -484,8 +541,7 @@ fviz_mca_var(res.mca, choice = "var", repel = TRUE)
 #summary(res.mca, ncp = 2, nbelements = Inf)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "eco_anx", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "clim_origin", alpha = 0.2)
-fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "imp_com", alpha = 0.2)
-fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "env_aso", alpha = 0.2)
+fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "dis_act", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "Internet", alpha = 0.2)
 fviz(res.mca, element = "ind", geom = "point", pointsize = 2, hab = "kids", alpha = 0.2)
 dimdesc(res.mca, axes = 1:2)
@@ -535,7 +591,7 @@ kable(round(prop.table(tab_ide_eco_anx) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_ide_eco_anx <- data2 %>%
-  ggplot(aes(x = ideology, fill = eco_anx)) +
+  ggplot(aes(x = ideology, fill = cir_mod)) +
   geom_bar(position = "fill") +
   labs(x = "Ideología política", y = "Proporción", fill = "Emociones frente al \ncambio climático") +
   papaja::theme_apa() +
@@ -551,7 +607,7 @@ kable(round(prop.table(tab_cli_eco_anx) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_cli_eco_anx <- data2 %>%
-  ggplot(aes(x = imp_cli, fill = eco_anx)) +
+  ggplot(aes(x = dis_act, fill = eco_anx)) +
   geom_bar(position = "fill") +
   labs(x = "Impacto acciones \nIndividuales en \nel Cambio Climático", y = "Proporción", fill = "Emociones frente al \ncambio climático") +
   papaja::theme_apa() +
@@ -596,7 +652,7 @@ kable(round(prop.table(tab_cont_eco_anx) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_cont_eco_anx <- data2 %>%
-  ggplot(aes(x = eco_anx, fill = cont_clim)) +
+  ggplot(aes(x = cir_mod, fill = cont_clim)) +
   geom_bar(position = "fill") +
   labs(x = "Emociones frente al \ncambio climático", y = "Proporción", fill = "Quema combustibles fósiles \nmayor contribución al \ncambio climático") +
   papaja::theme_apa() +
@@ -653,6 +709,22 @@ plot_ori_age
 ```
 
 
+```{r relación origen cambio climatico y opinion cientificos, fig.align='center', echo=F}
+tab_ori_age <- table(data2$clim_origin, data2$imp_sci)
+kable(round(prop.table(tab_ori_age) * 100, 1), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "BrBG")
+plot_ori_age <- data2 %>%
+  ggplot(aes(x = imp_sci, fill = clim_origin)) +
+  geom_bar(position = "fill") +
+  labs(x = "Grupo de edad", y = "Proporción", fill = "Origen Cambio Climático") +
+  papaja::theme_apa() +
+  coord_flip() +
+  scale_fill_manual(values = custom_palette)
+plot_ori_age
+```
+
+
 ```{r relación origen cambio climatico e impacto individual, fig.align='center', echo=F}
 tab_ori_imp_cli <- table(data2$clim_origin, data2$imp_cli)
 kable(round(prop.table(tab_ori_imp_cli) * 100, 1), booktabs = TRUE)
@@ -674,7 +746,7 @@ kable(round(prop.table(tab_ori_imp_como) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_ori_imp_como <- data2 %>%
-  ggplot(aes(x = clim_origin, fill = imp_como)) +
+  ggplot(aes(x = clim_origin, fill = dis_act)) +
   geom_bar(position = "fill") +
   labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Impacto acciones \nen la comodidad") +
   papaja::theme_apa() +
@@ -713,7 +785,7 @@ plot_ori_th
 ```
 
 
-```{r relación origen cambio climatico y redes sociales, fig.align='center', echo=F}
+```{r relación origen cambio climatico e internet, fig.align='center', echo=F}
 tab_ori_imp_cli <- table(data2$clim_origin, data2$Internet)
 kable(round(prop.table(tab_ori_imp_cli) * 100, 1), booktabs = TRUE)
 
@@ -733,6 +805,63 @@ Se realizaron múltiples test de chi-cuadrado para establecer si existen relacio
 
 ## Tests para la variable origen del cambio climático
 ```{r chi-square origen cambio climatico, echo=FALSE}
+specific_variable <- "clim_origin"
+
+# Create an empty list to store the p-values
+p_values <- list()
+
+# Create vectors to store the names of significant variables and their corresponding p-values
+significant_variables <- c()
+significant_p_values <- c()
+
+# Loop through each variable in your dataset
+for (var in names(data2)) {
+  if (var != specific_variable) {
+    # Create a contingency table
+    contingency_table <- table(data2[[var]], data2[[specific_variable]])
+
+    # Perform chi-square test
+    chi_square <- chisq.test(contingency_table)
+
+    # Store the raw p-value
+    p_value <- chi_square$p.value
+    
+    # Store the p-value in the list
+    p_values[[var]] <- p_value
+    
+  }
+}
+
+# Apply the correction for multiple comparisons to the p-values
+adjusted_p_values <- p.adjust(unlist(p_values), method = "fdr")
+
+# Loop through each variable and its corresponding p-value
+for (i in seq_along(p_values)) {
+  var <- names(p_values[i])
+  p_value <- adjusted_p_values[i]
+  
+  # Check if the p-value is significant
+  if (p_value < 0.05) {
+    # Add the variable name to the vector
+    significant_variables <- c(significant_variables, var)
+    # Add the corrected p-value to the vector
+    significant_p_values <- c(significant_p_values, p_value)
+  }
+}
+
+# Print the names of the significant variables
+print(significant_variables)
+sig_var <- c("Edad", "Estrato", "Etnia", "Ideología", "Internet", "Confianza Instituciones", "Emociones cambio climático", "Unirse organización", "Impacto científicos", "Impacto activistas", "Impacto grupos religiosos", "Impacto políticos", "Pensamientos cambio climático", "Acciones comodidad", "Acciones cambio climático", "No tener carro", "Un hijo menos", "Vegetariano", "Solo bici y caminar", "Contribución cambio climático")
+# Print the significant p-values
+print(significant_p_values)
+
+significant_p_values <- unname(significant_p_values)
+table <- data.frame(sig_var, significant_p_values)
+kable(table, col.names = c("Variable", "P-value"))
+```
+
+
+```{r chi-square origen cambio climatico 2, eval=FALSE, include=FALSE}
 specific_variable <- "clim_origin"
 
 # Create an empty list to store the p-values
@@ -765,8 +894,66 @@ for (var in names(adjusted_p_values)) {
 }
 ```
 
-## Tests para la variable emociones frente al cambio climático
+
 ```{r chi-square emociones cambio climatico, echo=FALSE}
+specific_variable <- "eco_anx"
+
+# Create an empty list to store the p-values
+p_values <- list()
+
+# Create vectors to store the names of significant variables and their corresponding p-values
+significant_variables <- c()
+significant_p_values <- c()
+
+# Loop through each variable in your dataset
+for (var in names(data2)) {
+  if (var != specific_variable) {
+    # Create a contingency table
+    contingency_table <- table(data2[[var]], data2[[specific_variable]])
+
+    # Perform chi-square test
+    chi_square <- chisq.test(contingency_table)
+
+    # Store the raw p-value
+    p_value <- chi_square$p.value
+    
+    # Store the p-value in the list
+    p_values[[var]] <- p_value
+    
+  }
+}
+
+# Apply the correction for multiple comparisons to the p-values
+adjusted_p_values <- p.adjust(unlist(p_values), method = "fdr")
+
+# Loop through each variable and its corresponding p-value
+for (i in seq_along(p_values)) {
+  var <- names(p_values[i])
+  p_value <- adjusted_p_values[i]
+  
+  # Check if the p-value is significant
+  if (p_value < 0.05) {
+    # Add the variable name to the vector
+    significant_variables <- c(significant_variables, var)
+    # Add the corrected p-value to the vector
+    significant_p_values <- c(significant_p_values, p_value)
+  }
+}
+
+# Print the names of the significant variables
+print(significant_variables)
+sig_var <- c("Educación", "Ideología", "Internet", "Confianza Instituciones", "Unirse organización", "Impacto grupos religiosos", "Pensamientos cambio climático", "Acciones comodidad", "No tener carro", "Un hijo menos", "Vegetariano", "Origen cambio climático", "Contribución cambio climático")
+# Print the significant p-values
+print(significant_p_values)
+
+significant_p_values <- unname(significant_p_values)
+table <- data.frame(sig_var, significant_p_values)
+kable(table, col.names = c("Variable", "P-value"))
+```
+
+
+## Tests para la variable emociones frente al cambio climático
+```{r chi-square emociones cambio climatico 2, eval=FALSE, include=FALSE}
 specific_variable <- "eco_anx"
 
 # Create an empty list to store the p-values
@@ -823,6 +1010,18 @@ for (var in names(data2)) {
 }
 # Print the adjusted Cramér's V values
 print(cram_values)
+cram_values <- unlist(cram_values)
+
+sig_var <- c("Edad", "Estrato", "Etnia", "Ideología", "Internet", "Confianza Instituciones", "Emociones cambio climático", "Unirse organización", "Impacto científicos", "Impacto activistas", "Impacto grupos religiosos", "Impacto políticos", "Pensamientos cambio climático", "Acciones comodidad", "Acciones cambio climático", "No tener carro", "Un hijo menos", "Vegetariano", "Solo bici y caminar", "Contribución cambio climático")
+
+# Create the new vector with selected values
+sig_values <- cram_values[c(3, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)]
+print(sig_values)
+
+sig_cram_values <- unname(sig_values)
+table <- data.frame(sig_var, sig_cram_values)
+sorted_table <- table[order(table$sig_cram_values, decreasing = TRUE), ]
+kable(sorted_table, col.names = c("Variable", "Cramér's V"))
 ```
 
 ## Valores para la variable  emociones frente al cambio climático
@@ -845,11 +1044,18 @@ for (var in names(data2)) {
 }
 # Print the adjusted Cramér's V values
 print(cram_values)
-```
+cram_values <- unlist(cram_values)
 
+sig_var <- c("Educación", "Ideología", "Internet", "Confianza Instituciones", "Unirse organización", "Impacto grupos religiosos", "Pensamientos cambio climático", "Acciones comodidad", "No tener carro", "Un hijo menos", "Vegetariano", "Origen cambio climático", "Contribución cambio climático")
 
-```{r logistic regression models, include=FALSE}
+# Create the new vector with selected values
+sig_values <- cram_values[c(6, 9, 10, 11, 12, 15, 17, 18, 20, 21, 22, 24, 25)]
+print(sig_values)
 
+sig_cram_values <- unname(sig_values)
+table <- data.frame(sig_var, sig_cram_values)
+sorted_table <- table[order(table$sig_cram_values, decreasing = TRUE), ]
+kable(sorted_table, col.names = c("Variable", "Cramér's V"))
 ```
 
 

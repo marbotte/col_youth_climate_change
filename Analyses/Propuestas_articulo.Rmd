@@ -1,0 +1,37 @@
+---
+title: 'Encuesta: Propuestas de artículo'
+author: "Juan Sebastian Cely"
+date: "`r Sys.Date()`"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+stopifnot(require(openxlsx), require(kableExtra), require(dm), require(dplyr), require (ggplot2), require(rms), require(caret), require(lmtest), require(car), require(yardstick), require(papaja), require(pandoc), require(tinytex), require(RColorBrewer), require(ggplotify), require(FactoMineR), require(factoextra), require(Factoshiny), require(effectsize))
+knitr::opts_chunk$set(cache=F,fig.path="./figures",cache.rebuild = F, out.width = "80%")
+options(knitr.table.format = "simple")
+```
+
+# Propuestas de artículo
+A partir de lo encontrado en los análisis exploratorios y siguiendo criterios tanto estadísticos como basados en la revisión de literatura, se tienen dos propuestas de artículo.
+
+## Emociones, conocimiento y acciones individuales contra el cambio climático
+
+¿La valencia emocional ligada al conocimiento sobre el cambio climático tiene un impacto sobre la disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos?
+
+Hipótesis 1: Estar bien informado frente a las causas del cambio climático está relacionado con una mayor disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos.
+
+Hipótesis 2: Experimentar emociones negativas frente al cambio climático se relaciona con una mayor disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos.
+
+Hipótesis 3: Un joven colombiano bien informado que experimente emociones negativas hacia el cambio climático tiene mayor disposición a llevar a cabo acciones individuales contra el cambio climático.
+
+Si las hipótesis se confirman, quiere decir que tanto el conocimiento como las emociones que se transmiten son relevantes a la hora de buscar promover que los jovenes colombianos tomen acciones individuales contra el cambio climático.
+
+## Relación entre el uso de internet y el conocimiento sobre el cambio climático
+
+¿Los jovenes colombianos que se informan a través de internet tienden a estar peor informados sobre el cambio climático?
+
+Hipótesis 1: Los jovenes colombianos que utilizan internet como fuente de información tienden a estar mejor informados sobre las causas del cambio climático.
+
+Si la hipótesis se confirma, quiere decir que a pesar del aumento de las fake news compartidas en medios digitales y redes sociales, los jóvenes colombianos que se informan a través de estos medios tienden a estar mejor informados que aquellos que se informan a través de medios más tradicionales.
