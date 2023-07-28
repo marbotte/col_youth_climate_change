@@ -480,15 +480,17 @@ data1$cont_clim <- as.factor(data1$cont_clim)
 # Variables y categorias
 Tras el proceso de codificación, las variables de interés fueron agrupadas en un nuevo data frame. A continuación se presentan dos tablas. En la primera se encuentran las variables y una breve descripción de cada una, y en la segunda se encuentran las variables, cada una de sus categorías y la frecuencia correspondiente a cada categoría.
 ```{r data frame variables categoricas, echo=FALSE}
+data1 <- data1 %>%
+  mutate(across(starts_with("C36"), as.factor))
 data2 <- data1 %>%
-  select(Zona, sex, age_r, estrato, etnia, education, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, no_car, one_fw_ch, veg, only_bk_wk, clim_origin, cont_clim)
+  select(Zona, sex, age_r, estrato, etnia, education, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, eco_anx2, cir_mod, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim, C36_1, C36_2, C36_3, C36_4, C36_5, C36_6, C36_7, C36_8, C36_9, C36_10, C36_11, C36_12, C36_13, C36_14, C36_15, C36_16)
 
 data3 <- data1 %>%
   select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim)
 # Not included: Negative emotions towards government actions against climate change, Alternative media
 
-codigo <- c("Zona", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "Internet", "trust_vote_inst", "eco_anx", "env_aso", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "imp_com", "imp_cli", "clim_origin", "cont_clim")
-descripcion <- c("Zona de residencia", "Sexo", "Rango de edad", "Estrato socioeconómico", "Pertenece a alguna etnia", "Tiene estudios de educación superior", "Tiene hijos", "Ideología política", "Se informa a través de internet", "Confía en las instituciones con cargos de elección popular", "Emociones frente al cambio climático", "Se uniría a una organización ambiental", "Impacto de los científicos frente al cambio climático", "Impacto de activistas frente al cambio climático", "Impacto de grupos religiosos frente al cambio climático", "Impacto de políticos frente al cambio climático", "Pensamientos frente al cambio climático", "Impacto de acciones individuales en su comodidad", "Impacto de acciones individuales en el cambio climático", "Causa u origen del cambio climático", "Factor que más contribuye al cambio climático")
+codigo <- c("Zona", "sex", "age_r", "strat", "ethni", "edu", "kids", "ideology", "Internet", "trust_vote_inst", "eco_anx", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "dis_act", "clim_origin", "cont_clim")
+descripcion <- c("Zona de residencia", "Sexo", "Rango de edad", "Estrato socioeconómico", "Pertenece a alguna etnia", "Tiene estudios de educación superior", "Tiene hijos", "Ideología política", "Se informa a través de internet", "Confía en las instituciones con cargos de elección popular", "Emociones frente al cambio climático", "Impacto de los científicos frente al cambio climático", "Impacto de activistas frente al cambio climático", "Impacto de grupos religiosos frente al cambio climático", "Impacto de políticos frente al cambio climático", "Pensamientos frente al cambio climático", "Disposición actuar cambio climático", "Causa u origen del cambio climático", "Factor que más contribuye al cambio climático")
 table_vars <- data.frame(codigo, descripcion)
 kable(table_vars, col.names = c("Código de la variable", "Descripción de la variable"), booktabs = TRUE)
 
@@ -601,45 +603,15 @@ plot_ide_eco_anx
 ```
 
 
-```{r relación impacto accion individual y emociones, fig.align='center', echo=F}
-tab_cli_eco_anx <- table(data2$imp_cli, data2$eco_anx)
-kable(round(prop.table(tab_cli_eco_anx) * 100, 1), booktabs = TRUE)
-
-custom_palette <- brewer.pal(6, "BrBG")
-plot_cli_eco_anx <- data2 %>%
-  ggplot(aes(x = dis_act, fill = eco_anx)) +
-  geom_bar(position = "fill") +
-  labs(x = "Impacto acciones \nIndividuales en \nel Cambio Climático", y = "Proporción", fill = "Emociones frente al \ncambio climático") +
-  papaja::theme_apa() +
-  scale_fill_manual(values = custom_palette)
-plot_cli_eco_anx
-```
-
-
-```{r relación impacto en la comodidad y emociones, fig.align='center', echo=F}
-tab_como_eco_anx <- table(data2$imp_como, data2$eco_anx)
-kable(round(prop.table(tab_como_eco_anx) * 100, 1), booktabs = TRUE)
-
-custom_palette <- brewer.pal(6, "BrBG")
-plot_como_eco_anx <- data2 %>%
-  ggplot(aes(x = imp_como, fill = eco_anx)) +
-  geom_bar(position = "fill") +
-  labs(x = "Impacto acciones \nIndividuales en \nComodidad", y = "Proporción", fill = "Emociones frente al \ncambio climático") +
-  papaja::theme_apa() +
-  scale_fill_manual(values = custom_palette)
-plot_como_eco_anx
-```
-
-
-```{r relación unirse organizaciones ambientales y eco ansiedad, fig.align='center', echo=F}
-tab_aso_eco_anx <- table(data2$env_aso, data2$eco_anx)
-kable(round(prop.table(tab_aso_eco_anx) * 100, 1), booktabs = TRUE)
+```{r disposicion a actuar y eco ansiedad, fig.align='center', echo=F}
+tab_dis_eco_anx <- table(data2$dis_act, data2$eco_anx)
+kable(round(prop.table(tab_dis_eco_anx) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_aso_eco_anx <- data2 %>%
-  ggplot(aes(x = env_aso, fill = eco_anx)) +
+  ggplot(aes(x = dis_act, fill = eco_anx)) +
   geom_bar(position = "fill") +
-  labs(x = "Unirse a organizaciones ambientales", y = "Proporción", fill = "Emociones frente al \ncambio climático") +
+  labs(x = "Disposición a actuar frente al cambio climático", y = "Proporción", fill = "Emociones frente al \ncambio climático") +
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette)
 plot_aso_eco_anx
@@ -652,7 +624,7 @@ kable(round(prop.table(tab_cont_eco_anx) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_cont_eco_anx <- data2 %>%
-  ggplot(aes(x = cir_mod, fill = cont_clim)) +
+  ggplot(aes(x = eco_anx, fill = cont_clim)) +
   geom_bar(position = "fill") +
   labs(x = "Emociones frente al \ncambio climático", y = "Proporción", fill = "Quema combustibles fósiles \nmayor contribución al \ncambio climático") +
   papaja::theme_apa() +
@@ -663,18 +635,18 @@ plot_cont_eco_anx
 
 
 ```{r relación internet y eco ansiedad, fig.align='center', echo=F}
-tab_cont_eco_anx <- table(data2$Internet, data2$eco_anx)
-kable(round(prop.table(tab_cont_eco_anx) * 100, 1), booktabs = TRUE)
+tab_int_eco_anx <- table(data2$Internet, data2$eco_anx)
+kable(round(prop.table(tab_int_eco_anx) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
-plot_cont_eco_anx <- data2 %>%
+plot_int_eco_anx <- data2 %>%
   ggplot(aes(x = eco_anx, fill = Internet)) +
   geom_bar(position = "fill") +
-  labs(x = "Emociones frente al \ncambio climático", y = "Proporción", fill = "Quema combustibles fósiles \nmayor contribución al \ncambio climático") +
+  labs(x = "Emociones frente al \ncambio climático", y = "Proporción", fill = "Internet como \nfuente de información") +
   papaja::theme_apa() +
   coord_flip() +
   scale_fill_manual(values = custom_palette)
-plot_cont_eco_anx
+plot_int_eco_anx
 ```
 
 
@@ -725,48 +697,18 @@ plot_ori_age
 ```
 
 
-```{r relación origen cambio climatico e impacto individual, fig.align='center', echo=F}
-tab_ori_imp_cli <- table(data2$clim_origin, data2$imp_cli)
-kable(round(prop.table(tab_ori_imp_cli) * 100, 1), booktabs = TRUE)
+```{r relación origen cambio climatico y disposición a actuar, fig.align='center', echo=F}
+tab_ori_dis <- table(data2$clim_origin, data2$dis_act)
+kable(round(prop.table(tab_ori_dis) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
-plot_ori_imp_cli <- data2 %>%
-  ggplot(aes(x = clim_origin, fill = imp_cli)) +
+plot_ori_dis <- data2 %>%
+  ggplot(aes(x = dis_act, fill = clim_origin)) +
   geom_bar(position = "fill") +
-  labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Impacto acciones \nIndividuales en \nCambio climático") +
+  labs(x = "Disposición a actuar frente al cambio climático", y = "Proporción", fill = "Origen Cambio Climático") +
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette)
-plot_ori_imp_cli
-```
-
-
-```{r relación origen cambio climatico e impacto en la comodidad, fig.align='center', echo=F}
-tab_ori_imp_como <- table(data2$clim_origin, data2$imp_como)
-kable(round(prop.table(tab_ori_imp_como) * 100, 1), booktabs = TRUE)
-
-custom_palette <- brewer.pal(6, "BrBG")
-plot_ori_imp_como <- data2 %>%
-  ggplot(aes(x = clim_origin, fill = dis_act)) +
-  geom_bar(position = "fill") +
-  labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Impacto acciones \nen la comodidad") +
-  papaja::theme_apa() +
-  scale_fill_manual(values = custom_palette)
-plot_ori_imp_como
-```
-
-
-```{r relación origen cambio climatico y unirse organizaciones ambientales, fig.align='center', echo=F}
-tab_ori_aso <- table(data2$clim_origin, data2$env_aso)
-kable(round(prop.table(tab_ori_aso) * 100, 1), booktabs = TRUE)
-
-custom_palette <- brewer.pal(6, "BrBG")
-plot_ori_aso <- data2 %>%
-  ggplot(aes(x = env_aso, fill = clim_origin)) +
-  geom_bar(position = "fill") +
-  labs(x = "Unirse a organizaciones ambientales", y = "Proporción", fill = "Origen Cambio Climático") +
-  papaja::theme_apa() +
-  scale_fill_manual(values = custom_palette)
-plot_ori_aso
+plot_ori_dis
 ```
 
 
@@ -786,17 +728,17 @@ plot_ori_th
 
 
 ```{r relación origen cambio climatico e internet, fig.align='center', echo=F}
-tab_ori_imp_cli <- table(data2$clim_origin, data2$Internet)
-kable(round(prop.table(tab_ori_imp_cli) * 100, 1), booktabs = TRUE)
+tab_ori_int <- table(data2$clim_origin, data2$Internet)
+kable(round(prop.table(tab_ori_int) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
-plot_ori_imp_cli <- data2 %>%
+plot_ori_int <- data2 %>%
   ggplot(aes(x = Internet, fill = clim_origin)) +
   geom_bar(position = "fill") +
-  labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Impacto acciones \nIndividuales en \nCambio climático") +
+  labs(x = "Origen Cambio Climático", y = "Proporción", fill = "Internet como \nfuente de información") +
   papaja::theme_apa() +
   scale_fill_manual(values = custom_palette)
-plot_ori_imp_cli
+plot_ori_int
 ```
 
 
