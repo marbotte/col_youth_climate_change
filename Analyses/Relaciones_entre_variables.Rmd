@@ -414,7 +414,7 @@ for (i in 1:nrow(data1)) {
   }
 }
 
-data1$dis_act <- data1$imp_cli + data1$imp_como + data1$aso
+data1$dis_act <- data1$imp_cli + data1$imp_como
 data1 <- data1 %>%
   mutate(dis_act = case_when(
     dis_act %in% c(-7, -6, -5, -4) ~ "Poco dispuesta",
