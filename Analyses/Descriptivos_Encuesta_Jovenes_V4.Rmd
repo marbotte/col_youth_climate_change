@@ -14,7 +14,7 @@ options(knitr.table.format = "simple")
 ```
 
 ```{r data, include=FALSE}
-wb<-loadWorkbook("020-22 Base de Datos Anonimizada V4 (1).xlsx")
+wb<-loadWorkbook("C:\\Users\\sebas\\OneDrive\\Documents\\JSCA2\\Research\\Current_R_projects\\col_youth_climate_change\\Analyses\\020-22 Base de Datos Anonimizada V4 (1).xlsx")
 names(wb)
 data1 <- readWorkbook(wb,sheet=1)
 codeBook1 <- readWorkbook(wb,sheet=2,skipEmptyRows = F)
@@ -50,7 +50,7 @@ plot_emo
 ```
 
 ## Variable "Emociones hacia el cambio climático" Recodificada
-El conjunto de 16 emociones fue agrupado en tres niveles: Con Eco-ansiedad, emociones ambivalentes y/o neutrales, y Sin Eco-ansiedad.
+El conjunto de 16 emociones fue agrupado en tres niveles: Emociones negativas, Emociones ambivalentes y/o neutrales, y Emociones positivas.
 ```{r recodificación emociones cambio climático, include=FALSE}
 neg_emo <- c("C36_1", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9", "C36_10", "C36_11", "C36_15")
 amb_emo <- c("C36_13")
@@ -99,8 +99,8 @@ plot_eco_anx
 
 
 ## Variable "Emociones hacia el cambio climático" Recodificada Opción 2
-El conjunto de 16 emociones fue agrupado en tres niveles: Emociones de alta activación, Emociones de baja activación y emociones ambivalentes o neutras.
-```{r recodificación emociones cambio climático 2, include=FALSE}
+El conjunto de 16 emociones fueron agrupadas en 6 categorías creadas a partir del modelo conocido como "Circumplex model of affect", el cual clasifica a las emociones de acuerdo a las dimensiones de valencia y activación. Las emociones positivas solo fueron catalogadas de acuerdo a su valencia debido al reducido número de participantes que seleccionaron algunas de estas. De esta manera se evita tener categorias con frecuencias en extremo reducidas.
+```{r recodificación emociones cambio climático 2, include=FALSE, eval=FALSE}
 high_ar <- c("C36_2", "C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_9", "C36_12", "C36_14")
 low_ar <- c("C36_1", "C36_8", "C36_10", "C36_11", "C36_13", "C36_15", "C36_16")
 data1$eco_anx2 <- NA
@@ -118,7 +118,7 @@ data1$eco_anx2[i] <- "Baja activación"
 ```
 
 
-```{r variable emo recodificada 2, fig.align='center', echo=FALSE}
+```{r variable emo recodificada 2, fig.align='center', include=FALSE, eval=FALSE}
 data1$eco_anx2 <- factor(data1$eco_anx2, levels = c("Baja activación", "Ambivalente/Neutra", "Alta activación"))
 table_eco_anx2<- as.data.frame(table(data1$eco_anx2)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -176,7 +176,7 @@ data1$cir_mod <- as.factor(data1$cir_mod)
 ```
 
 
-```{r recodificación emociones cambio climático 4, include=FALSE, eval=FALSE}
+```{r recodificación emociones cambio climático 4, include=FALSE}
 unp_deac <- c("C36_1", "C36_10", "C36_11", "C36_15")
 unp_act <- c("C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9")
 pos <- c("C36_13", "C36_16", "C36_2", "C36_12", "C36_14")
@@ -188,18 +188,38 @@ pos_count <- sum(data1[i, pos] == 1)
 if (unp_deac_count %in% c(1, 2) & unp_act_count == 0 & pos_count == 0) {
 data1$cir_mod[i] <- "Neg no act"
 } else if (unp_deac_count == 1 & unp_act_count == 1 & pos_count == 0) {
-data1$cir_mod[i] <- "Neg act y no act"
+data1$cir_mod[i] <- "Neg no act y act"
 } else if (unp_deac_count == 1 & unp_act_count == 0 & pos_count == 1) {
-data1$cir_mod[i] <- "Neg no act y pos"
+data1$cir_mod[i] <- "Pos y neg no act"
 } else if (unp_deac_count == 0 & unp_act_count %in% c(1, 2) & pos_count == 0) {
 data1$cir_mod[i] <- "Neg act"
 } else if (unp_deac_count == 0 & unp_act_count == 1 & pos_count == 1) {
-data1$cir_mod[i] <- "Neg act y pos"
+data1$cir_mod[i] <- "Pos y neg act"
 } else if (unp_deac_count == 0 & unp_act_count == 0 & pos_count %in% c(1, 2)) {
 data1$cir_mod[i] <- "Pos"
 }
 }
-data1$cir_mod <- as.factor(data1$cir_mod)
+```
+
+```{r variable emo recodificada 4, fig.align='center', echo=F}
+data1$cir_mod <- factor(data1$cir_mod, levels = c("Pos", "Pos y neg act", "Pos y neg no act", "Neg act", "Neg no act y act", "Neg no act"))
+table_cir_mod <- as.data.frame(table(data1$cir_mod)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_cir_mod, col.names = c("Emociones", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+plot_cir_mod <- data1 %>%
+  count(cir_mod) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = cir_mod, y = prop, fill = cir_mod)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 75) +
+  labs(x = "Emociones", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Emociones hacia el cambio climático") +
+  papaja::theme_apa() +
+  coord_flip() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
+plot_cir_mod
 ```
 
 
@@ -389,7 +409,7 @@ plot_et
 Los datos del DANE muestran porcentajes cercanos a los obtenidos en la encuesta.
 ![](dane_ethni_2020.png)
 
-```{r recodificación etnia, include=FALSE, eval=FALSE}
+```{r recodificación etnia, include=FALSE}
 data1$ethni <- data1$A5
 data1 <- data1 %>%
   mutate(ethni = case_when(
@@ -400,7 +420,7 @@ data1 <- data1 %>%
 
 ## Variable "Etnia" Recodificada
 La variable "Etnia" fue recodificada en dos distintos niveles que distinguen si la persona se reconoce como perteneciente a alguna de las etnias incluidas o no.
-```{r variable etnia recodificada, fig.align='center', include=FALSE, eval=FALSE}
+```{r variable etnia recodificada, fig.align='center', echo=FALSE}
 data1$ethni <- as.factor(data1$ethni)
 table_ethni<- as.data.frame(table(data1$ethni)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -654,7 +674,7 @@ for (variable in variables) {
 ```
 
 
-```{r recodificación medios, include=FALSE}
+```{r recodificación medios, include=FALSE, eval=FALSE}
 val_med <- c("B12_1", "B12_2", "B12_3", "B12_4")
 no_val_med <- c("B12_5", "B12_89")
 data1$med <- NA
@@ -671,9 +691,8 @@ data1$med[i] <- "Fuentes no validadas"
 }
 ```
 
-## Variable "Medios de información" Recodificada
-Los distintos medios de información fueron agrupados para crear una variable que distingue si la persona se informa con medios exclusivamente validados, medios exclusivamente no validados, o ambos tipos de medios.
-```{r variable recodificacion medios, fig.align='center', echo=F}
+
+```{r variable recodificacion medios, fig.align='center', include=FALSE, eval=FALSE}
 data1$med <- factor(data1$med, levels = c("Fuentes validadas", "Fuentes mixtas", "Fuentes no validadas"))
 table_med <- as.data.frame(table(data1$med)) %>%
   mutate(per = round(Freq / sum(Freq) * 100, 1))
@@ -729,7 +748,7 @@ data1 <- data1 %>%
 ```
 
 
-## Variable "Medios de información" Recodificada, opción 2.
+## Variable "Medios de información" Recodificada
 Los distintos medios de información fueron agrupados para crear una variable que distingue si la persona se informa a través de internet o no.
 ```{r variable recodificacion medios 2, fig.align='center', echo=F}
 data1$Internet <- as.factor(data1$Internet)
@@ -750,7 +769,6 @@ plot_int <- data1 %>%
   geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_int
 ```
-
 
 
 # Confianza hacia figuras e instituciones
@@ -1281,20 +1299,16 @@ for (i in 1:nrow(data1)) {
 
 ## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
 Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3.
-```{r variable medida impacto acciones comodidad cat, fig.align='center', echo=F}
-custom_palette <- brewer.pal(6, "Blues")
+```{r variable medida impacto acciones comodidad cont, fig.align='center', echo=F}
 plot_imp_como <- data1 %>%
-  count(imp_como) %>%
-  mutate(prop = (n / sum(n))*100) %>%
-  ggplot(aes(x = imp_como, y = prop, fill = imp_como)) +
-  geom_bar(stat = "identity") +
-  ylim(0, 50) +
+  ggplot(aes(x = imp_como, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#FF9896", binwidth = 1) +
+  ylim(0, 60) +
   labs(x = "Impacto", y = "Porcentaje (%)") +
   ggtitle("Distribución puntaje impacto de acciones individuales \n contra el cambio climático en la comodidad") +
   papaja::theme_apa() +
-  theme(legend.position="none") +
-  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
-  scale_fill_manual(values = custom_palette)
+  scale_x_continuous(breaks = seq(-3, 3, 1)) +
+  geom_text(stat = "count", aes(label = paste0(round((after_stat(count) / sum(after_stat(count))) * 100, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_imp_como
 ```
 
@@ -1358,40 +1372,56 @@ for (i in 1:nrow(data1)) {
 
 ## Creación de una medida del impacto de ciertas acciones en el cambio climático
 Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3.
-```{r variable medida impacto cambio climático cat, fig.align='center', echo=F}
-custom_palette <- brewer.pal(6, "Blues")
+```{r variable medida impacto cambio climático cont, fig.align='center', echo=F}
 plot_imp_cli <- data1 %>%
-  count(imp_cli) %>%
-  mutate(prop = (n / sum(n))*100) %>%
-  ggplot(aes(x = imp_cli, y = prop, fill = imp_cli)) +
-  geom_bar(stat = "identity") +
-  ylim(0, 50) +
+  ggplot(aes(x = imp_cli, y = after_stat(count) / sum(after_stat(count)) * 100)) +
+  geom_histogram(fill = "#FF9896", binwidth = 1) +
+  ylim(0, 60) +
   labs(x = "Impacto", y = "Porcentaje (%)") +
-  ggtitle("Distribución puntaje impacto de acciones individuales \n contra el cambio climático") +
+  ggtitle("Distribución puntaje impacto de acciones individuales \n en el cambio climático") +
   papaja::theme_apa() +
-  theme(legend.position="none") +
-  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
-  scale_fill_manual(values = custom_palette)
+  scale_x_continuous(breaks = seq(-3, 3, 1)) +
+  geom_text(stat = "count", aes(label = paste0(round((after_stat(count) / sum(after_stat(count))) * 100, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_imp_cli
 ```
 
 
 
 ```{r medida disposicion acciones en cambio climático, include=FALSE}
-data1$dis_act <- data1$imp_cli + data1$imp_como + data1$aso
+data1$dis_act <- data1$imp_cli + data1$imp_como
 data1 <- data1 %>%
   mutate(dis_act = case_when(
-    dis_act %in% c(-7, -6, -5, -4) ~ "Poco dispuesta",
+    dis_act %in% c(-6, -5, -4) ~ "Poco dispuesta",
     dis_act %in% c(-3, -2, -1) ~ "Poco dispuesta",
     dis_act == 0 ~ "Poco dispuesta",
     dis_act %in% c(1, 2, 3) ~ "Dispuesta",
-    dis_act %in% c(4, 5, 6, 7) ~ "Muy dispuesta",
+    dis_act %in% c(4, 5, 6) ~ "Muy dispuesta",
 ))
-data1$dis_act <- factor(data1$dis_act, levels = c("Poco dispuesta", "Dispuesta", "Muy dispuesta"))
 ```
 
 
-```{r medida disposicion acciones en cambio climático otro, include=FALSE}
+## Creación de una medida de la disposición a llevar acabo acciones individuales
+Se sumaron los valores obtenidos frente al impacto de acciones individuales en el cambio climático y en la comodidad y se clasificaron de modo que los puntajes negativos o iguales a cero se convirtieron en la categoría "Poco dispuesta"; los puntajes de 1 hasta 3 se convirtieron en la categoría "Dispuesta", y los puntajes de 4 hasta 6 se convirtieron en la categoría "Muy dispuesta".
+```{r variable medida disposicion acciones en cambio climático, fig.align='center', echo=FALSE}
+data1$dis_act <- factor(data1$dis_act, levels = c("Poco dispuesta", "Dispuesta", "Muy dispuesta"))
+custom_palette <- brewer.pal(7, "Greens")
+plot_dis_act <- data1 %>%
+  count(dis_act) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = dis_act, y = prop, fill = dis_act)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 80) +
+  labs(x = "Disposición a tomar acciones \nindividuales contra el cambio climático", y = "Porcentaje (%)") +
+  ggtitle("Distribución disposición a tomar acciones \nindividuales contra el cambio climático") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
+plot_dis_act
+```
+
+
+```{r medida disposicion acciones en cambio climático otro, include=FALSE, eval=FALSE}
 # Impact of individual actions on comfort
 c38 <- grep("^C38_", names(data1), value=T)
 data1$imp_como <- NA

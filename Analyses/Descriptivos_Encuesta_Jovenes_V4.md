@@ -1,7 +1,7 @@
 Encuesta: Distribución y recodificación de variables
 ================
 Juan Sebastian Cely
-2023-07-17
+2023-08-01
 
 # Emociones hacia el cambio climático
 
@@ -37,8 +37,8 @@ podía elegir un máximo de 2 emociones de un conjunto de 16 emociones.
 
 ## Variable “Emociones hacia el cambio climático” Recodificada
 
-El conjunto de 16 emociones fue agrupado en tres niveles: Con
-Eco-ansiedad, emociones ambivalentes y/o neutrales, y Sin Eco-ansiedad.
+El conjunto de 16 emociones fue agrupado en tres niveles: Emociones
+negativas, Emociones ambivalentes y/o neutrales, y Emociones positivas.
 
 | Emociones              | Frecuencia | Porcentaje (%) |
 |:-----------------------|-----------:|---------------:|
@@ -50,17 +50,24 @@ Eco-ansiedad, emociones ambivalentes y/o neutrales, y Sin Eco-ansiedad.
 
 ## Variable “Emociones hacia el cambio climático” Recodificada Opción 2
 
-El conjunto de 16 emociones fue agrupado en tres niveles: Emociones de
-alta activación, Emociones de baja activación y emociones ambivalentes o
-neutras.
+El conjunto de 16 emociones fueron agrupadas en 6 categorías creadas a
+partir del modelo conocido como “Circumplex model of affect”, el cual
+clasifica a las emociones de acuerdo a las dimensiones de valencia y
+activación. Las emociones positivas solo fueron catalogadas de acuerdo a
+su valencia debido al reducido número de participantes que seleccionaron
+algunas de estas. De esta manera se evita tener categorias con
+frecuencias en extremo reducidas.
 
-| Emociones          | Frecuencia | Porcentaje (%) |
-|:-------------------|-----------:|---------------:|
-| Baja activación    |        258 |           11.6 |
-| Ambivalente/Neutra |       1003 |           45.2 |
-| Alta activación    |        959 |           43.2 |
+| Emociones        | Frecuencia | Porcentaje (%) |
+|:-----------------|-----------:|---------------:|
+| Pos              |        297 |           13.4 |
+| Pos y neg act    |        264 |           11.9 |
+| Pos y neg no act |         78 |            3.5 |
+| Neg act          |        647 |           29.1 |
+| Neg no act y act |        798 |           35.9 |
+| Neg no act       |        136 |            6.1 |
 
-<img src="./figuresvariable emo recodificada 2-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresvariable emo recodificada 4-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Zona de residencia
 
@@ -196,6 +203,13 @@ La variable “Etnia” fue recodificada en dos distintos niveles que
 distinguen si la persona se reconoce como perteneciente a alguna de las
 etnias incluidas o no.
 
+| ¿Pertenece a alguna etnia? | Frecuencia | Porcentaje (%) |
+|:---------------------------|-----------:|---------------:|
+| No                         |       2035 |           91.7 |
+| Sí                         |        185 |            8.3 |
+
+<img src="./figuresvariable etnia recodificada-1.png" width="80%" style="display: block; margin: auto;" />
+
 # Nivel educativo
 
 La pregunta número 6 fue: ¿Cuál es el nivel educativo más alto alcanzado
@@ -300,21 +314,6 @@ Se exploró cada uno de los medios de información de forma individual.
 <img src="./figuresloop medios de información-1.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-2.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-3.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-4.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-5.png" width="80%" style="display: block; margin: auto;" /><img src="./figuresloop medios de información-6.png" width="80%" style="display: block; margin: auto;" />
 
 ## Variable “Medios de información” Recodificada
-
-Los distintos medios de información fueron agrupados para crear una
-variable que distingue si la persona se informa con medios
-exclusivamente validados, medios exclusivamente no validados, o ambos
-tipos de medios.
-
-| Tipo de fuentes      | Frecuencia | Porcentaje (%) |
-|:---------------------|-----------:|---------------:|
-| Fuentes validadas    |        603 |           27.2 |
-| Fuentes mixtas       |       1114 |           50.2 |
-| Fuentes no validadas |        503 |           22.7 |
-
-<img src="./figuresvariable recodificacion medios-1.png" width="80%" style="display: block; margin: auto;" />
-
-## Variable “Medios de información” Recodificada, opción 2.
 
 Los distintos medios de información fueron agrupados para crear una
 variable que distingue si la persona se informa a través de internet o
@@ -518,7 +517,7 @@ respuesta para cada una de las 10 acciones incluidas.
 Se creó una medida que promedia los valores asignados a cada una de las
 acciones individuales y se recodificaron en una escala que va desde -3
 hasta 3.
-<img src="./figuresvariable medida impacto acciones comodidad cat-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresvariable medida impacto acciones comodidad cont-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Impacto acciones en cambio climático
 
@@ -554,7 +553,17 @@ respuesta para cada una de las 10 acciones incluidas.
 Se creó una medida que promedia los valores asignados a cada una de las
 acciones individuales y se recodificaron en una escala que va desde -3
 hasta 3.
-<img src="./figuresvariable medida impacto cambio climático cat-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresvariable medida impacto cambio climático cont-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Creación de una medida de la disposición a llevar acabo acciones individuales
+
+Se sumaron los valores obtenidos frente al impacto de acciones
+individuales en el cambio climático y en la comodidad y se clasificaron
+de modo que los puntajes negativos o iguales a cero se convirtieron en
+la categoría “Poco dispuesta”; los puntajes de 1 hasta 3 se convirtieron
+en la categoría “Dispuesta”, y los puntajes de 4 hasta 6 se convirtieron
+en la categoría “Muy dispuesta”.
+<img src="./figuresvariable medida disposicion acciones en cambio climático-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Origen del cambio climático
 

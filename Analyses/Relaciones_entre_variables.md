@@ -1,7 +1,7 @@
 Encuesta: Relaciones entre variables
 ================
 Juan Sebastian Cely
-2023-07-17
+2023-08-01
 
 # Variables y categorias
 
@@ -25,14 +25,12 @@ categoría.
 | Internet              | Se informa a través de internet                            |
 | trust_vote_inst       | Confía en las instituciones con cargos de elección popular |
 | eco_anx               | Emociones frente al cambio climático                       |
-| env_aso               | Se uniría a una organización ambiental                     |
 | imp_sci               | Impacto de los científicos frente al cambio climático      |
 | imp_ac                | Impacto de activistas frente al cambio climático           |
 | imp_re                | Impacto de grupos religiosos frente al cambio climático    |
 | imp_po                | Impacto de políticos frente al cambio climático            |
 | thoughts              | Pensamientos frente al cambio climático                    |
-| imp_com               | Impacto de acciones individuales en su comodidad           |
-| imp_cli               | Impacto de acciones individuales en el cambio climático    |
+| dis_act               | Disposición actuar cambio climático                        |
 | clim_origin           | Causa u origen del cambio climático                        |
 | cont_clim             | Factor que más contribuye al cambio climático              |
 
@@ -65,23 +63,24 @@ categoría.
 | eco_anx         | Negativas                    |       1581 |
 | eco_anx         | Ambivalentes/Neutrales       |        385 |
 | eco_anx         | Positivas                    |        254 |
-| env_aso         | Sí                           |       1274 |
-| env_aso         | No                           |        946 |
-| imp_sci         | Negativo                     |        753 |
-| imp_sci         | Positivo                     |       1467 |
-| imp_ac          | Negativo                     |       1178 |
-| imp_ac          | Positivo                     |       1042 |
-| imp_re          | Negativo                     |       1349 |
-| imp_re          | Positivo                     |        871 |
-| imp_po          | Negativo                     |       1589 |
-| imp_po          | Positivo                     |        631 |
+| imp_sci         | Negativo                     |        209 |
+| imp_sci         | Neutro                       |        958 |
+| imp_sci         | Positivo                     |       1053 |
+| imp_ac          | Negativo                     |        591 |
+| imp_ac          | Neutro                       |       1056 |
+| imp_ac          | Positivo                     |        573 |
+| imp_re          | Negativo                     |        767 |
+| imp_re          | Neutro                       |       1010 |
+| imp_re          | Positivo                     |        443 |
+| imp_po          | Negativo                     |       1097 |
+| imp_po          | Neutro                       |        808 |
+| imp_po          | Positivo                     |        315 |
 | thoughts        | Negativos                    |       1125 |
 | thoughts        | Ambivalentes/Neutrales       |        951 |
 | thoughts        | Positivos                    |        144 |
-| imp_com         | Negativo                     |        461 |
-| imp_com         | Positivo                     |       1759 |
-| imp_cl          | Negativo                     |        249 |
-| imp_cl          | Positivo                     |       1971 |
+| dis_act         | Poco dispuesta               |        368 |
+| dis_act         | Dispuesta                    |        925 |
+| dis_act         | Muy dispuesta                |        927 |
 | clim_origin     | Correcta                     |       1053 |
 | clim_origin     | Incorrecta                   |       1167 |
 | cont_clim       | Correcta                     |        744 |
@@ -132,154 +131,147 @@ dimensión distinta a aquellas ligadas con opiniones y percepciones
 frente al cambio climático, por lo que posiblemente no estén asociadas a
 estas opiniones y percepciones.
 
-<img src="./figuresanálisis de componentes múltiples-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-2.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-3.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-8.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-9.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-10.png" width="80%" />
+<img src="./figuresanálisis de componentes múltiples-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-2.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-3.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples-8.png" width="80%" />
 
     ## $`Dim 1`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                          R2       p.value
-    ## imp_po          0.238940291 1.077748e-133
-    ## imp_re          0.236509201 3.722030e-132
-    ## clim_origin     0.225025633 5.912636e-125
-    ## env_aso         0.160016720  4.384782e-86
-    ## imp_com         0.146046808  4.035593e-78
-    ## Internet        0.137685413  2.049025e-73
-    ## imp_cl          0.128821770  1.783533e-68
-    ## thoughts        0.121513913  4.267007e-63
-    ## eco_anx         0.110292302  5.504091e-57
-    ## kids            0.107085565  1.447258e-56
-    ## age_r           0.110169660  8.508718e-56
-    ## trust_vote_inst 0.102904009  2.626411e-54
-    ## imp_ac          0.063515198  1.655569e-33
-    ## cont_clim       0.060881270  3.808365e-32
-    ## ideology        0.037622891  3.453407e-19
-    ## Zona            0.034763742  8.161463e-19
-    ## strat           0.017610517  2.795674e-09
-    ## imp_sci         0.013126349  6.198244e-08
-    ## edu             0.008222246  1.878962e-05
-    ## ethni           0.003412659  5.900261e-03
+    ## imp_po          0.383804416 7.999224e-234
+    ## imp_re          0.302497440 3.719855e-174
+    ## dis_act         0.299856804 2.452721e-172
+    ## clim_origin     0.287150439 2.978704e-165
+    ## imp_ac          0.178337237  2.740703e-95
+    ## Internet        0.134870520  7.685258e-72
+    ## imp_sci         0.118707141  1.464868e-61
+    ## trust_vote_inst 0.112839037  1.086035e-59
+    ## eco_anx         0.096759414  1.018868e-49
+    ## thoughts        0.065398819  2.749679e-33
+    ## kids            0.053920314  1.457155e-28
+    ## age_r           0.047729100  2.425311e-23
+    ## ideology        0.041509268  3.892305e-21
+    ## cont_clim       0.037116353  5.278970e-20
+    ## Zona            0.017181405  5.672759e-10
+    ## edu             0.012515377  1.259152e-07
+    ## ethni           0.011488170  4.151733e-07
+    ## strat           0.003364004  2.386637e-02
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
-    ##                                             Estimate       p.value
-    ## imp_po=imp_po_Positivo                    0.16994491 1.077748e-133
-    ## imp_re=imp_re_Positivo                    0.15618850 3.722030e-132
-    ## clim_origin=clim_origin_Incorrecta        0.14897263 5.912636e-125
-    ## env_aso=env_aso_No                        0.12685059  4.384782e-86
-    ## imp_com=imp_com_Negativo                  0.14774158  4.035593e-78
-    ## Internet=Internet_No                      0.14188600  2.049025e-73
-    ## imp_cl=imp_cl_Negativo                    0.17835765  1.783533e-68
-    ## kids=kids_Sí                              0.10393174  1.447258e-56
-    ## trust_vote_inst=trust_vote_inst_Sí        0.11966643  2.626411e-54
-    ## eco_anx=eco_anx_Positivas                 0.13706873  4.387834e-36
-    ## thoughts=thoughts_Ambivalentes/Neutrales  0.03242075  6.673416e-36
-    ## imp_ac=imp_ac_Positivo                    0.07919038  1.655569e-33
-    ## cont_clim=cont_clim_Incorrecta            0.08196950  3.808365e-32
-    ## age_r=De 30 a 32 años                     0.12908133  1.228784e-26
-    ## Zona=Municipios rurales dispersos         0.09990694  8.161463e-19
-    ## thoughts=thoughts_Positivos               0.13488098  4.318891e-15
-    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.01732887  5.633625e-14
-    ## age_r=De 25 a 29 años                     0.07649488  1.259642e-08
-    ## imp_sci=imp_sci_Positivo                  0.03794893  6.198244e-08
-    ## strat=Bajo                                0.01957679  2.381462e-06
-    ## ideology=Derecha                          0.06754579  6.320509e-06
-    ## edu=edu_No                                0.03667874  1.878962e-05
-    ## ideology=Centro                           0.03010707  3.130259e-05
-    ## ethni=ethni_Sí                            0.03314503  5.900261e-03
-    ## strat=Alto                                0.04113225  1.326114e-02
-    ## ethni=ethni_No                           -0.03314503  5.900261e-03
-    ## edu=edu_Sí                               -0.03667874  1.878962e-05
-    ## imp_sci=imp_sci_Negativo                 -0.03794893  6.198244e-08
-    ## strat=Medio                              -0.06070904  5.181485e-10
-    ## age_r=De 21 a 24 años                    -0.06389983  6.892780e-12
-    ## Zona=Urbana ciudades                     -0.09990694  8.161463e-19
-    ## ideology=Izquierda                       -0.09765285  3.104437e-19
-    ## age_r=De 18 a 20 años                    -0.14167638  3.711151e-31
-    ## cont_clim=cont_clim_Correcta             -0.08196950  3.808365e-32
-    ## imp_ac=imp_ac_Negativo                   -0.07919038  1.655569e-33
-    ## eco_anx=eco_anx_Negativas                -0.15439759  7.093861e-53
-    ## trust_vote_inst=trust_vote_inst_No       -0.11966643  2.626411e-54
-    ## kids=kids_No                             -0.10393174  1.447258e-56
-    ## thoughts=thoughts_Negativos              -0.16730173  3.830387e-61
-    ## imp_cl=imp_cl_Positivo                   -0.17835765  1.783533e-68
-    ## Internet=Internet_Sí                     -0.14188600  2.049025e-73
-    ## imp_com=imp_com_Positivo                 -0.14774158  4.035593e-78
-    ## env_aso=env_aso_Sí                       -0.12685059  4.384782e-86
-    ## clim_origin=clim_origin_Correcta         -0.14897263 5.912636e-125
-    ## imp_re=imp_re_Negativo                   -0.15618850 3.722030e-132
-    ## imp_po=imp_po_Negativo                   -0.16994491 1.077748e-133
+    ##                                              Estimate       p.value
+    ## imp_po=imp_po_Neutro                      0.223026722 1.972675e-191
+    ## clim_origin=clim_origin_Incorrecta        0.182793810 2.978704e-165
+    ## imp_re=imp_re_Neutro                      0.188515526 5.199627e-121
+    ## imp_ac=imp_ac_Neutro                      0.184804038  1.359829e-89
+    ## Internet=Internet_No                      0.152535297  7.685258e-72
+    ## imp_sci=imp_sci_Neutro                    0.162760739  1.035868e-62
+    ## trust_vote_inst=trust_vote_inst_Sí        0.136113796  1.086035e-59
+    ## dis_act=Poco dispuesta                    0.204133311  3.770421e-59
+    ## dis_act=Dispuesta                         0.059659653  5.278169e-40
+    ## eco_anx=eco_anx_Positivas                 0.143291004  9.333663e-33
+    ## kids=kids_Sí                              0.080107872  1.457155e-28
+    ## cont_clim=cont_clim_Incorrecta            0.069519935  5.278970e-20
+    ## thoughts=thoughts_Positivos               0.153630404  5.638895e-16
+    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.013314794  1.429228e-11
+    ## age_r=De 30 a 32 años                     0.084310909  2.528590e-10
+    ## Zona=Municipios rurales dispersos         0.076291828  5.672759e-10
+    ## ideology=Centro                           0.052203980  9.539737e-10
+    ## edu=edu_No                                0.049153840  1.259152e-07
+    ## ethni=ethni_Sí                            0.066056220  4.151733e-07
+    ## age_r=De 25 a 29 años                     0.066513129  1.232255e-06
+    ## ideology=Derecha                          0.055661059  4.509196e-03
+    ## imp_po=imp_po_Positivo                    0.013077734  8.588286e-03
+    ## strat=Bajo                                0.020845521  8.654090e-03
+    ## imp_re=imp_re_Positivo                    0.044412615  3.666627e-02
+    ## strat=Medio                              -0.020646620  8.904527e-03
+    ## ethni=ethni_No                           -0.066056220  4.151733e-07
+    ## edu=edu_Sí                               -0.049153840  1.259152e-07
+    ## imp_sci=imp_sci_Negativo                 -0.092596261  6.576710e-08
+    ## age_r=De 21 a 24 años                    -0.066829675  1.086069e-09
+    ## Zona=Urbana ciudades                     -0.076291828  5.672759e-10
+    ## age_r=De 18 a 20 años                    -0.083994363  1.825448e-10
+    ## imp_ac=imp_ac_Positivo                   -0.040350026  7.851840e-11
+    ## thoughts=thoughts_Ambivalentes/Neutrales -0.009489158  4.016083e-12
+    ## cont_clim=cont_clim_Correcta             -0.069519935  5.278970e-20
+    ## ideology=Izquierda                       -0.107865039  3.190608e-22
+    ## thoughts=thoughts_Negativos              -0.144141247  7.951016e-28
+    ## kids=kids_No                             -0.080107872  1.457155e-28
+    ## imp_sci=imp_sci_Positivo                 -0.070164478  1.233781e-39
+    ## eco_anx=eco_anx_Negativas                -0.156605798  1.161609e-45
+    ## imp_ac=imp_ac_Negativo                   -0.144454011  1.422197e-55
+    ## trust_vote_inst=trust_vote_inst_No       -0.136113796  1.086035e-59
+    ## Internet=Internet_Sí                     -0.152535297  7.685258e-72
+    ## imp_re=imp_re_Negativo                   -0.232928141 6.900499e-159
+    ## dis_act=Muy dispuesta                    -0.263792964 1.865471e-159
+    ## clim_origin=clim_origin_Correcta         -0.182793810 2.978704e-165
+    ## imp_po=imp_po_Negativo                   -0.236104457 4.461328e-206
     ## 
     ## $`Dim 2`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                          R2       p.value
-    ## imp_ac          0.302835619 5.579355e-176
-    ## imp_sci         0.262286805 1.014537e-148
-    ## imp_re          0.243558533 1.249805e-136
-    ## imp_cl          0.211202881 1.996953e-116
-    ## imp_po          0.200588245 5.616931e-110
-    ## imp_com         0.181258068  1.900826e-98
-    ## strat           0.075556423  1.508113e-38
-    ## ideology        0.064659758  6.604247e-33
-    ## clim_origin     0.057722089  1.620410e-30
-    ## ethni           0.048702211  6.829356e-26
-    ## Zona            0.044722894  7.295140e-24
-    ## edu             0.043201868  4.331745e-23
-    ## env_aso         0.034835210  7.510535e-19
-    ## Internet        0.013662244  3.330252e-08
-    ## kids            0.012959548  7.521058e-08
-    ## age_r           0.013824776  9.113368e-07
-    ## trust_vote_inst 0.009538927  4.022475e-06
-    ## eco_anx         0.011000378  4.730480e-06
-    ## cont_clim       0.002158872  2.858434e-02
-    ## thoughts        0.002773621  4.601303e-02
+    ## imp_re          0.478122988 8.400660e-314
+    ## imp_po          0.444261635 1.544597e-283
+    ## imp_ac          0.355488717 3.404371e-212
+    ## imp_sci         0.322374448 4.489153e-188
+    ## ideology        0.068593791  6.176244e-35
+    ## ethni           0.032682059  9.171431e-18
+    ## trust_vote_inst 0.031576639  3.309728e-17
+    ## dis_act         0.032842162  8.391103e-17
+    ## clim_origin     0.027259455  4.933147e-15
+    ## age_r           0.030249397  1.098300e-14
+    ## edu             0.024252118  1.601069e-13
+    ## strat           0.024124812  1.752084e-12
+    ## thoughts        0.011138247  4.053126e-06
+    ## cont_clim       0.009471955  4.349800e-06
+    ## Internet        0.004082708  2.595620e-03
+    ## eco_anx         0.003455977  2.154557e-02
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
-    ##                                       Estimate       p.value
-    ## imp_ac=imp_ac_Negativo              0.16307537 5.579355e-176
-    ## imp_sci=imp_sci_Negativo            0.15998051 1.014537e-148
-    ## imp_re=imp_re_Negativo              0.14947826 1.249805e-136
-    ## imp_cl=imp_cl_Negativo              0.21537651 1.996953e-116
-    ## imp_po=imp_po_Negativo              0.14684783 5.616931e-110
-    ## imp_com=imp_com_Negativo            0.15522322  1.900826e-98
-    ## strat=Bajo                          0.12380442  9.378524e-36
-    ## clim_origin=clim_origin_Incorrecta  0.07115621  1.620410e-30
-    ## ethni=ethni_Sí                      0.11808580  6.829356e-26
-    ## Zona=Municipios rurales dispersos   0.10686825  7.295140e-24
-    ## edu=edu_No                          0.07929062  4.331745e-23
-    ## env_aso=env_aso_No                  0.05581749  7.510535e-19
-    ## ideology=Izquierda                  0.09727933  1.434943e-13
-    ## Internet=Internet_No                0.04215100  3.330252e-08
-    ## kids=kids_Sí                        0.03409800  7.521058e-08
-    ## eco_anx=eco_anx_Positivas           0.06364816  7.786216e-07
-    ## trust_vote_inst=trust_vote_inst_No  0.03436033  4.022475e-06
-    ## age_r=De 25 a 29 años               0.03916185  3.826569e-05
-    ## ideology=Centro                     0.03006560  1.545807e-02
-    ## thoughts=thoughts_Positivos         0.03940135  1.945192e-02
-    ## cont_clim=cont_clim_Incorrecta      0.01455711  2.858434e-02
-    ## cont_clim=cont_clim_Correcta       -0.01455711  2.858434e-02
-    ## eco_anx=eco_anx_Negativas          -0.03470274  2.131417e-03
-    ## trust_vote_inst=trust_vote_inst_Sí -0.03436033  4.022475e-06
-    ## age_r=De 30 a 32 años              -0.05046418  5.846209e-07
-    ## kids=kids_No                       -0.03409800  7.521058e-08
-    ## Internet=Internet_Sí               -0.04215100  3.330252e-08
-    ## strat=Alto                         -0.11019974  9.935255e-15
-    ## strat=Medio                        -0.01360468  5.992615e-16
-    ## env_aso=env_aso_Sí                 -0.05581749  7.510535e-19
-    ## edu=edu_Sí                         -0.07929062  4.331745e-23
-    ## Zona=Urbana ciudades               -0.10686825  7.295140e-24
-    ## ethni=ethni_No                     -0.11808580  6.829356e-26
-    ## ideology=Derecha                   -0.12734493  1.578730e-29
-    ## clim_origin=clim_origin_Correcta   -0.07115621  1.620410e-30
-    ## imp_com=imp_com_Positivo           -0.15522322  1.900826e-98
-    ## imp_po=imp_po_Positivo             -0.14684783 5.616931e-110
-    ## imp_cl=imp_cl_Positivo             -0.21537651 1.996953e-116
-    ## imp_re=imp_re_Positivo             -0.14947826 1.249805e-136
-    ## imp_sci=imp_sci_Positivo           -0.15998051 1.014537e-148
-    ## imp_ac=imp_ac_Positivo             -0.16307537 5.579355e-176
+    ##                                               Estimate       p.value
+    ## imp_re=imp_re_Positivo                    3.646258e-01 1.091219e-307
+    ## imp_po=imp_po_Positivo                    3.959595e-01 3.498142e-278
+    ## imp_ac=imp_ac_Positivo                    2.865196e-01 6.730561e-189
+    ## imp_sci=imp_sci_Positivo                  2.624199e-01 8.504561e-181
+    ## ideology=Derecha                          1.427845e-01  4.328788e-34
+    ## ethni=ethni_No                            1.034666e-01  9.171431e-18
+    ## trust_vote_inst=trust_vote_inst_Sí        6.686713e-02  3.309728e-17
+    ## clim_origin=clim_origin_Correcta          5.230252e-02  4.933147e-15
+    ## age_r=De 30 a 32 años                     8.622897e-02  5.689066e-14
+    ## edu=edu_Sí                                6.354298e-02  1.601069e-13
+    ## strat=Alto                                7.607589e-02  7.683302e-07
+    ## cont_clim=cont_clim_Incorrecta            3.261398e-02  4.349800e-06
+    ## strat=Medio                               9.233372e-05  8.616395e-05
+    ## thoughts=thoughts_Ambivalentes/Neutrales  6.379320e-03  4.388847e-04
+    ## dis_act=Muy dispuesta                     5.254177e-02  7.497644e-04
+    ## dis_act=Dispuesta                         5.022347e-02  2.127832e-03
+    ## Internet=Internet_Sí                      2.464582e-02  2.595620e-03
+    ## thoughts=thoughts_Positivos               4.608718e-02  8.621072e-03
+    ## age_r=De 25 a 29 años                    -1.594346e-02  2.917649e-02
+    ## eco_anx=eco_anx_Negativas                -2.780979e-02  6.324097e-03
+    ## Internet=Internet_No                     -2.464582e-02  2.595620e-03
+    ## ideology=Centro                          -4.737921e-02  3.732942e-05
+    ## cont_clim=cont_clim_Correcta             -3.261398e-02  4.349800e-06
+    ## thoughts=thoughts_Negativos              -5.246650e-02  1.752916e-06
+    ## age_r=De 18 a 20 años                    -6.880469e-02  7.079736e-08
+    ## imp_po=imp_po_Neutro                     -1.666489e-01  3.369281e-08
+    ## ideology=Izquierda                       -9.540534e-02  5.766718e-10
+    ## strat=Bajo                               -7.616822e-02  2.299940e-11
+    ## edu=edu_No                               -6.354298e-02  1.601069e-13
+    ## clim_origin=clim_origin_Incorrecta       -5.230252e-02  4.933147e-15
+    ## imp_ac=imp_ac_Neutro                     -7.243283e-02  4.404277e-15
+    ## trust_vote_inst=trust_vote_inst_No       -6.686713e-02  3.309728e-17
+    ## ethni=ethni_Sí                           -1.034666e-01  9.171431e-18
+    ## dis_act=Poco dispuesta                   -1.027652e-01  7.714891e-18
+    ## imp_re=imp_re_Neutro                     -1.492312e-01  4.585529e-28
+    ## imp_sci=imp_sci_Negativo                 -1.951012e-01  1.733165e-40
+    ## imp_re=imp_re_Negativo                   -2.153947e-01  2.472307e-59
+    ## imp_po=imp_po_Negativo                   -2.293106e-01  2.245911e-64
+    ## imp_ac=imp_ac_Negativo                   -2.140868e-01  9.145497e-75
+    ## imp_sci=imp_sci_Neutro                   -6.731873e-02  5.617180e-85
 
 ## Análisis con las variables sociodemográficas como variables suplementarias
 
@@ -288,142 +280,149 @@ relacionadas con las dimensiones de variabilidad observadas, estas no
 fueron incluidas como variables activas en la construcción de las
 dimensiones, sino como variables suplementarias. Al interpretar el
 análisis se encuentra que algunas variables demográficas pueden estar
-relacionadas con algunas de las dimensiones obtenidas, pero no con las
-variables de mayor interés relacionadas con el cambio climático.
+relacionadas con algunas de las dimensiones obtenidas, pero su relación
+con las variables de interés no es muy clara.
 <img src="./figuresanálisis de componentes múltiples 2-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-2.png" width="80%" />
 
-    ## Warning: ggrepel: 15 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 16 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
 <img src="./figuresanálisis de componentes múltiples 2-3.png" width="80%" />
 
-    ## Warning: ggrepel: 8 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 7 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-<img src="./figuresanálisis de componentes múltiples 2-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-8.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-9.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-10.png" width="80%" />
+<img src="./figuresanálisis de componentes múltiples 2-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2-8.png" width="80%" />
 
     ## $`Dim 1`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
     ##                          R2       p.value
-    ## imp_po          0.323927792 8.622002e-191
-    ## imp_re          0.286820275 4.980790e-165
-    ## clim_origin     0.249704910 1.452161e-140
-    ## imp_com         0.152250228  1.217328e-81
-    ## env_aso         0.141652744  1.214543e-75
-    ## imp_cl          0.132834199  1.050178e-70
-    ## imp_ac          0.120941765  3.997438e-64
-    ## Internet        0.116587098  9.765629e-62
-    ## thoughts        0.112033569  6.274418e-58
-    ## eco_anx         0.106034565  1.094022e-54
-    ## trust_vote_inst 0.099191722  2.607416e-52
-    ## cont_clim       0.061819165  1.248017e-32
-    ## imp_sci         0.043412502  3.385222e-23
-    ## ideology        0.012528581  8.520130e-07
-    ## age_r           0.013231820  1.737727e-06
-    ## Zona            0.009259986  5.572529e-06
-    ## kids            0.006102774  2.292955e-04
+    ## imp_po          0.428999165 1.705416e-270
+    ## imp_re          0.321968380 8.721008e-188
+    ## dis_act         0.307743582 8.628977e-178
+    ## clim_origin     0.296034936 2.672714e-171
+    ## imp_ac          0.206952395 2.361713e-112
+    ## imp_sci         0.125453667  2.925901e-65
+    ## trust_vote_inst 0.119019342  4.543321e-63
+    ## Internet        0.111608937  5.076379e-59
+    ## eco_anx         0.092065182  3.188622e-47
+    ## thoughts        0.054897933  6.578900e-28
+    ## ideology        0.049141505  5.513977e-25
+    ## cont_clim       0.035677024  2.820647e-19
+    ## kids            0.005223346  6.548793e-04
+    ## Zona            0.004433320  1.695785e-03
+    ## age_r           0.006628678  2.051547e-03
+    ## ethni           0.003220177  7.486935e-03
+    ## edu             0.002345575  2.249066e-02
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
     ##                                              Estimate       p.value
-    ## imp_po=imp_po_Positivo                    0.244177271 8.622002e-191
-    ## imp_re=imp_re_Positivo                    0.212249966 4.980790e-165
-    ## clim_origin=clim_origin_Incorrecta        0.193651866 1.452161e-140
-    ## imp_com=imp_com_Negativo                  0.186145847  1.217328e-81
-    ## env_aso=env_aso_No                        0.147278710  1.214543e-75
-    ## imp_cl=imp_cl_Negativo                    0.223495984  1.050178e-70
-    ## imp_ac=imp_ac_Positivo                    0.134846415  3.997438e-64
-    ## Internet=Internet_No                      0.161115931  9.765629e-62
-    ## trust_vote_inst=trust_vote_inst_Sí        0.144981162  2.607416e-52
-    ## eco_anx=eco_anx_Positivas                 0.179130335  5.097884e-38
-    ## thoughts=thoughts_Ambivalentes/Neutrales  0.036644917  1.107184e-32
-    ## cont_clim=cont_clim_Incorrecta            0.101927103  1.248017e-32
-    ## imp_sci=imp_sci_Positivo                  0.085163328  3.385222e-23
-    ## thoughts=thoughts_Positivos               0.162325565  2.130643e-14
-    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.005757895  8.466618e-11
-    ## Zona=Municipios rurales dispersos         0.063629022  5.572529e-06
-    ## kids=kids_Sí                              0.030617098  2.292955e-04
-    ## age_r=De 30 a 32 años                     0.047134574  2.577541e-03
-    ## ideology=Centro                           0.024636836  7.471985e-03
-    ## age_r=De 25 a 29 años                     0.041253136  9.000641e-03
-    ## ideology=Derecha                          0.044610174  2.013013e-02
-    ## strat=Alto                                0.044954154  2.112569e-02
-    ## age_r=De 21 a 24 años                    -0.023431596  3.370732e-02
-    ## kids=kids_No                             -0.030617098  2.292955e-04
-    ## age_r=De 18 a 20 años                    -0.064956114  2.203004e-05
-    ## Zona=Urbana ciudades                     -0.063629022  5.572529e-06
-    ## ideology=Izquierda                       -0.069247010  1.925495e-07
-    ## imp_sci=imp_sci_Negativo                 -0.085163328  3.385222e-23
-    ## cont_clim=cont_clim_Correcta             -0.101927103  1.248017e-32
-    ## eco_anx=eco_anx_Negativas                -0.184888230  1.429437e-48
-    ## trust_vote_inst=trust_vote_inst_No       -0.144981162  2.607416e-52
-    ## thoughts=thoughts_Negativos              -0.198970482  4.985964e-56
-    ## Internet=Internet_Sí                     -0.161115931  9.765629e-62
-    ## imp_ac=imp_ac_Negativo                   -0.134846415  3.997438e-64
-    ## imp_cl=imp_cl_Positivo                   -0.223495984  1.050178e-70
-    ## env_aso=env_aso_Sí                       -0.147278710  1.214543e-75
-    ## imp_com=imp_com_Positivo                 -0.186145847  1.217328e-81
-    ## clim_origin=clim_origin_Correcta         -0.193651866 1.452161e-140
-    ## imp_re=imp_re_Negativo                   -0.212249966 4.980790e-165
-    ## imp_po=imp_po_Negativo                   -0.244177271 8.622002e-191
+    ## imp_po=imp_po_Neutro                      0.289763459 5.413529e-217
+    ## clim_origin=clim_origin_Incorrecta        0.230584026 2.672714e-171
+    ## imp_re=imp_re_Neutro                      0.241072155 2.525453e-129
+    ## imp_ac=imp_ac_Neutro                      0.242072865 1.278242e-100
+    ## imp_sci=imp_sci_Neutro                    0.219680964  1.892915e-64
+    ## trust_vote_inst=trust_vote_inst_Sí        0.173672968  4.543321e-63
+    ## Internet=Internet_No                      0.172390097  5.076379e-59
+    ## dis_act=Poco dispuesta                    0.251475278  3.917233e-58
+    ## dis_act=Dispuesta                         0.080333765  2.320130e-43
+    ## eco_anx=eco_anx_Positivas                 0.180759417  1.060516e-32
+    ## cont_clim=cont_clim_Incorrecta            0.084678277  2.820647e-19
+    ## thoughts=thoughts_Positivos               0.185595586  4.155644e-15
+    ## ideology=Centro                           0.074304667  3.628355e-12
+    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.007948041  7.459137e-10
+    ## kids=kids_Sí                              0.030975932  6.548793e-04
+    ## Zona=Municipios rurales dispersos         0.048146445  1.695785e-03
+    ## imp_po=imp_po_Positivo                    0.022909223  1.860524e-03
+    ## ideology=Derecha                          0.070035730  6.348275e-03
+    ## ethni=ethni_Sí                            0.043448938  7.486935e-03
+    ## edu=edu_No                                0.026436936  2.249066e-02
+    ## imp_re=imp_re_Positivo                    0.057921597  2.623960e-02
+    ## age_r=De 25 a 29 años                     0.036141903  2.871103e-02
+    ## age_r=De 30 a 32 años                     0.033839638  4.740581e-02
+    ## edu=edu_Sí                               -0.026436936  2.249066e-02
+    ## age_r=De 18 a 20 años                    -0.037812085  2.094014e-02
+    ## age_r=De 21 a 24 años                    -0.032169456  1.930743e-02
+    ## ethni=ethni_No                           -0.043448938  7.486935e-03
+    ## Zona=Urbana ciudades                     -0.048146445  1.695785e-03
+    ## kids=kids_No                             -0.030975932  6.548793e-04
+    ## imp_ac=imp_ac_Positivo                   -0.034296890  1.948760e-08
+    ## thoughts=thoughts_Ambivalentes/Neutrales -0.019974854  5.003051e-09
+    ## imp_sci=imp_sci_Negativo                 -0.157122712  6.978032e-14
+    ## cont_clim=cont_clim_Correcta             -0.084678277  2.820647e-19
+    ## thoughts=thoughts_Negativos              -0.165620731  2.795131e-22
+    ## ideology=Izquierda                       -0.144340397  4.143815e-26
+    ## imp_sci=imp_sci_Positivo                 -0.062558253  7.338376e-34
+    ## eco_anx=eco_anx_Negativas                -0.188707458  2.062722e-42
+    ## Internet=Internet_Sí                     -0.172390097  5.076379e-59
+    ## trust_vote_inst=trust_vote_inst_No       -0.173672968  4.543321e-63
+    ## imp_ac=imp_ac_Negativo                   -0.207775975  2.974781e-72
+    ## dis_act=Muy dispuesta                    -0.331809043 4.566745e-166
+    ## imp_re=imp_re_Negativo                   -0.298993752 2.853382e-171
+    ## clim_origin=clim_origin_Correcta         -0.230584026 2.672714e-171
+    ## imp_po=imp_po_Negativo                   -0.312672681 4.125345e-239
     ## 
     ## $`Dim 2`
     ## 
     ## Link between the variable and the categorical variable (1-way anova)
     ## =============================================
-    ##                      R2       p.value
-    ## imp_cl      0.342363120 4.054562e-204
-    ## imp_com     0.309125588 2.382416e-180
-    ## imp_ac      0.293055093 2.907786e-169
-    ## imp_re      0.228452042 4.308634e-127
-    ## imp_sci     0.227498792 1.697991e-126
-    ## imp_po      0.157543243  1.152070e-84
-    ## clim_origin 0.115471401  3.977967e-61
-    ## env_aso     0.031553452  3.400001e-17
-    ## eco_anx     0.023169222  5.184810e-12
-    ## ethni       0.010865983  8.561509e-07
-    ## ideology    0.008526314  7.545741e-05
-    ## Internet    0.006922350  8.681854e-05
-    ## cont_clim   0.005043594  8.124945e-04
-    ## Zona        0.003564199  4.895265e-03
-    ## kids        0.003472818  5.478276e-03
-    ## thoughts    0.004058158  1.102466e-02
+    ##                          R2       p.value
+    ## imp_re          0.505773669  0.000000e+00
+    ## imp_po          0.465868596 1.252947e-302
+    ## imp_ac          0.358513793 1.849896e-214
+    ## imp_sci         0.332850298 1.417502e-195
+    ## ideology        0.062644186  7.179819e-32
+    ## clim_origin     0.037419689  3.707408e-20
+    ## dis_act         0.038723900  9.708858e-20
+    ## trust_vote_inst 0.030223166  1.591136e-16
+    ## thoughts        0.013491899  2.887865e-07
+    ## cont_clim       0.010460875  1.372248e-06
+    ## ethni           0.007292594  5.608143e-05
+    ## eco_anx         0.005764162  1.648219e-03
+    ## age_r           0.004265530  2.360130e-02
+    ## Internet        0.002115252  3.024101e-02
     ## 
     ## Link between variable and the categories of the categorical variables
     ## ================================================================
-    ##                                       Estimate       p.value
-    ## imp_cl=imp_cl_Negativo              0.33959171 4.054562e-204
-    ## imp_com=imp_com_Negativo            0.25103870 2.382416e-180
-    ## imp_ac=imp_ac_Negativo              0.19866653 2.907786e-169
-    ## imp_re=imp_re_Negativo              0.17928298 4.308634e-127
-    ## imp_sci=imp_sci_Negativo            0.18451581 1.697991e-126
-    ## imp_po=imp_po_Negativo              0.16116838  1.152070e-84
-    ## clim_origin=clim_origin_Incorrecta  0.12463620  3.977967e-61
-    ## env_aso=env_aso_No                  0.06578846  3.400001e-17
-    ## eco_anx=eco_anx_Positivas           0.11508819  5.999295e-13
-    ## ethni=ethni_Sí                      0.06907534  8.561509e-07
-    ## Internet=Internet_No                0.03715685  8.681854e-05
-    ## cont_clim=cont_clim_Incorrecta      0.02755478  8.124945e-04
-    ## thoughts=thoughts_Positivos         0.06145966  3.332176e-03
-    ## Zona=Municipios rurales dispersos   0.03736198  4.895265e-03
-    ## kids=kids_Sí                        0.02185950  5.478276e-03
-    ## kids=kids_No                       -0.02185950  5.478276e-03
-    ## Zona=Urbana ciudades               -0.03736198  4.895265e-03
-    ## cont_clim=cont_clim_Correcta       -0.02755478  8.124945e-04
-    ## Internet=Internet_Sí               -0.03715685  8.681854e-05
-    ## ideology=Derecha                   -0.05836935  1.677809e-05
-    ## eco_anx=eco_anx_Negativas          -0.06132819  1.322554e-05
-    ## ethni=ethni_No                     -0.06907534  8.561509e-07
-    ## env_aso=env_aso_Sí                 -0.06578846  3.400001e-17
-    ## clim_origin=clim_origin_Correcta   -0.12463620  3.977967e-61
-    ## imp_po=imp_po_Positivo             -0.16116838  1.152070e-84
-    ## imp_sci=imp_sci_Positivo           -0.18451581 1.697991e-126
-    ## imp_re=imp_re_Positivo             -0.17928298 4.308634e-127
-    ## imp_ac=imp_ac_Positivo             -0.19866653 2.907786e-169
-    ## imp_com=imp_com_Positivo           -0.25103870 2.382416e-180
-    ## imp_cl=imp_cl_Positivo             -0.33959171 4.054562e-204
+    ##                                             Estimate       p.value
+    ## imp_re=imp_re_Positivo                    0.46833445  0.000000e+00
+    ## imp_po=imp_po_Positivo                    0.50700867 9.691791e-299
+    ## imp_ac=imp_ac_Positivo                    0.36080205 2.931742e-197
+    ## imp_sci=imp_sci_Positivo                  0.32812778 8.756175e-191
+    ## ideology=Derecha                          0.17027899  4.465481e-32
+    ## clim_origin=clim_origin_Correcta          0.07633756  3.707408e-20
+    ## trust_vote_inst=trust_vote_inst_Sí        0.08149367  1.591136e-16
+    ## cont_clim=cont_clim_Incorrecta            0.04269649  1.372248e-06
+    ## dis_act=Muy dispuesta                     0.07818150  1.066143e-05
+    ## ethni=ethni_No                            0.06088506  5.608143e-05
+    ## thoughts=thoughts_Ambivalentes/Neutrales  0.01027715  7.958596e-05
+    ## age_r=De 30 a 32 años                     0.04052974  4.379083e-03
+    ## thoughts=thoughts_Positivos               0.06109146  5.112625e-03
+    ## dis_act=Dispuesta                         0.06005159  1.056965e-02
+    ## eco_anx=eco_anx_Positivas                 0.03192063  1.281938e-02
+    ## Internet=Internet_Sí                      0.02209909  3.024101e-02
+    ## eco_anx=eco_anx_Ambivalentes/Neutrales    0.01281975  3.358720e-02
+    ## Internet=Internet_No                     -0.02209909  3.024101e-02
+    ## eco_anx=eco_anx_Negativas                -0.04474038  4.162302e-04
+    ## ethni=ethni_Sí                           -0.06088506  5.608143e-05
+    ## ideology=Centro                          -0.06442022  2.791408e-06
+    ## cont_clim=cont_clim_Correcta             -0.04269649  1.372248e-06
+    ## ideology=Izquierda                       -0.10585877  1.889818e-07
+    ## thoughts=thoughts_Negativos              -0.07136861  1.202040e-07
+    ## imp_po=imp_po_Neutro                     -0.21940233  3.012628e-10
+    ## trust_vote_inst=trust_vote_inst_No       -0.08149367  1.591136e-16
+    ## imp_ac=imp_ac_Neutro                     -0.10412453  7.513739e-20
+    ## clim_origin=clim_origin_Incorrecta       -0.07633756  3.707408e-20
+    ## dis_act=Poco dispuesta                   -0.13823309  1.356137e-20
+    ## imp_sci=imp_sci_Negativo                 -0.23105436  8.701907e-37
+    ## imp_re=imp_re_Neutro                     -0.20875882  4.200875e-39
+    ## imp_re=imp_re_Negativo                   -0.25957563  8.708414e-51
+    ## imp_po=imp_po_Negativo                   -0.28760635  4.469012e-63
+    ## imp_ac=imp_ac_Negativo                   -0.25667752  1.003602e-66
+    ## imp_sci=imp_sci_Neutro                   -0.09707342  1.326921e-94
 
 ## Conclusión del Análisis de correspondencia múltiple
 
@@ -440,12 +439,16 @@ Partiendo de lo observado en el MCA se decidió explorar en gráficos
 separados las relaciones entre las variables que podrían estar
 asociadas.
 
+## Origen del cambio climático y emociones frente al cambio climático
+
 |            | Negativas | Ambivalentes/Neutrales | Positivas |
 |------------|----------:|-----------------------:|----------:|
 | Correcta   |      35.8 |                    7.7 |       3.9 |
 | Incorrecta |      35.5 |                    9.6 |       7.5 |
 
 <img src="./figuresrelación origen cambio climatico y emociones-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Pensamientos frente al cambio climático y emociones frente al cambio climático
 
 |                        | Negativas | Ambivalentes/Neutrales | Positivas |
 |------------------------|----------:|-----------------------:|----------:|
@@ -455,6 +458,8 @@ asociadas.
 
 <img src="./figuresrelación pensamientos y emociones-1.png" width="80%" style="display: block; margin: auto;" />
 
+## Ideología política y emociones frente al cambio climático
+
 |           | Negativas | Ambivalentes/Neutrales | Positivas |
 |-----------|----------:|-----------------------:|----------:|
 | Derecha   |      12.3 |                    4.1 |       2.7 |
@@ -463,97 +468,153 @@ asociadas.
 
 <img src="./figuresrelación ideologia y emociones-1.png" width="80%" style="display: block; margin: auto;" />
 
-|     | Negativas | Ambivalentes/Neutrales | Positivas |
-|-----|----------:|-----------------------:|----------:|
-| -3  |       0.1 |                    0.1 |       0.0 |
-| -2  |       1.0 |                    0.1 |       0.1 |
-| -1  |       6.8 |                    1.6 |       1.4 |
-| 1   |      18.3 |                    4.6 |       3.4 |
-| 2   |      21.5 |                    6.2 |       3.9 |
-| 3   |      23.5 |                    4.7 |       2.7 |
+## Disposición a tomar acciones individuales y emociones frente al cambio climático
 
-<img src="./figuresrelación impacto accion individual y emociones-1.png" width="80%" style="display: block; margin: auto;" />
+|                | Negativas | Ambivalentes/Neutrales | Positivas |
+|----------------|----------:|-----------------------:|----------:|
+| Poco dispuesta |      11.1 |                    3.0 |       2.5 |
+| Dispuesta      |      29.0 |                    7.5 |       5.2 |
+| Muy dispuesta  |      31.2 |                    6.8 |       3.8 |
 
-|     | Negativas | Ambivalentes/Neutrales | Positivas |
-|-----|----------:|-----------------------:|----------:|
-| -3  |       0.3 |                    0.1 |       0.0 |
-| -2  |       2.0 |                    0.3 |       0.3 |
-| -1  |      11.4 |                    3.5 |       2.8 |
-| 1   |      32.0 |                    7.6 |       5.4 |
-| 2   |      18.1 |                    4.7 |       2.2 |
-| 3   |       7.3 |                    1.1 |       0.7 |
+<img src="./figuresdisposicion a actuar y emociones-1.png" width="80%" style="display: block; margin: auto;" />
 
-<img src="./figuresrelación impacto en la comodidad y emociones-1.png" width="80%" style="display: block; margin: auto;" />
-
-|     | Negativas | Ambivalentes/Neutrales | Positivas |
-|-----|----------:|-----------------------:|----------:|
-| Sí  |      42.7 |                    9.3 |       5.3 |
-| No  |      28.5 |                    8.0 |       6.1 |
-
-<img src="./figuresrelación unirse organizaciones ambientales y eco ansiedad-1.png" width="80%" style="display: block; margin: auto;" />
+## Factor que más contribuye al cambio climático y emociones frente al cambio climático
 
 |            | Negativas | Ambivalentes/Neutrales | Positivas |
 |------------|----------:|-----------------------:|----------:|
 | Correcta   |      24.6 |                    5.9 |       3.0 |
 | Incorrecta |      46.6 |                   11.4 |       8.5 |
 
-<img src="./figuresrelación contribucion al cambio climatico y eco ansiedad-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresrelación contribucion al cambio climatico y emociones-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Uso de internet como fuente de información y emociones frente al cambio climático
 
 |     | Negativas | Ambivalentes/Neutrales | Positivas |
 |-----|----------:|-----------------------:|----------:|
 | No  |      14.1 |                    4.2 |       3.2 |
 | Sí  |      57.2 |                   13.2 |       8.3 |
 
-<img src="./figuresrelación internet y eco ansiedad-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresrelación internet y emociones-1.png" width="80%" style="display: block; margin: auto;" />
 
-|            | Básica Primaria | Básica Secundaria | Secundaria Completa | Técnico o Tecnólogo | Pregrado | Posgrado |
-|------------|----------------:|------------------:|--------------------:|--------------------:|---------:|---------:|
-| Correcta   |             0.9 |               3.2 |                22.0 |                13.2 |      7.1 |      1.0 |
-| Incorrecta |             1.6 |               4.2 |                23.6 |                12.8 |      8.5 |      1.8 |
+## Confianza en Instituciones y emociones frente al cambio climático
+
+|     | Negativas | Ambivalentes/Neutrales | Positivas |
+|-----|----------:|-----------------------:|----------:|
+| No  |      56.8 |                   12.6 |       7.7 |
+| Sí  |      14.5 |                    4.8 |       3.7 |
+
+<img src="./figuresconfianza instituciones y emociones-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Zona de residencia y emociones frente al cambio climático
+
+|                              | Negativas | Ambivalentes/Neutrales | Positivas |
+|------------------------------|----------:|-----------------------:|----------:|
+| Municipios rurales dispersos |       6.4 |                    2.0 |       1.0 |
+| Urbana ciudades              |      64.8 |                   15.4 |      10.4 |
+
+<img src="./figureszona y emociones-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Rango de edad y emociones frente al cambio climático
+
+|                 | Negativas | Ambivalentes/Neutrales | Positivas |
+|-----------------|----------:|-----------------------:|----------:|
+| De 18 a 20 años |      13.5 |                    3.0 |       2.1 |
+| De 21 a 24 años |      16.9 |                    4.1 |       2.6 |
+| De 25 a 29 años |      20.7 |                    4.9 |       3.7 |
+| De 30 a 32 años |      20.1 |                    5.4 |       3.1 |
+
+<img src="./figuresedad y emociones-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Nivel educativo y origen del cambio climático
+
+|                     | Correcta | Incorrecta |
+|---------------------|---------:|-----------:|
+| Básica Primaria     |      0.9 |        1.6 |
+| Básica Secundaria   |      3.2 |        4.2 |
+| Secundaria Completa |     22.0 |       23.6 |
+| Técnico o Tecnólogo |     13.2 |       12.8 |
+| Pregrado            |      7.1 |        8.5 |
+| Posgrado            |      1.0 |        1.8 |
 
 <img src="./figuresrelación origen cambio climatico y educacion-1.png" width="80%" style="display: block; margin: auto;" />
 
-|            | De 18 a 20 años | De 21 a 24 años | De 25 a 29 años | De 30 a 32 años |
-|------------|----------------:|----------------:|----------------:|----------------:|
-| Correcta   |            10.0 |            11.3 |            12.2 |            14.0 |
-| Incorrecta |             8.6 |            12.3 |            17.1 |            14.5 |
+## Rango de edad y origen del cambio climático
+
+|                 | Correcta | Incorrecta |
+|-----------------|---------:|-----------:|
+| De 18 a 20 años |     10.0 |        8.6 |
+| De 21 a 24 años |     11.3 |       12.3 |
+| De 25 a 29 años |     12.2 |       17.1 |
+| De 30 a 32 años |     14.0 |       14.5 |
 
 <img src="./figuresrelación origen cambio climatico y edad-1.png" width="80%" style="display: block; margin: auto;" />
 
-|            |  -3 |  -2 |  -1 |    1 |    2 |    3 |
-|------------|----:|----:|----:|-----:|-----:|-----:|
-| Correcta   | 0.1 | 0.2 | 1.3 |  8.4 | 16.6 | 20.8 |
-| Incorrecta | 0.1 | 0.9 | 8.5 | 17.9 | 15.0 | 10.1 |
+## Opinión impacto de los científicos y origen del cambio climático
 
-<img src="./figuresrelación origen cambio climatico e impacto individual-1.png" width="80%" style="display: block; margin: auto;" />
+|          | Correcta | Incorrecta |
+|----------|---------:|-----------:|
+| Negativo |      4.3 |        5.1 |
+| Neutro   |     16.9 |       26.2 |
+| Positivo |     26.2 |       21.3 |
 
-|            |  -3 |  -2 |   -1 |    1 |    2 |   3 |
-|------------|----:|----:|-----:|-----:|-----:|----:|
-| Correcta   | 0.2 | 0.5 |  5.1 | 19.7 | 15.6 | 6.3 |
-| Incorrecta | 0.3 | 2.0 | 12.6 | 25.4 |  9.4 | 2.9 |
+<img src="./figuresrelación origen cambio climatico y opinion cientificos-1.png" width="80%" style="display: block; margin: auto;" />
 
-<img src="./figuresrelación origen cambio climatico e impacto en la comodidad-1.png" width="80%" style="display: block; margin: auto;" />
+## Disposición a tomar acciones individuales y origen del cambio climático
 
-|            |   Sí |   No |
-|------------|-----:|-----:|
-| Correcta   | 31.0 | 16.4 |
-| Incorrecta | 26.4 | 26.2 |
+|                | Correcta | Incorrecta |
+|----------------|---------:|-----------:|
+| Poco dispuesta |      3.1 |       13.5 |
+| Dispuesta      |     17.0 |       24.7 |
+| Muy dispuesta  |     27.4 |       14.4 |
 
-<img src="./figuresrelación origen cambio climatico y unirse organizaciones ambientales-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresrelación origen cambio climatico y disposición a actuar-1.png" width="80%" style="display: block; margin: auto;" />
 
-|            | Negativos | Ambivalentes/Neutrales | Positivos |
-|------------|----------:|-----------------------:|----------:|
-| Correcta   |      26.6 |                   18.0 |       2.8 |
-| Incorrecta |      24.1 |                   24.9 |       3.6 |
+## Pensamientos frente al cambio climático y origen del cambio climático
+
+|                        | Correcta | Incorrecta |
+|------------------------|---------:|-----------:|
+| Negativos              |     26.6 |       24.1 |
+| Ambivalentes/Neutrales |     18.0 |       24.9 |
+| Positivos              |      2.8 |        3.6 |
 
 <img src="./figuresrelación origen cambio climatico y pensamientos sobre cambio climatico-1.png" width="80%" style="display: block; margin: auto;" />
 
-|            |   No |   Sí |
-|------------|-----:|-----:|
-| Correcta   |  7.2 | 40.3 |
-| Incorrecta | 14.2 | 38.3 |
+## Uso de internet como fuente de información y origen del cambio climático
 
-<img src="./figuresrelación origen cambio climatico y redes sociales-1.png" width="80%" style="display: block; margin: auto;" />
+|     | Correcta | Incorrecta |
+|-----|---------:|-----------:|
+| No  |      7.2 |       14.2 |
+| Sí  |     40.3 |       38.3 |
+
+<img src="./figuresrelación origen cambio climatico e internet-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Zona de residencia y origen del cambio climático
+
+|                              | Correcta | Incorrecta |
+|------------------------------|---------:|-----------:|
+| Municipios rurales dispersos |      4.1 |        5.4 |
+| Urbana ciudades              |     43.3 |       47.2 |
+
+<img src="./figuresrelación origen cambio climatico y zona-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Ideología política y origen del cambio climático
+
+|           | Correcta | Incorrecta |
+|-----------|---------:|-----------:|
+| Derecha   |     10.2 |        8.8 |
+| Centro    |     25.0 |       31.2 |
+| Izquierda |     12.2 |       12.5 |
+
+<img src="./figuresrelación origen cambio climatico e ideología-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Confianza en Instituciones y origen del cambio climático
+
+|     | Correcta | Incorrecta |
+|-----|---------:|-----------:|
+| No  |     38.6 |       38.4 |
+| Sí  |      8.8 |       14.1 |
+
+<img src="./figuresrelación origen cambio climatico y confianza en instituciones-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Tests de chi-cuadrado
 
@@ -564,63 +625,34 @@ corrección propuesta por Benjamini y Hochberg.
 
 ## Tests para la variable origen del cambio climático
 
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Variable age_r is significantly associated with clim_origin with adjusted p-value: 0.001453519 
-    ## Variable estrato is significantly associated with clim_origin with adjusted p-value: 0.01884656 
-    ## Variable etnia is significantly associated with clim_origin with adjusted p-value: 0.01236785 
-    ## Variable ideology is significantly associated with clim_origin with adjusted p-value: 0.004220962 
-    ## Variable Internet is significantly associated with clim_origin with adjusted p-value: 2.068288e-11 
-    ## Variable trust_vote_inst is significantly associated with clim_origin with adjusted p-value: 6.568142e-06 
-    ## Variable eco_anx is significantly associated with clim_origin with adjusted p-value: 1.130156e-05 
-    ## Variable env_aso is significantly associated with clim_origin with adjusted p-value: 2.137599e-12 
-    ## Variable imp_scien is significantly associated with clim_origin with adjusted p-value: 6.048624e-33 
-    ## Variable imp_act is significantly associated with clim_origin with adjusted p-value: 1.442057e-07 
-    ## Variable imp_rel is significantly associated with clim_origin with adjusted p-value: 3.956478e-20 
-    ## Variable imp_pol is significantly associated with clim_origin with adjusted p-value: 1.965114e-25 
-    ## Variable thoughts is significantly associated with clim_origin with adjusted p-value: 1.118072e-05 
-    ## Variable imp_como is significantly associated with clim_origin with adjusted p-value: 1.831613e-32 
-    ## Variable imp_cli is significantly associated with clim_origin with adjusted p-value: 1.675852e-57 
-    ## Variable no_car is significantly associated with clim_origin with adjusted p-value: 6.98691e-33 
-    ## Variable one_fw_ch is significantly associated with clim_origin with adjusted p-value: 7.641959e-23 
-    ## Variable veg is significantly associated with clim_origin with adjusted p-value: 1.732633e-29 
-    ## Variable only_bk_wk is significantly associated with clim_origin with adjusted p-value: 2.393742e-42 
-    ## Variable cont_clim is significantly associated with clim_origin with adjusted p-value: 0.0001348859
+| Variable                      |   P-value |
+|:------------------------------|----------:|
+| Edad                          | 0.0016174 |
+| Estrato                       | 0.0193850 |
+| Etnia                         | 0.0042548 |
+| Ideología                     | 0.0042548 |
+| Internet                      | 0.0000000 |
+| Confianza Instituciones       | 0.0000102 |
+| Emociones cambio climático    | 0.0000153 |
+| Impacto científicos           | 0.0000000 |
+| Impacto activistas            | 0.0002275 |
+| Impacto grupos religiosos     | 0.0000000 |
+| Impacto políticos             | 0.0000000 |
+| Pensamientos cambio climático | 0.0000153 |
+| Disposición a actuar          | 0.0000000 |
+| Contribución cambio climático | 0.0001727 |
 
 ## Tests para la variable emociones frente al cambio climático
 
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
-    ## incorrect
-
-    ## Variable edu is significantly associated with eco_anx with adjusted p-value: 0.02805863 
-    ## Variable ideology is significantly associated with eco_anx with adjusted p-value: 0.001282594 
-    ## Variable Internet is significantly associated with eco_anx with adjusted p-value: 0.02027504 
-    ## Variable trust_vote_inst is significantly associated with eco_anx with adjusted p-value: 7.044676e-05 
-    ## Variable env_aso is significantly associated with eco_anx with adjusted p-value: 0.0004741051 
-    ## Variable imp_rel is significantly associated with eco_anx with adjusted p-value: 0.02895086 
-    ## Variable thoughts is significantly associated with eco_anx with adjusted p-value: 7.860687e-49 
-    ## Variable imp_como is significantly associated with eco_anx with adjusted p-value: 0.008412295 
-    ## Variable no_car is significantly associated with eco_anx with adjusted p-value: 0.04922477 
-    ## Variable one_fw_ch is significantly associated with eco_anx with adjusted p-value: 0.02678232 
-    ## Variable veg is significantly associated with eco_anx with adjusted p-value: 0.007238619 
-    ## Variable clim_origin is significantly associated with eco_anx with adjusted p-value: 7.044676e-05 
-    ## Variable cont_clim is significantly associated with eco_anx with adjusted p-value: 0.04922477
+| Variable                      |   P-value |
+|:------------------------------|----------:|
+| Ideología                     | 0.0011543 |
+| Internet                      | 0.0194640 |
+| Confianza Instituciones       | 0.0000507 |
+| Impacto grupos religiosos     | 0.0093094 |
+| Pensamientos cambio climático | 0.0000000 |
+| Disposición a actuar          | 0.0260008 |
+| Origen cambio climático       | 0.0000507 |
 
 # Calculo de multiples Cramér’s V
 
@@ -630,154 +662,499 @@ del tamaño del efecto utilizada fue Cramér’s V.
 
 ## Valores para la variable origen del cambio climático
 
-    ## $Zona
-    ## [1] 0.01592219
-    ## 
-    ## $sex
-    ## [1] 0
-    ## 
-    ## $age_r
-    ## [1] 0.07738864
-    ## 
-    ## $estrato
-    ## [1] 0.06397857
-    ## 
-    ## $etnia
-    ## [1] 0.06791127
-    ## 
-    ## $education
-    ## [1] 0.05140177
-    ## 
-    ## $edu
-    ## [1] 0.02155064
-    ## 
-    ## $kids
-    ## [1] 0.02139138
-    ## 
-    ## $ideology
-    ## [1] 0.06574526
-    ## 
-    ## $Internet
-    ## [1] 0.1443268
-    ## 
-    ## $trust_vote_inst
-    ## [1] 0.09737299
-    ## 
-    ## $eco_anx
-    ## [1] 0.09912163
-    ## 
-    ## $env_aso
-    ## [1] 0.1512568
-    ## 
-    ## $imp_scien
-    ## [1] 0.271043
-    ## 
-    ## $imp_act
-    ## [1] 0.1311048
-    ## 
-    ## $imp_rel
-    ## [1] 0.212246
-    ## 
-    ## $imp_pol
-    ## [1] 0.2380509
-    ## 
-    ## $thoughts
-    ## [1] 0.09948352
-    ## 
-    ## $imp_como
-    ## [1] 0.2660131
-    ## 
-    ## $imp_cli
-    ## [1] 0.3534405
-    ## 
-    ## $no_car
-    ## [1] 0.2680532
-    ## 
-    ## $one_fw_ch
-    ## [1] 0.2234418
-    ## 
-    ## $veg
-    ## [1] 0.2535725
-    ## 
-    ## $only_bk_wk
-    ## [1] 0.3040538
-    ## 
-    ## $cont_clim
-    ## [1] 0.08158392
+| Variable                      | Cramér’s V |
+|:------------------------------|-----------:|
+| Edad                          |  0.0773886 |
+| Estrato                       |  0.0639786 |
+| Etnia                         |  0.0608797 |
+| Ideología                     |  0.0657453 |
+| Internet                      |  0.1443268 |
+| Confianza Instituciones       |  0.0973730 |
+| Emociones cambio climático    |  0.0991216 |
+| Impacto científicos           |  0.1489673 |
+| Impacto activistas            |  0.0847853 |
+| Impacto grupos religiosos     |  0.1506780 |
+| Impacto políticos             |  0.1931039 |
+| Pensamientos cambio climático |  0.0994835 |
+| Disposición a actuar          |  0.3428330 |
+| Contribución cambio climático |  0.0815839 |
 
 ## Valores para la variable emociones frente al cambio climático
 
-    ## $Zona
-    ## [1] 0.006969885
+| Variable                      | Cramér’s V |
+|:------------------------------|-----------:|
+| Ideología                     |  0.0627360 |
+| Internet                      |  0.0603232 |
+| Confianza Instituciones       |  0.0981141 |
+| Impacto grupos religiosos     |  0.0527561 |
+| Pensamientos cambio climático |  0.2294467 |
+| Disposición a actuar          |  0.0456626 |
+| Origen cambio climático       |  0.0991216 |
+
+# Relación variables con nueva variable para emociones frente al cambio climático
+
+Los análisis anteriores se realizaron nuevamente pero modificando la
+variable de las emociones frente al cambio climático, incluyendo esta
+vez la clasificación basada en el modelo “Circumplex model of affect”.
+
+## Análisis de correspondencia múltiple
+
+<img src="./figuresanálisis de componentes múltiples nueva variable emociones-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-2.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-3.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples nueva variable emociones-8.png" width="80%" />
+
+    ## $`Dim 1`
     ## 
-    ## $sex
-    ## [1] 0.03833253
+    ## Link between the variable and the categorical variable (1-way anova)
+    ## =============================================
+    ##                         R2       p.value
+    ## imp_po          0.37889593 5.280937e-230
+    ## dis_act         0.30163066 1.473689e-173
+    ## imp_re          0.29803146 4.396599e-171
+    ## clim_origin     0.29007904 3.083639e-167
+    ## imp_ac          0.16875908  1.040609e-89
+    ## Internet        0.13186180  3.652811e-70
+    ## cir_mod         0.13784655  7.050283e-69
+    ## trust_vote_inst 0.11512506  6.149713e-61
+    ## imp_sci         0.11246201  3.674829e-58
+    ## thoughts        0.06969227  1.669625e-35
+    ## kids            0.05287635  4.998662e-28
+    ## age_r           0.04852750  9.653594e-24
+    ## ideology        0.04096253  7.323766e-21
+    ## cont_clim       0.03722976  4.625654e-20
+    ## Zona            0.02034687  1.461904e-11
+    ## edu             0.01080017  9.243223e-07
+    ## ethni           0.01023051  1.794859e-06
+    ## strat           0.00390499  1.307367e-02
     ## 
-    ## $age_r
-    ## [1] 0
+    ## Link between variable and the categories of the categorical variables
+    ## ================================================================
+    ##                                        Estimate       p.value
+    ## imp_po=imp_po_Neutro                0.218239251 1.812902e-184
+    ## clim_origin=clim_origin_Incorrecta  0.184730655 3.083639e-167
+    ## imp_re=imp_re_Neutro                0.184108168 3.474639e-115
+    ## imp_ac=imp_ac_Neutro                0.179662794  2.064460e-83
+    ## Internet=Internet_No                0.151651037  3.652811e-70
+    ## dis_act=Poco dispuesta              0.210884260  1.518655e-62
+    ## trust_vote_inst=trust_vote_inst_Sí  0.138239278  6.149713e-61
+    ## imp_sci=imp_sci_Neutro              0.159852650  2.913745e-59
+    ## dis_act=Dispuesta                   0.055237687  1.146321e-37
+    ## cir_mod=Pos                         0.186987578  9.093596e-34
+    ## kids=kids_Sí                        0.079763420  4.998662e-28
+    ## cont_clim=cont_clim_Incorrecta      0.070007711  4.625654e-20
+    ## thoughts=Positivos                  0.152085662  1.391024e-15
+    ## Zona=Municipios rurales dispersos   0.083477908  1.461904e-11
+    ## age_r=De 30 a 32 años               0.086557955  8.860721e-11
+    ## ideology=Centro                     0.047680469  1.635239e-08
+    ## edu=edu_No                          0.045911848  9.243223e-07
+    ## age_r=De 25 a 29 años               0.066121778  1.703110e-06
+    ## ethni=ethni_Sí                      0.062677387  1.794859e-06
+    ## cir_mod=Pos y neg act               0.059449014  2.496788e-06
+    ## cir_mod=Neg act                     0.006237320  4.443328e-04
+    ## ideology=Derecha                    0.061479125  8.639533e-04
+    ## cir_mod=Pos y neg no act            0.092538921  9.272866e-04
+    ## imp_po=imp_po_Positivo              0.021269262  1.375491e-03
+    ## strat=Bajo                          0.019610753  6.602898e-03
+    ## imp_re=imp_re_Positivo              0.051494502  7.599673e-03
+    ## strat=Medio                        -0.025190832  3.754417e-03
+    ## ethni=ethni_No                     -0.062677387  1.794859e-06
+    ## edu=edu_Sí                         -0.045911848  9.243223e-07
+    ## cir_mod=Neg no act                 -0.179049455  2.972024e-07
+    ## imp_sci=imp_sci_Negativo           -0.092300180  8.322003e-08
+    ## imp_ac=imp_ac_Positivo             -0.035053721  2.841076e-09
+    ## age_r=De 18 a 20 años              -0.082934197  3.563199e-10
+    ## age_r=De 21 a 24 años              -0.069745537  3.152554e-10
+    ## Zona=Urbana ciudades               -0.083477908  1.461904e-11
+    ## thoughts=Ambivalentes/Neutrales    -0.003768341  3.938329e-14
+    ## cont_clim=cont_clim_Correcta       -0.070007711  4.625654e-20
+    ## ideology=Izquierda                 -0.109159594  7.781989e-22
+    ## kids=kids_No                       -0.079763420  4.998662e-28
+    ## thoughts=Negativos                 -0.148317321  1.125302e-30
+    ## imp_sci=imp_sci_Positivo           -0.067552470  3.530302e-37
+    ## cir_mod=Neg no act y act           -0.166163378  2.769540e-44
+    ## imp_ac=imp_ac_Negativo             -0.144609072  2.290110e-54
+    ## trust_vote_inst=trust_vote_inst_No -0.138239278  6.149713e-61
+    ## Internet=Internet_Sí               -0.151651037  3.652811e-70
+    ## dis_act=Muy dispuesta              -0.266121947 1.564806e-158
+    ## imp_re=imp_re_Negativo             -0.235602670 1.351787e-158
+    ## clim_origin=clim_origin_Correcta   -0.184730655 3.083639e-167
+    ## imp_po=imp_po_Negativo             -0.239508513 3.711795e-206
     ## 
-    ## $estrato
-    ## [1] 0.041517
+    ## $`Dim 2`
     ## 
-    ## $etnia
-    ## [1] 0
+    ## Link between the variable and the categorical variable (1-way anova)
+    ## =============================================
+    ##                          R2       p.value
+    ## imp_re          0.473451996 1.636782e-309
+    ## imp_po          0.438235597 2.403523e-278
+    ## imp_ac          0.358201577 3.172479e-214
+    ## imp_sci         0.325234394 4.130774e-190
+    ## ideology        0.067532688  2.182045e-34
+    ## dis_act         0.034412330  1.385517e-17
+    ## ethni           0.032100343  1.802135e-17
+    ## clim_origin     0.030030263  1.990002e-16
+    ## trust_vote_inst 0.028746920  8.808072e-16
+    ## age_r           0.031124086  4.097442e-15
+    ## edu             0.024926877  7.336237e-14
+    ## strat           0.024974454  6.671602e-13
+    ## cir_mod         0.014703008  4.093043e-06
+    ## thoughts        0.009534980  2.441682e-05
+    ## cont_clim       0.007946341  2.597986e-05
+    ## Internet        0.004750712  1.155732e-03
     ## 
-    ## $education
-    ## [1] 0.03821462
+    ## Link between variable and the categories of the categorical variables
+    ## ================================================================
+    ##                                        Estimate       p.value
+    ## imp_re=imp_re_Positivo              0.363724858 5.320534e-305
+    ## imp_po=imp_po_Positivo              0.394946818 1.596267e-274
+    ## imp_ac=imp_ac_Positivo              0.288588924 2.450022e-192
+    ## imp_sci=imp_sci_Positivo            0.263227318 1.870801e-183
+    ## ideology=Derecha                    0.142043685  6.557495e-34
+    ## ethni=ethni_No                      0.102699529  1.802135e-17
+    ## clim_origin=clim_origin_Correcta    0.054980874  1.990002e-16
+    ## trust_vote_inst=trust_vote_inst_Sí  0.063898910  8.808072e-16
+    ## age_r=De 30 a 32 años               0.088006972  1.800491e-14
+    ## edu=edu_Sí                          0.064520058  7.336237e-14
+    ## strat=Alto                          0.080166161  2.057058e-07
+    ## cir_mod=Pos y neg act               0.081079744  1.360794e-05
+    ## cont_clim=cont_clim_Incorrecta      0.029918213  2.597986e-05
+    ## dis_act=Muy dispuesta               0.057418172  9.292057e-05
+    ## thoughts=Ambivalentes/Neutrales     0.013985160  2.027549e-04
+    ## Internet=Internet_Sí                0.026626649  1.155732e-03
+    ## dis_act=Dispuesta                   0.047648185  7.598568e-03
+    ## cir_mod=Neg act                     0.026927907  1.560988e-02
+    ## age_r=De 25 a 29 años              -0.016028840  2.814022e-02
+    ## Internet=Internet_No               -0.026626649  1.155732e-03
+    ## cir_mod=Neg no act y act           -0.030638778  3.282681e-04
+    ## strat=Medio                        -0.002308175  1.422944e-04
+    ## cont_clim=cont_clim_Correcta       -0.029918213  2.597986e-05
+    ## ideology=Centro                    -0.049247994  1.418570e-05
+    ## thoughts=Negativos                 -0.045109158  4.899225e-06
+    ## age_r=De 18 a 20 años              -0.069114725  6.301209e-08
+    ## ideology=Izquierda                 -0.092795690  3.318277e-09
+    ## imp_po=imp_po_Neutro               -0.169584767  3.024283e-09
+    ## strat=Bajo                         -0.077857987  1.997825e-11
+    ## edu=edu_No                         -0.064520058  7.336237e-14
+    ## trust_vote_inst=trust_vote_inst_No -0.063898910  8.808072e-16
+    ## imp_ac=imp_ac_Neutro               -0.075581836  2.648758e-16
+    ## clim_origin=clim_origin_Incorrecta -0.054980874  1.990002e-16
+    ## ethni=ethni_Sí                     -0.102699529  1.802135e-17
+    ## dis_act=Poco dispuesta             -0.105066357  1.546518e-18
+    ## imp_re=imp_re_Neutro               -0.152197231  6.695021e-30
+    ## imp_sci=imp_sci_Negativo           -0.193186202  1.274456e-39
+    ## imp_re=imp_re_Negativo             -0.211527627  8.150606e-56
+    ## imp_po=imp_po_Negativo             -0.225362052  2.072273e-60
+    ## imp_ac=imp_ac_Negativo             -0.213007087  3.937967e-73
+    ## imp_sci=imp_sci_Neutro             -0.070041116  2.291716e-87
+
+## Análisis con las variables sociodemográficas como variables suplementarias
+
+<img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-1.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-2.png" width="80%" />
+
+    ## Warning: ggrepel: 16 unlabeled data points (too many overlaps). Consider
+    ## increasing max.overlaps
+
+<img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-3.png" width="80%" />
+
+    ## Warning: ggrepel: 7 unlabeled data points (too many overlaps). Consider
+    ## increasing max.overlaps
+
+<img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-4.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-5.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-6.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-7.png" width="80%" /><img src="./figuresanálisis de componentes múltiples 2 nueva variable emociones-8.png" width="80%" />
+
+    ## $`Dim 1`
     ## 
-    ## $edu
-    ## [1] 0.05607967
+    ## Link between the variable and the categorical variable (1-way anova)
+    ## =============================================
+    ##                          R2       p.value
+    ## imp_po          0.422584134 4.076041e-265
+    ## imp_re          0.316662842 4.931045e-184
+    ## dis_act         0.310224944 1.611563e-179
+    ## clim_origin     0.300581840 2.007713e-174
+    ## imp_ac          0.196626760 3.989284e-106
+    ## cir_mod         0.132055161  1.094194e-65
+    ## trust_vote_inst 0.120510284  6.900830e-64
+    ## imp_sci         0.120735880  1.138415e-62
+    ## Internet        0.109831056  4.697975e-58
+    ## thoughts        0.058481339  9.758240e-30
+    ## ideology        0.048233888  1.587699e-24
+    ## cont_clim       0.035958972  2.031608e-19
+    ## Zona            0.005478270  4.826681e-04
+    ## kids            0.005247270  6.363706e-04
+    ## age_r           0.006980116  1.418320e-03
+    ## ethni           0.002968034  1.024725e-02
+    ## edu             0.002047657  3.300858e-02
     ## 
-    ## $kids
-    ## [1] 0.03570624
+    ## Link between variable and the categories of the categorical variables
+    ## ================================================================
+    ##                                       Estimate       p.value
+    ## imp_po=imp_po_Neutro                0.28489251 1.264497e-209
+    ## clim_origin=clim_origin_Incorrecta  0.23358380 2.007713e-174
+    ## imp_re=imp_re_Neutro                0.23670044 5.315082e-124
+    ## imp_ac=imp_ac_Neutro                0.23605726  3.195214e-94
+    ## trust_vote_inst=trust_vote_inst_Sí  0.17568679  6.900830e-64
+    ## dis_act=Poco dispuesta              0.26117700  3.651253e-62
+    ## imp_sci=imp_sci_Neutro              0.21666653  6.128972e-62
+    ## Internet=Internet_No                0.17192104  4.697975e-58
+    ## dis_act=Dispuesta                   0.07399100  1.322335e-40
+    ## cir_mod=Pos                         0.23059020  2.283022e-33
+    ## cont_clim=cont_clim_Incorrecta      0.08546434  2.031608e-19
+    ## thoughts=Positivos                  0.18270281  1.340095e-14
+    ## ideology=Centro                     0.06859630  9.959112e-11
+    ## cir_mod=Pos y neg act               0.05318961  1.114509e-04
+    ## cir_mod=Pos y neg no act            0.13754028  1.498312e-04
+    ## imp_po=imp_po_Positivo              0.03038241  4.267191e-04
+    ## Zona=Municipios rurales dispersos   0.05380529  4.826681e-04
+    ## cir_mod=Neg act                     0.00699934  5.391149e-04
+    ## kids=kids_Sí                        0.03121191  6.363706e-04
+    ## ideology=Derecha                    0.07721932  1.279637e-03
+    ## imp_re=imp_re_Positivo              0.06423595  8.339236e-03
+    ## ethni=ethni_Sí                      0.04193506  1.024725e-02
+    ## age_r=De 25 a 29 años               0.03609389  3.015619e-02
+    ## edu=edu_No                          0.02483240  3.300858e-02
+    ## age_r=De 30 a 32 años               0.03599432  3.411772e-02
+    ## edu=edu_Sí                         -0.02483240  3.300858e-02
+    ## age_r=De 18 a 20 años              -0.03698714  2.404415e-02
+    ## age_r=De 21 a 24 años              -0.03510107  1.201722e-02
+    ## ethni=ethni_No                     -0.04193506  1.024725e-02
+    ## kids=kids_No                       -0.03121191  6.363706e-04
+    ## Zona=Urbana ciudades               -0.05380529  4.826681e-04
+    ## imp_ac=imp_ac_Positivo             -0.02974288  1.983883e-07
+    ## cir_mod=Neg no act                 -0.22879956  1.115098e-07
+    ## thoughts=Ambivalentes/Neutrales    -0.01225920  8.068721e-11
+    ## imp_sci=imp_sci_Negativo           -0.15499565  2.039906e-13
+    ## cont_clim=cont_clim_Correcta       -0.08546434  2.031608e-19
+    ## thoughts=Negativos                 -0.17044361  7.578687e-25
+    ## ideology=Izquierda                 -0.14581562  1.268616e-25
+    ## imp_sci=imp_sci_Positivo           -0.06167088  1.324915e-32
+    ## cir_mod=Neg no act y act           -0.19951987  1.197658e-40
+    ## Internet=Internet_Sí               -0.17192104  4.697975e-58
+    ## trust_vote_inst=trust_vote_inst_No -0.17568679  6.900830e-64
+    ## imp_ac=imp_ac_Negativo             -0.20631438  7.200830e-70
+    ## dis_act=Muy dispuesta              -0.33516799 2.458892e-165
+    ## imp_re=imp_re_Negativo             -0.30093638 8.035238e-170
+    ## clim_origin=clim_origin_Correcta   -0.23358380 2.007713e-174
+    ## imp_po=imp_po_Negativo             -0.31527492 2.949773e-237
     ## 
-    ## $ideology
-    ## [1] 0.06273595
+    ## $`Dim 2`
     ## 
-    ## $Internet
-    ## [1] 0.06032322
+    ## Link between the variable and the categorical variable (1-way anova)
+    ## =============================================
+    ##                          R2       p.value
+    ## imp_re          0.502719317  0.000000e+00
+    ## imp_po          0.461366723 1.375595e-298
+    ## imp_ac          0.362326239 2.497408e-217
+    ## imp_sci         0.334705661 6.468874e-197
+    ## ideology        0.061256877  3.699075e-31
+    ## clim_origin     0.039259985  4.337043e-21
+    ## dis_act         0.039763910  2.924425e-20
+    ## trust_vote_inst 0.028123243  1.814170e-15
+    ## cir_mod         0.016525311  6.221454e-07
+    ## thoughts        0.012005957  1.531689e-06
+    ## cont_clim       0.008994135  7.604831e-06
+    ## ethni           0.007045282  7.508430e-05
+    ## age_r           0.004432761  1.991199e-02
+    ## Internet        0.002311260  2.350014e-02
     ## 
-    ## $trust_vote_inst
-    ## [1] 0.09811412
-    ## 
-    ## $env_aso
-    ## [1] 0.08745675
-    ## 
-    ## $imp_scien
-    ## [1] 0.04855219
-    ## 
-    ## $imp_act
-    ## [1] 0.004250028
-    ## 
-    ## $imp_rel
-    ## [1] 0.05509745
-    ## 
-    ## $imp_pol
-    ## [1] 0.03565998
-    ## 
-    ## $thoughts
-    ## [1] 0.2294467
-    ## 
-    ## $imp_como
-    ## [1] 0.06239652
-    ## 
-    ## $imp_cli
-    ## [1] 0.04496724
-    ## 
-    ## $no_car
-    ## [1] 0.04843456
-    ## 
-    ## $one_fw_ch
-    ## [1] 0.05477745
-    ## 
-    ## $veg
-    ## [1] 0.06387608
-    ## 
-    ## $only_bk_wk
-    ## [1] 0.03779449
-    ## 
-    ## $clim_origin
-    ## [1] 0.09912163
-    ## 
-    ## $cont_clim
-    ## [1] 0.04906422
+    ## Link between variable and the categories of the categorical variables
+    ## ================================================================
+    ##                                       Estimate       p.value
+    ## imp_re=imp_re_Positivo              0.46765816  0.000000e+00
+    ## imp_po=imp_po_Positivo              0.50573336 2.969520e-295
+    ## imp_ac=imp_ac_Positivo              0.36339524 2.877626e-200
+    ## imp_sci=imp_sci_Positivo            0.32916735 2.694488e-192
+    ## ideology=Derecha                    0.16859154  1.534247e-31
+    ## clim_origin=clim_origin_Correcta    0.07830764  4.337043e-21
+    ## trust_vote_inst=trust_vote_inst_Sí  0.07872768  1.814170e-15
+    ## cir_mod=Pos y neg act               0.11480918  4.781548e-07
+    ## dis_act=Muy dispuesta               0.08205067  1.998278e-06
+    ## cont_clim=cont_clim_Incorrecta      0.03964868  7.604831e-06
+    ## thoughts=Ambivalentes/Neutrales     0.01942199  3.105312e-05
+    ## ethni=ethni_No                      0.05993214  7.508430e-05
+    ## age_r=De 30 a 32 años               0.04165302  3.463434e-03
+    ## dis_act=Dispuesta                   0.05761156  2.322381e-02
+    ## Internet=Internet_Sí                0.02313442  2.350014e-02
+    ## thoughts=Positivos                  0.04369456  4.250981e-02
+    ## Internet=Internet_No               -0.02313442  2.350014e-02
+    ## cir_mod=Neg no act y act           -0.04249074  1.291179e-04
+    ## ethni=ethni_Sí                     -0.05993214  7.508430e-05
+    ## cont_clim=cont_clim_Correcta       -0.03964868  7.604831e-06
+    ## ideology=Centro                    -0.06554938  1.610963e-06
+    ## ideology=Izquierda                 -0.10304217  6.037132e-07
+    ## thoughts=Negativos                 -0.06311655  2.913548e-07
+    ## imp_po=imp_po_Neutro               -0.22032480  1.316524e-10
+    ## trust_vote_inst=trust_vote_inst_No -0.07872768  1.814170e-15
+    ## imp_ac=imp_ac_Neutro               -0.10581357  2.045233e-20
+    ## dis_act=Poco dispuesta             -0.13966224  6.123725e-21
+    ## clim_origin=clim_origin_Incorrecta -0.07830764  4.337043e-21
+    ## imp_sci=imp_sci_Negativo           -0.23068351  1.406241e-36
+    ## imp_re=imp_re_Neutro               -0.21067535  3.448623e-40
+    ## imp_re=imp_re_Negativo             -0.25698281  5.331671e-49
+    ## imp_po=imp_po_Negativo             -0.28540856  2.353407e-61
+    ## imp_ac=imp_ac_Negativo             -0.25758168  7.759215e-67
+    ## imp_sci=imp_sci_Neutro             -0.09848384  9.650939e-96
+
+# Exploración visual de relaciones
+
+## Origen del cambio climático y emociones frente al cambio climático
+
+|            | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|------------|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| Correcta   | 4.7 |           5.6 |              1.4 |    12.7 |             19.5 |        3.6 |
+| Incorrecta | 8.7 |           6.3 |              2.1 |    16.5 |             16.4 |        2.6 |
+
+<img src="./figuresrelación origen cambio climatico y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Pensamientos frente al cambio climático y emociones frente al cambio climático
+
+|                        | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|------------------------|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| Negativos              | 3.1 |           4.6 |              1.5 |    15.3 |             22.3 |        3.9 |
+| Ambivalentes/Neutrales | 7.2 |           6.5 |              1.8 |    12.7 |             12.6 |        2.0 |
+| Positivos              | 3.1 |           0.8 |              0.2 |     1.1 |              1.0 |        0.3 |
+
+<img src="./figuresrelación pensamientos y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Ideología política y emociones frente al cambio climático
+
+|           | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|-----------|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| Derecha   | 3.0 |           2.6 |              1.2 |     6.0 |              5.6 |        0.7 |
+| Centro    | 7.6 |           7.0 |              1.9 |    15.6 |             20.5 |        3.7 |
+| Izquierda | 2.7 |           2.3 |              0.5 |     7.6 |              9.9 |        1.7 |
+
+<img src="./figuresrelación ideologia y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Disposición a tomar acciones individuales y emociones frente al cambio climático
+
+|                | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|----------------|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| Poco dispuesta | 3.2 |           1.6 |              0.7 |     5.9 |              4.2 |        0.9 |
+| Dispuesta      | 5.9 |           5.2 |              1.6 |    11.7 |             14.4 |        2.9 |
+| Muy dispuesta  | 4.3 |           5.0 |              1.2 |    11.5 |             17.3 |        2.3 |
+
+<img src="./figuresdisposicion a actuar y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Factor que más contribuye al cambio climático y emociones frente al cambio climático
+
+|            | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|------------|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| Correcta   | 3.6 |           4.3 |              1.0 |     9.7 |             12.3 |        2.6 |
+| Incorrecta | 9.8 |           7.6 |              2.5 |    19.4 |             23.6 |        3.5 |
+
+<img src="./figuresrelación contribucion al cambio climatico y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Uso de internet como fuente de información y emociones frente al cambio climático
+
+|     | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|-----|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| No  | 3.6 |           3.0 |              0.7 |     6.3 |              6.8 |        0.9 |
+| Sí  | 9.8 |           8.9 |              2.8 |    22.8 |             29.1 |        5.2 |
+
+<img src="./figuresrelación internet y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Confianza en Instituciones y emociones frente al cambio climático
+
+|     | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|-----|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| No  | 9.2 |           8.6 |              2.5 |    22.3 |             29.5 |        4.9 |
+| Sí  | 4.2 |           3.3 |              1.0 |     6.8 |              6.4 |        1.2 |
+
+<img src="./figuresconfianza instituciones y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Zona de residencia y emociones frente al cambio climático
+
+|                              |  Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|------------------------------|-----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| Municipios rurales dispersos |  1.5 |           1.1 |              0.4 |     3.4 |              2.8 |        0.3 |
+| Urbana ciudades              | 11.9 |          10.8 |              3.1 |    25.8 |             33.2 |        5.9 |
+
+<img src="./figureszona y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Rango de edad y emociones frente al cambio climático
+
+|                 | Pos | Pos y neg act | Pos y neg no act | Neg act | Neg no act y act | Neg no act |
+|-----------------|----:|--------------:|-----------------:|--------:|-----------------:|-----------:|
+| De 18 a 20 años | 2.5 |           1.8 |              0.8 |     5.6 |              6.8 |        1.0 |
+| De 21 a 24 años | 3.0 |           2.7 |              1.0 |     6.0 |              9.3 |        1.6 |
+| De 25 a 29 años | 4.4 |           3.5 |              0.7 |     8.6 |             10.3 |        1.8 |
+| De 30 a 32 años | 3.5 |           3.9 |              1.0 |     8.9 |              9.5 |        1.7 |
+
+<img src="./figuresedad y emociones 2-1.png" width="80%" style="display: block; margin: auto;" />
+
+## Tests de Chi-cuadrado para la variable origen del cambio climático
+
+| Variable                      |   P-value |
+|:------------------------------|----------:|
+| Edad                          | 0.0017072 |
+| Estrato                       | 0.0204620 |
+| Etnia                         | 0.0044912 |
+| Ideología                     | 0.0044912 |
+| Internet                      | 0.0000000 |
+| Confianza Instituciones       | 0.0000093 |
+| Emociones cambio climático    | 0.0000000 |
+| Impacto científicos           | 0.0000000 |
+| Impacto activistas            | 0.0002401 |
+| Impacto grupos religiosos     | 0.0000000 |
+| Impacto políticos             | 0.0000000 |
+| Pensamientos cambio climático | 0.0000149 |
+| Disposición a actuar          | 0.0000000 |
+| Contribución cambio climático | 0.0001822 |
+
+## Tests de Chi-cuadrado para la variable emociones frente al cambio climático
+
+    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
+    ## incorrect
+
+    ## Warning in chisq.test(contingency_table): Chi-squared approximation may be
+    ## incorrect
+
+| Variable                      |   P-value |
+|:------------------------------|----------:|
+| Sexo                          | 0.0298233 |
+| Estrato                       | 0.0162191 |
+| Nivel educativo               | 0.0455107 |
+| Ideología                     | 0.0002019 |
+| Internet                      | 0.0329670 |
+| Confianza Instituciones       | 0.0001383 |
+| Impacto activistas            | 0.0491040 |
+| Impacto grupos religiosos     | 0.0013985 |
+| Impacto políticos             | 0.0172459 |
+| Pensamientos cambio climático | 0.0000000 |
+| Disposición a actuar          | 0.0000041 |
+| Origen cambio climático       | 0.0000001 |
+| Contribución cambio climático | 0.0414672 |
+
+## Valores de Cramers’ V para la variable origen del cambio climático
+
+| Variable                      | Cramér’s V |
+|:------------------------------|-----------:|
+| Edad                          |  0.0773886 |
+| Estrato                       |  0.0639786 |
+| Etnia                         |  0.0608797 |
+| Ideología                     |  0.0657453 |
+| Internet                      |  0.1443268 |
+| Confianza Instituciones       |  0.0973730 |
+| Emociones cambio climático    |  0.1360172 |
+| Impacto científicos           |  0.1489673 |
+| Impacto activistas            |  0.0847853 |
+| Impacto grupos religiosos     |  0.1506780 |
+| Impacto políticos             |  0.1931039 |
+| Pensamientos cambio climático |  0.0994835 |
+| Disposición a actuar          |  0.3428330 |
+| Contribución cambio climático |  0.0815839 |
+
+## Valores de Cramers’ V para la variable emociones frente al cambio climático
+
+| Variable                      | Cramér’s V |
+|:------------------------------|-----------:|
+| Sexo                          |  0.0645383 |
+| Estrato                       |  0.0438092 |
+| Nivel educativo               |  0.0368637 |
+| Ideología                     |  0.0782387 |
+| Internet                      |  0.0627496 |
+| Confianza Instituciones       |  0.1028955 |
+| Impacto activistas            |  0.0464352 |
+| Impacto grupos religiosos     |  0.0700058 |
+| Impacto políticos             |  0.0564305 |
+| Pensamientos cambio climático |  0.2369547 |
+| Disposición a actuar          |  0.0924014 |
+| Origen cambio climático       |  0.1360172 |
+| Contribución cambio climático |  0.0597860 |

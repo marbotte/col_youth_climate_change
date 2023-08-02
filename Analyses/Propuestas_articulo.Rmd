@@ -14,9 +14,9 @@ options(knitr.table.format = "simple")
 ```
 
 # Propuestas de artículo
-A partir de lo encontrado en los análisis exploratorios y siguiendo criterios tanto estadísticos como basados en la revisión de literatura, se tienen dos propuestas de artículo.
+A partir de lo encontrado en los análisis exploratorios y siguiendo criterios tanto estadísticos como basados en la revisión de literatura, se tienen las siguientes propuestas de artículo.
 
-## Emociones, conocimiento y acciones individuales contra el cambio climático
+## Emociones (solo valencia), conocimiento y acciones individuales contra el cambio climático
 
 ¿La valencia emocional ligada al conocimiento sobre el cambio climático tiene un impacto sobre la disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos?
 
@@ -41,6 +41,19 @@ Artículos de referencia:
 [Vainio, Annukka & Paloniemi, Riikka. (2013). Does Belief Matter in Climate Change Action?. Public understanding of science (Bristol, England). 22. 382-95. 10.1177/0963662511410268.](https://www.researchgate.net/publication/247157982_Does_Belief_Matter_in_Climate_Change_Action)
 [Yilmaz, Veysel & Can, Yasemin. (2020). Impact of knowledge, concern and awareness about global warming and global climatic change on environmental behavior. Environment, Development and Sustainability. 22. 10.1007/s10668-019-00475-5.](https://www.researchgate.net/publication/336100230_Impact_of_knowledge_concern_and_awareness_about_global_warming_and_global_climatic_change_on_environmental_behavior)
 
+## Emociones (valencia y activación), conocimiento y acciones individuales contra el cambio climático
+
+¿El tipo de valencia y activación emocional ligada al conocimiento sobre el cambio climático tiene un impacto sobre la disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos?
+
+Hipótesis 1: Estar bien informado frente a las causas del cambio climático está relacionado con una mayor disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos.
+
+Hipótesis 2: Experimentar emociones negativas frente al cambio climático se relaciona con una mayor disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos.
+
+Hipótesis 3: Experimentar emociones negativas activas frente al cambio climático se relaciona con una mayor disposición a llevar a cabo acciones individuales contra el cambio climático en jovenes colombianos.
+
+Hipótesis 4: Un joven colombiano bien informado que experimente emociones negativas activas hacia el cambio climático tiene mayor disposición a llevar a cabo acciones individuales contra el cambio climático. Por tanto, hay una interacción entre el conocimiento y la activación y valencia emocional frente al cambio climático.
+
+Si las hipótesis se confirman, quiere decir que tanto el conocimiento como las emociones que se transmiten son relevantes a la hora de buscar promover que los jovenes colombianos tomen acciones individuales contra el cambio climático.
 
 ## Relación entre el uso de internet y el conocimiento sobre el cambio climático
 
