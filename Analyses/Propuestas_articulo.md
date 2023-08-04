@@ -1,7 +1,7 @@
 Encuesta: Propuestas de artículo
 ================
 Juan Sebastian Cely
-2023-08-01
+2023-08-04
 
 # Propuestas de artículo
 
@@ -138,3 +138,16 @@ Environmental Psychology. 81. 101796.
 and Natural Hazards.” The International Journal of Climate Change:
 Impacts and Responses 13 (2): 179-195.
 doi:10.18848/1835-7156/CGP/v13i02/179-195.](https://www.cgscholar.com/bookstore/works/new-media-a-game-changer-for-climate-change-and-natural-hazards?category_id=cgrn&path=cgrn%2F192%2F193)
+[Gómez-Casillas, A., Gómez Márquez, V. The effect of social network
+sites usage in climate change awareness in Latin America. Popul Environ
+45, 7 (2023).
+https://doi.org/10.1007/s11111-023-00417-4](https://link.springer.com/article/10.1007/s11111-023-00417-4)
+[Diehl, T., Huber, B., Gil de Zúñiga, H., & Liu, J. (2019). Social Media
+and Beliefs about Climate Change: A Cross-National Analysis of News Use,
+Political Ideology, and Trust in Science. International Journal of
+Public Opinion Research.
+doi:10.1093/ijpor/edz040](https://academic.oup.com/ijpor/article-abstract/33/2/197/5628296?login=false)
+[Udalov, V., Welfens, P.J.J. Digital and competing information sources:
+Impact on environmental concern and prospects for international policy
+cooperation. Int Econ Econ Policy 18, 631–660 (2021).
+https://doi.org/10.1007/s10368-021-00503-8](https://link.springer.com/article/10.1007/s10368-021-00503-8)
