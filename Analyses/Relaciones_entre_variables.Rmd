@@ -483,7 +483,7 @@ Tras el proceso de codificación, las variables de interés fueron agrupadas en 
 data1 <- data1 %>%
   mutate(across(starts_with("C36"), as.factor))
 data2 <- data1 %>%
-  select(Zona, sex, age_r, estrato, ethni, education, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim, C36_1, C36_2, C36_3, C36_4, C36_5, C36_6, C36_7, C36_8, C36_9, C36_10, C36_11, C36_12, C36_13, C36_14, C36_15, C36_16)
+  select(Zona, sex, age_r, estrato, ethni, education, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_scien, imp_act, imp_rel, imp_pol, thoughts, dis_act, clim_origin, cont_clim, C36_1, C36_2, C36_3, C36_4, C36_5, C36_6, C36_7, C36_8, C36_9, C36_10, C36_11, C36_12, C36_13, C36_14, C36_15, C36_16)
 
 data3 <- data1 %>%
   select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, Internet, trust_vote_inst, eco_anx, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim)
@@ -732,12 +732,12 @@ plot_ori_age
 
 ## Opinión impacto de los científicos y origen del cambio climático
 ```{r relación origen cambio climatico y opinion cientificos, fig.align='center', echo=F}
-tab_ori_sci <- table(data2$imp_sci, data2$clim_origin)
+tab_ori_sci <- table(data2$imp_scien, data2$clim_origin)
 kable(round(prop.table(tab_ori_sci) * 100, 1), booktabs = TRUE)
 
 custom_palette <- brewer.pal(6, "BrBG")
 plot_ori_sci <- data2 %>%
-  ggplot(aes(x = imp_sci, fill = clim_origin)) +
+  ggplot(aes(x = imp_scien, fill = clim_origin)) +
   geom_bar(position = "fill") +
   labs(x = "Impacto científicos en el \ncambio climático", y = "Proporción", fill = "Origen humano del \nCambio climático") +
   papaja::theme_apa() +
@@ -902,40 +902,6 @@ kable(table, col.names = c("Variable", "P-value"))
 ```
 
 
-```{r chi-square origen cambio climatico 2, eval=FALSE, include=FALSE}
-specific_variable <- "clim_origin"
-
-# Create an empty list to store the p-values
-p_values <- list()
-
-# Loop through each variable in your dataset
-for (var in names(data2)) {
-  if (var != specific_variable) {
-    # Create a contingency table
-    contingency_table <- table(data2[[var]], data2[[specific_variable]])
-
-    # Perform chi-square test
-    chi_square <- chisq.test(contingency_table)
-
-    # Store the raw p-value
-    p_value <- chi_square$p.value
-    
-    # Store the p-value
-    p_values[[var]] <- p_value
-    
-  }
-}
-adjusted_p_values <- p.adjust(p_values, method="fdr")
-
-# Loop through the adjusted p-values and print significant associations
-for (var in names(adjusted_p_values)) {
-  if (adjusted_p_values[[var]] < 0.05) {
-    cat("Variable", var, "is significantly associated with", specific_variable, "with adjusted p-value:", adjusted_p_values[[var]], "\n")
-  }
-}
-```
-
-
 ## Tests para la variable emociones frente al cambio climático
 ```{r chi-square emociones cambio climatico, echo=FALSE}
 specific_variable <- "eco_anx"
@@ -992,47 +958,13 @@ kable(table, col.names = c("Variable", "P-value"))
 ```
 
 
-```{r chi-square emociones cambio climatico 2, eval=FALSE, include=FALSE}
-specific_variable <- "eco_anx"
-
-# Create an empty list to store the p-values
-p_values <- list()
-
-# Loop through each variable in your dataset
-for (var in names(data2)) {
-  if (var != specific_variable) {
-    # Create a contingency table
-    contingency_table <- table(data2[[var]], data2[[specific_variable]])
-
-    # Perform chi-square test
-    chi_square <- chisq.test(contingency_table)
-
-    # Store the raw p-value
-    p_value <- chi_square$p.value
-    
-    # Store the p-value
-    p_values[[var]] <- p_value
-    
-  }
-}
-adjusted_p_values <- p.adjust(p_values, method="fdr")
-
-# Loop through the adjusted p-values and print significant associations
-for (var in names(adjusted_p_values)) {
-  if (adjusted_p_values[[var]] < 0.05) {
-    cat("Variable", var, "is significantly associated with", specific_variable, "with adjusted p-value:", adjusted_p_values[[var]], "\n")
-  }
-}
-```
-
-
 # Calculo de multiples Cramér's V
 Se calcularon los tamaños del efecto de las distintas asociaciones entre las principales variables de interés y las demás variables. La medida del tamaño del efecto utilizada fue Cramér's V.
 
 ## Valores para la variable origen del cambio climático
 ```{r cramers v origen cambio climatico, echo=FALSE}
 specific_variable <- "clim_origin"
-variables_to_include <- c("age_r","estrato", "ethni", "ideology", "Internet", "trust_vote_inst", "eco_anx", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "dis_act", "cont_clim")
+variables_to_include <- c("age_r","estrato", "ethni", "ideology", "Internet", "trust_vote_inst", "eco_anx", "imp_scien", "imp_act", "imp_rel", "imp_pol", "thoughts", "dis_act", "cont_clim")
 
 # Create an empty list to store the adjusted p-values
 cram_values <- list()
@@ -1061,7 +993,7 @@ kable(table, col.names = c("Variable", "Cramér's V"))
 ## Valores para la variable  emociones frente al cambio climático
 ```{r cramers v emociones cambio climático, echo=FALSE}
 specific_variable <- "eco_anx"
-variables_to_include <- c("ideology", "Internet", "trust_vote_inst", "imp_re", "thoughts", "dis_act", "clim_origin")
+variables_to_include <- c("ideology", "Internet", "trust_vote_inst", "imp_rel", "thoughts", "dis_act", "clim_origin")
 
 # Create an empty list to store the adjusted p-values
 cram_values <- list()
@@ -1092,7 +1024,7 @@ kable(table, col.names = c("Variable", "Cramér's V"))
 Los análisis anteriores se realizaron nuevamente pero modificando la variable de las emociones frente al cambio climático, incluyendo esta vez la clasificación basada en el modelo "Circumplex model of affect".
 ```{r data frame variables categoricas 2, include=FALSE}
 data2 <- data1 %>%
-  select(Zona, sex, age_r, estrato, ethni, education, edu, kids, ideology, Internet, trust_vote_inst, cir_mod, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim)
+  select(Zona, sex, age_r, estrato, ethni, education, edu, kids, ideology, Internet, trust_vote_inst, cir_mod, imp_scien, imp_act, imp_rel, imp_pol, thoughts, dis_act, clim_origin, cont_clim)
 
 data3 <- data1 %>%
   select(Zona, sex, age_r, strat, ethni, edu, kids, ideology, Internet, trust_vote_inst, cir_mod, imp_sci, imp_ac, imp_re, imp_po, thoughts, dis_act, clim_origin, cont_clim)
@@ -1396,7 +1328,7 @@ for (i in seq_along(p_values)) {
 }
 
 # Print the names of the significant variables
-sig_var <- c("Sexo", "Estrato", "Nivel educativo","Ideología", "Internet", "Confianza Instituciones", "Impacto activistas", "Impacto grupos religiosos", "Impacto políticos", "Pensamientos cambio climático", "Disposición a actuar", "Origen cambio climático", "Contribución cambio climático")
+sig_var <- c("Sexo", "Estrato", "Nivel educativo","Ideología", "Internet", "Confianza Instituciones", "Impacto científicos", "Impacto grupos religiosos", "Impacto políticos", "Pensamientos cambio climático", "Disposición a actuar", "Origen cambio climático", "Contribución cambio climático")
 # Print the significant p-values
 
 significant_p_values <- unname(significant_p_values)
@@ -1408,7 +1340,7 @@ kable(table, col.names = c("Variable", "P-value"))
 ## Valores de Cramers' V para la variable origen del cambio climático
 ```{r cramers v origen cambio climatico nueva variable emociones, echo=FALSE}
 specific_variable <- "clim_origin"
-variables_to_include <- c("age_r","estrato", "ethni", "ideology", "Internet", "trust_vote_inst", "cir_mod", "imp_sci", "imp_ac", "imp_re", "imp_po", "thoughts", "dis_act", "cont_clim")
+variables_to_include <- c("age_r","estrato", "ethni", "ideology", "Internet", "trust_vote_inst", "cir_mod", "imp_scien", "imp_act", "imp_rel", "imp_pol", "thoughts", "dis_act", "cont_clim")
 
 # Create an empty list to store the adjusted p-values
 cram_values <- list()
@@ -1437,7 +1369,7 @@ kable(table, col.names = c("Variable", "Cramér's V"))
 ## Valores de Cramers' V para la variable emociones frente al cambio climático
 ```{r cramers v nueva variable emociones cambio climático, echo=FALSE}
 specific_variable <- "cir_mod"
-variables_to_include <- c("sex", "estrato", "education", "ideology", "Internet", "trust_vote_inst", "imp_ac", "imp_re", "imp_po", "thoughts", "dis_act", "clim_origin", "cont_clim")
+variables_to_include <- c("sex", "estrato", "education", "ideology", "Internet", "trust_vote_inst", "imp_scien", "imp_rel", "imp_pol", "thoughts", "dis_act", "clim_origin", "cont_clim")
 
 # Create an empty list to store the adjusted p-values
 cram_values <- list()
@@ -1455,7 +1387,7 @@ for (var in variables_to_include) {
 # Print the adjusted Cramér's V values
 cram_values <- unlist(cram_values)
 
-sig_var <- c("Sexo", "Estrato", "Nivel educativo","Ideología", "Internet", "Confianza Instituciones", "Impacto activistas", "Impacto grupos religiosos", "Impacto políticos", "Pensamientos cambio climático", "Disposición a actuar", "Origen cambio climático", "Contribución cambio climático")
+sig_var <- c("Sexo", "Estrato", "Nivel educativo","Ideología", "Internet", "Confianza Instituciones", "Impacto científicos", "Impacto grupos religiosos", "Impacto políticos", "Pensamientos cambio climático", "Disposición a actuar", "Origen cambio climático", "Contribución cambio climático")
 
 cram_values <- unname(cram_values)
 table <- data.frame(sig_var, cram_values)

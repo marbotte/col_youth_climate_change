@@ -1,7 +1,7 @@
 Encuesta: Distribución y recodificación de variables
 ================
 Juan Sebastian Cely
-2023-08-01
+2023-08-04
 
 # Emociones hacia el cambio climático
 
@@ -57,6 +57,8 @@ activación. Las emociones positivas solo fueron catalogadas de acuerdo a
 su valencia debido al reducido número de participantes que seleccionaron
 algunas de estas. De esta manera se evita tener categorias con
 frecuencias en extremo reducidas.
+
+<img src="./figuresvariable emo recodificada 3-1.png" width="80%" style="display: block; margin: auto;" />
 
 | Emociones        | Frecuencia | Porcentaje (%) |
 |:-----------------|-----------:|---------------:|

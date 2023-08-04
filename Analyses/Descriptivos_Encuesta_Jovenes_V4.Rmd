@@ -139,40 +139,57 @@ plot_eco_anx2
 ```
 
 
-```{r recodificación emociones cambio climático 3, include=FALSE, eval=FALSE}
+```{r recodificación emociones cambio climático 3, include=FALSE}
 unp_deac <- c("C36_1", "C36_10", "C36_11", "C36_15")
 unp_act <- c("C36_3", "C36_4", "C36_5", "C36_6", "C36_7", "C36_8", "C36_9")
 ple_deac <- c("C36_13", "C36_16")
 ple_act <- c("C36_2", "C36_12", "C36_14")
-data1$cir_mod <- NA
+data1$cir_mod2 <- NA
 for (i in 1:nrow(data1)) {
 unp_deac_count <- sum(data1[i, unp_deac] == 1)
 unp_act_count <- sum(data1[i, unp_act] == 1)
 ple_deac_count <- sum(data1[i, ple_deac] == 1)
 ple_act_count <- sum(data1[i, ple_act] == 1)
 if (unp_deac_count %in% c(1, 2) & unp_act_count == 0 & ple_deac_count == 0 & ple_act_count == 0) {
-data1$cir_mod[i] <- "Neg no act"
+data1$cir_mod2[i] <- "Neg no act"
 } else if (unp_deac_count == 1 & unp_act_count == 1 & ple_deac_count == 0 & ple_act_count == 0) {
-data1$cir_mod[i] <- "Neg act y no act"
+data1$cir_mod2[i] <- "Neg act y no act"
 } else if (unp_deac_count == 1 & unp_act_count == 0 & ple_deac_count == 1 & ple_act_count == 0) {
-data1$cir_mod[i] <- "Neg no act y pos no act"
+data1$cir_mod2[i] <- "Neg no act y pos no act"
 } else if (unp_deac_count == 1 & unp_act_count == 0 & ple_deac_count == 0 & ple_act_count == 1) {
-data1$cir_mod[i] <- "Neg no act y pos act"
+data1$cir_mod2[i] <- "Neg no act y pos act"
 } else if (unp_deac_count == 0 & unp_act_count %in% c(1, 2) & ple_deac_count == 0 & ple_act_count == 0) {
-data1$cir_mod[i] <- "Neg act"
+data1$cir_mod2[i] <- "Neg act"
 } else if (unp_deac_count == 0 & unp_act_count == 1 & ple_deac_count == 1 & ple_act_count == 0) {
-data1$cir_mod[i] <- "Neg act y pos no act"
+data1$cir_mod2[i] <- "Neg act y pos no act"
 } else if (unp_deac_count == 0 & unp_act_count == 1 & ple_deac_count == 0 & ple_act_count == 1) {
-data1$cir_mod[i] <- "Neg act y pos act"
+data1$cir_mod2[i] <- "Neg act y pos act"
 } else if (unp_deac_count == 0 & unp_act_count == 0 & ple_deac_count %in% c(1, 2) & ple_act_count == 0) {
-data1$cir_mod[i] <- "Pos no act"
+data1$cir_mod2[i] <- "Pos no act"
 } else if (unp_deac_count == 0 & unp_act_count == 0 & ple_deac_count == 1 & ple_act_count == 1) {
-data1$cir_mod[i] <- "Pos act y no act"
+data1$cir_mod2[i] <- "Pos act y no act"
 } else if (unp_deac_count == 0 & unp_act_count == 0 & ple_deac_count == 0 & ple_act_count %in% c(1, 2)) {
-data1$cir_mod[i] <- "Pos act"
+data1$cir_mod2[i] <- "Pos act"
 }
 }
-data1$cir_mod <- as.factor(data1$cir_mod)
+data1$cir_mod2 <- as.factor(data1$cir_mod2)
+```
+
+
+```{r variable emo recodificada 3, fig.align='center', echo=F}
+plot_cir_mod2 <- data1 %>%
+  count(cir_mod2) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = cir_mod2, y = prop, fill = cir_mod2)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 75) +
+  labs(x = "Emociones", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n Emociones hacia el cambio climático") +
+  papaja::theme_apa() +
+  coord_flip() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), hjust = -0.2, color = "black", size = 4)
+plot_cir_mod2
 ```
 
 
