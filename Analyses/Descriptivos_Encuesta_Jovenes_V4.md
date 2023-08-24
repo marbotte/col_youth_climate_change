@@ -1,7 +1,7 @@
 Encuesta: Distribución y recodificación de variables
 ================
 Juan Sebastian Cely
-2023-08-04
+2023-08-23
 
 # Emociones hacia el cambio climático
 
@@ -387,6 +387,15 @@ por su relevancia para el proyecto.
 
 <img src="./figuresvariable asociarse a organizaciones ambientales-1.png" width="80%" style="display: block; margin: auto;" />
 
+# Creación de una medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático
+
+La creación de la medida de negatividad emocional hacia las acciones del
+gobierno frente al cambio climático corresponde a la suma de las
+emociones negativas menos la suma de las emociones positivas. Al valor
+total, tras realizar la resta, se le suma un valor de 19 para que el
+rango de la medida de negatividad vaya desde 1 hasta 51.
+<img src="./figuresvariable medida negatividad emocional gobierno-1.png" width="80%" />
+
 # Impacto de actores frente al cambio climático
 
 La pregunta número 35 fue: En una escala de 1 a 6, donde 1 es MUY
@@ -514,13 +523,6 @@ respuesta para cada una de las 10 acciones incluidas.
 | 5            |       3553 |           16.0 |
 | Muy positivo |       6267 |           28.2 |
 
-## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
-
-Se creó una medida que promedia los valores asignados a cada una de las
-acciones individuales y se recodificaron en una escala que va desde -3
-hasta 3.
-<img src="./figuresvariable medida impacto acciones comodidad cont-1.png" width="80%" style="display: block; margin: auto;" />
-
 # Impacto acciones en cambio climático
 
 La pregunta número 39 fue: En una escala de 1 a 6, donde 1 es MUY
@@ -550,22 +552,19 @@ respuesta para cada una de las 10 acciones incluidas.
 | 5            |       4258 |           19.2 |
 | Muy positivo |       9568 |           43.1 |
 
-## Creación de una medida del impacto de ciertas acciones en el cambio climático
+## Recodificación para variable de impacto en la comodidad de acciones contra cambio climático
 
 Se creó una medida que promedia los valores asignados a cada una de las
 acciones individuales y se recodificaron en una escala que va desde -3
-hasta 3.
-<img src="./figuresvariable medida impacto cambio climático cont-1.png" width="80%" style="display: block; margin: auto;" />
+hasta 3. Posteriormente, los distintos valores fueron recodificados en
+una variable con dos niveles, impacto “Negativo” e impacto “Positivo”.
 
-## Creación de una medida de la disposición a llevar acabo acciones individuales
+| Impacto en comodidad | Frecuencia | Porcentaje (%) |
+|:---------------------|-----------:|---------------:|
+| Negativo             |        461 |           20.8 |
+| Positivo             |       1759 |           79.2 |
 
-Se sumaron los valores obtenidos frente al impacto de acciones
-individuales en el cambio climático y en la comodidad y se clasificaron
-de modo que los puntajes negativos o iguales a cero se convirtieron en
-la categoría “Poco dispuesta”; los puntajes de 1 hasta 3 se convirtieron
-en la categoría “Dispuesta”, y los puntajes de 4 hasta 6 se convirtieron
-en la categoría “Muy dispuesta”.
-<img src="./figuresvariable medida disposicion acciones en cambio climático-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="./figuresvariable impacto comodidad recodificada-1.png" width="80%" style="display: block; margin: auto;" />
 
 # Origen del cambio climático
 

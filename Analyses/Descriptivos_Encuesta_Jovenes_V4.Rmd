@@ -938,18 +938,6 @@ plot_aso
 ```
 
 
-```{r variable asociarse a organizaciones ambientales 2, fig.align='center', echo=F}
-data1$aso <- data1$C18_7
-for (i in 1:nrow(data1)) {
-  if (data1$aso[i] == 1) {
-    data1$aso[i] <- 1
-  } else if (data1$aso[i] == 2) {
-    data1$aso[i] <- -1
-  }
-}
-```
-
-
 ```{r variable emociones respuesta gobierno al cambio climático, include=FALSE, eval=FALSE}
 # Emociones hacia respuesta del gobierno frente al cambio climático
 # La pregunta número 34 fue: "En una escala de 1 a 6, donde 1 es MUY POCO y 6 es MUY FUERTE, Cuando usted piensa en cómo el gobierno está respondiendo al cambio climático se siente:". El participante debía dar una respuesta para cada una de las 10 emociones incluidas.
@@ -976,26 +964,39 @@ totals_emo_gov$Categoria <- gsub("_", " ", totals_emo_gov$Categoria)
 kable(totals_emo_gov, col.names = c("Categoría", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
 ```
 
-```{r medida negatividad emocional gobierno cambio climático, include=FALSE, eval=FALSE}
+```{r medida negatividad emocional gobierno cambio climático, include=FALSE}
 neg_d34 <- c("D34_2", "D34_3", "D34_4", "D34_6", "D34_8", "D34_9")
 pos_d34 <- c("D34_1", "D34_5", "D34_7", "D34_10")
 data1$neg_emo_gov <- NA
 for (i in 1:nrow(data1)) {
   data1$neg_emo_gov[i] <- sum(data1[i, neg_d34]) - sum(data1[i, pos_d34]) + 19
 }
+data1 <- data1 %>%
+  mutate(neg_emo_gov = case_when(
+    neg_emo_gov %in% c(1:10) ~ "Nulo o muy bajo",
+    neg_emo_gov %in% c(11:20) ~ "Bajo",
+    neg_emo_gov %in% c(21:30) ~ "Medio",
+    neg_emo_gov %in% c(31:40) ~ "Alto",
+    neg_emo_gov %in% c(41:51) ~ "Muy alto"
+))
 ```
 
 
-```{r variable medida negatividad emocional gobierno, include=FALSE, eval=FALSE}
 # Creación de una medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático
-# La creación de la medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático corresponde a la suma de las emociones negativas menos la suma de las emociones positivas. Al valor total, tras realizar la resta, se le suma un valor de 19 para que el rango de la medida de negatividad vaya desde 1 hasta 51.
+La creación de la medida de negatividad emocional hacia las acciones del gobierno frente al cambio climático corresponde a la suma de las emociones negativas menos la suma de las emociones positivas. Al valor total, tras realizar la resta, se le suma un valor de 19 para que el rango de la medida de negatividad vaya desde 1 hasta 51.
+```{r variable medida negatividad emocional gobierno, echo=FALSE}
+data1$neg_emo_gov <- factor(data1$neg_emo_gov, levels = c("Nulo o muy bajo", "Bajo", "Medio", "Alto", "Muy alto"))
 plot_neg_emo_gov <- data1 %>%
-  ggplot(aes(x = neg_emo_gov, y = after_stat(count) / sum(after_stat(count)) * 100)) +
-  geom_histogram(fill = "#BCBD22", binwidth = 1) +
-  labs(x = "Negatividad emocional", y = "Porcentaje (%)") +
-  ggtitle("Distribución puntaje negatividad emocional \n hacia las acciones del gobierno frente al cambio climático") +
+  count(neg_emo_gov) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = neg_emo_gov, y = prop, fill = neg_emo_gov)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 100) +
+  labs(x = "Nivel emociones negativas", y = "Porcentaje (%)") +
+  ggtitle("Distribución nivel emociones negativas en relación a \nacciones del gobierno en cambio climático") +
   papaja::theme_apa() +
-  scale_x_continuous(breaks = seq(1, 51, 5))
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4)
 plot_neg_emo_gov
 ```
 
@@ -1314,9 +1315,10 @@ for (i in 1:nrow(data1)) {
 #levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
 ```
 
-## Creación de una medida del impacto positivo de ciertas acciones en la comodidad
-Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3.
-```{r variable medida impacto acciones comodidad cont, fig.align='center', echo=F}
+
+```{r variable medida impacto acciones comodidad cont, fig.align='center', echo=F, eval=FALSE}
+## Creación de una medida del impacto de ciertas acciones en la comodidad
+#Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3.
 plot_imp_como <- data1 %>%
   ggplot(aes(x = imp_como, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#FF9896", binwidth = 1) +
@@ -1387,9 +1389,10 @@ for (i in 1:nrow(data1)) {
 #levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
 ```
 
+
+```{r variable medida impacto cambio climático cont, fig.align='center', echo=F, eval=FALSE}
 ## Creación de una medida del impacto de ciertas acciones en el cambio climático
-Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3.
-```{r variable medida impacto cambio climático cont, fig.align='center', echo=F}
+#Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3.
 plot_imp_cli <- data1 %>%
   ggplot(aes(x = imp_cli, y = after_stat(count) / sum(after_stat(count)) * 100)) +
   geom_histogram(fill = "#FF9896", binwidth = 1) +
@@ -1404,7 +1407,7 @@ plot_imp_cli
 
 
 
-```{r medida disposicion acciones en cambio climático, include=FALSE}
+```{r medida disposicion acciones en cambio climático, include=FALSE, eval=FALSE}
 data1$dis_act <- data1$imp_cli + data1$imp_como
 data1 <- data1 %>%
   mutate(dis_act = case_when(
@@ -1417,9 +1420,11 @@ data1 <- data1 %>%
 ```
 
 
-## Creación de una medida de la disposición a llevar acabo acciones individuales
-Se sumaron los valores obtenidos frente al impacto de acciones individuales en el cambio climático y en la comodidad y se clasificaron de modo que los puntajes negativos o iguales a cero se convirtieron en la categoría "Poco dispuesta"; los puntajes de 1 hasta 3 se convirtieron en la categoría "Dispuesta", y los puntajes de 4 hasta 6 se convirtieron en la categoría "Muy dispuesta".
-```{r variable medida disposicion acciones en cambio climático, fig.align='center', echo=FALSE}
+```{r variable medida disposicion acciones en cambio climático, fig.align='center', echo=FALSE, eval=FALSE}
+
+# Creación de una medida de la disposición a llevar acabo acciones individuales
+#Se sumaron los valores obtenidos frente al impacto de acciones individuales en el cambio climático y en la comodidad y se clasificaron de modo que los puntajes negativos o iguales a cero se convirtieron en la categoría "Poco dispuesta"; los puntajes de 1 hasta 3 se convirtieron en la categoría "Dispuesta", y los puntajes de 4 hasta 6 se convirtieron en la categoría "Muy dispuesta".
+
 data1$dis_act <- factor(data1$dis_act, levels = c("Poco dispuesta", "Dispuesta", "Muy dispuesta"))
 custom_palette <- brewer.pal(7, "Greens")
 plot_dis_act <- data1 %>%
@@ -1438,22 +1443,34 @@ plot_dis_act
 ```
 
 
-```{r medida disposicion acciones en cambio climático otro, include=FALSE, eval=FALSE}
+```{r medida disposicion acciones en cambio climático otro, include=FALSE}
 # Impact of individual actions on comfort
 c38 <- grep("^C38_", names(data1), value=T)
 data1$imp_como <- NA
 for (i in 1:nrow(data1)) {
   data1$imp_como[i] <- round(sum(data1[i, c38]) / 10) 
 }
-data1$imp_como <- as.factor(data1$imp_como)
-levels(data1$imp_como) <- c("-3", "-2", "-1", "1", "2", "3")
-
+for (i in 1:nrow(data1)) {
+  if (data1$imp_como[i] == 1) {
+    data1$imp_como[i] <- -3
+  } else if (data1$imp_como[i] == 2) {
+    data1$imp_como[i] <- -2
+  } else if (data1$imp_como[i] == 3) {
+    data1$imp_como[i] <- -1
+  } else if (data1$imp_como[i] == 4) {
+    data1$imp_como[i] <- 1
+  } else if (data1$imp_como[i] == 5) {
+    data1$imp_como[i] <- 2
+  } else if (data1$imp_como[i] == 6) {
+    data1$imp_como[i] <- 3
+  }
+}
 data1 <- data1 %>%
-  mutate(imp_com = case_when(
-    imp_como %in% c("-3", "-2", "-1") ~ "Negativo",
-    imp_como %in% c("1", "2", "3") ~ "Positivo"
-  ))
-data1$imp_com <- as.factor(data1$imp_com)
+    mutate(imp_como = case_when(
+        imp_como %in% c(-1, -2, -3) ~ "Negativo",
+        imp_como %in% c(1, 2, 3) ~ "Positivo"
+    ))
+data1$imp_como <- as.factor(data1$imp_como)
 
 # Impact of individual actions on climate change
 c39 <- grep("^C39_", names(data1), value=T)
@@ -1461,15 +1478,51 @@ data1$imp_cli <- NA
 for (i in 1:nrow(data1)) {
   data1$imp_cli[i] <- round(sum(data1[i, c39]) / 10)
 }
-data1$imp_cli <- as.factor(data1$imp_cli)
-levels(data1$imp_cli) <- c("-3", "-2", "-1", "1", "2", "3")
-
+for (i in 1:nrow(data1)) {
+  if (data1$imp_cli[i] == 1) {
+    data1$imp_cli[i] <- -3
+  } else if (data1$imp_cli[i] == 2) {
+    data1$imp_cli[i] <- -2
+  } else if (data1$imp_cli[i] == 3) {
+    data1$imp_cli[i] <- -1
+  } else if (data1$imp_cli[i] == 4) {
+    data1$imp_cli[i] <- 1
+  } else if (data1$imp_cli[i] == 5) {
+    data1$imp_cli[i] <- 2
+  } else if (data1$imp_cli[i] == 6) {
+    data1$imp_cli[i] <- 3
+  }
+}
 data1 <- data1 %>%
-  mutate(imp_cl = case_when(
-    imp_cli %in% c("-3", "-2", "-1") ~ "Negativo",
-    imp_cli %in% c("1", "2", "3") ~ "Positivo"
-  ))
-data1$imp_cl <- as.factor(data1$imp_cl)
+    mutate(imp_cli = case_when(
+        imp_cli %in% c(-1, -2, -3) ~ "Negativo",
+        imp_cli %in% c(1, 2, 3) ~ "Positivo"
+    ))
+data1$imp_cli <- as.factor(data1$imp_cli)
+```
+
+
+## Recodificación para variable de impacto en la comodidad de acciones contra cambio climático
+Se creó una medida que promedia los valores asignados a cada una de las acciones individuales y se recodificaron en una escala que va desde -3 hasta 3. Posteriormente, los distintos valores fueron recodificados en una variable con dos niveles, impacto "Negativo" e impacto "Positivo".
+```{r variable impacto comodidad recodificada, fig.align='center', echo=FALSE}
+table_imp_como <- as.data.frame(table(data1$imp_como)) %>%
+  mutate(per = round(Freq / sum(Freq) * 100, 1))
+kable(table_imp_como, col.names = c("Impacto en comodidad", "Frecuencia", "Porcentaje (%)"), booktabs = TRUE)
+
+custom_palette <- brewer.pal(6, "Reds")
+plot_imp_como <- data1 %>%
+  count(imp_como) %>%
+  mutate(prop = (n / sum(n))*100) %>%
+  ggplot(aes(x = imp_como, y = prop, fill = imp_como)) +
+  geom_bar(stat = "identity") +
+  ylim(0, 100) +
+  labs(x = "Impacto en comodidad", y = "Porcentaje (%)") +
+  ggtitle("Distribución \n impacto en comodidad") +
+  papaja::theme_apa() +
+  theme(legend.position="none") +
+  geom_text(aes(label = paste0(round(prop, 1), "%")), vjust = -0.5, color = "black", size = 4) +
+  scale_fill_manual(values = custom_palette)
+plot_imp_como
 ```
 
 # Origen del cambio climático
